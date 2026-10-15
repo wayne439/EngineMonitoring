@@ -22,6 +22,11 @@ struct AircraftView: View {
                         Label("Edit aircraft profile", systemImage: "pencil")
                     }
                 }
+                NavigationLink {
+                    DataChecklistView()
+                } label: {
+                    Label("Data checklist", systemImage: "checklist")
+                }
                 ForEach(AircraftKnowledge.facts) { fact in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(fact.label).font(.caption).foregroundStyle(.secondary)

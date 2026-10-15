@@ -1,5 +1,13 @@
 # AI Engine Monitoring changelog
 
+## 0.4.0 (2026-10-15)
+- New landing page shown when the app opens: Register for AI Engine Monitoring, Log in to AI Engine Monitoring, Sign in with Apple, and Explore without an account; plus What it does, Why pilots use it, and About us.
+- Registration: name, email, password; aircraft chosen from a drop-down (common single-engine piston models with Garmin glass, or Other) plus tail number, which fills the Aircraft Profile; a data checklist (required / recommended / optional) of what to gather; advisory acknowledgement.
+- Log in with email and password, Forgot password (emailed reset link), and Sign in with Apple.
+- Data checklist also under AIRCRAFT > Data checklist; ticks are kept on the device.
+- Clearer error messages from the account server.
+- Version 0.4.0 (5).
+
 ## 0.3.1 (2026-10-15)
 - App renamed AI Engine Monitoring (briefly EngineAI): home-screen name, title, PDF and export wording; app binary EngineAI.app. Bundle ID, module and repo keep the EngineMonitoring name.
 - Pre-shop report header now describes the owner's aircraft from the profile instead of a fixed SR22 line.
