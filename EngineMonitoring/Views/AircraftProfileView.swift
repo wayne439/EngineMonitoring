@@ -39,8 +39,14 @@ struct AircraftProfileView: View {
                 }
                 TextField("Propeller model", text: $store.profile.propeller)
                 Picker("Engine monitor", selection: $store.profile.monitor) {
-                    ForEach(EngineMonitorType.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(EngineMonitorType.allCases) { Text($0.label).tag($0) }
                 }
+                Picker("Wireless data link", selection: Binding(get: { store.profile.dataLink ?? .notSure },
+                                                                set: { store.profile.dataLink = $0 })) {
+                    ForEach(DataLink.allCases) { Text($0.rawValue).tag($0) }
+                }
+                DataPathAdviceView(advice: DataPathAdvice.advise(monitor: store.profile.monitor, link: store.profile.dataLink,
+                                                                 make: store.profile.make))
             } header: {
                 Text("Engine")
             } footer: {

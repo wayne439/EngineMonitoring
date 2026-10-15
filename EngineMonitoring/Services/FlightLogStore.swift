@@ -5,6 +5,8 @@ final class FlightLogStore: ObservableObject {
     @Published private(set) var entries: [FlightLogEntry] = []
     @Published var lastError: String?
     @Published private(set) var isImporting = false
+    /// One-line result of the last import ("Imported 3 new flights."), for a confirmation message.
+    @Published var importSummary: String?
     /// One compact summary per imported log; the aircraft's normal ranges are built from these.
     @Published private(set) var summaries: [String: FlightSummary] = [:]
     @Published private(set) var isSummarizing = false
@@ -81,6 +83,69 @@ final class FlightLogStore: ObservableObject {
             }
         }
         if !failures.isEmpty { lastError = "Some files were not imported.\n" + failures.joined(separator: "\n") }
+        let added = urls.count - failures.count
+        importSummary = added > 0 ? "Imported \(added) flight\(added == 1 ? "" : "s")." : nil
+    }
+
+    // MARK: SD card folder import
+
+    private static let folderBookmarkKey = "EM.logFolderBookmark"
+
+    /// True once a data_log folder has been chosen, so "Import new flights" is one tap.
+    var hasSavedFolder: Bool { UserDefaults.standard.data(forKey: Self.folderBookmarkKey) != nil }
+
+    /// Engine log files in a folder (and one level of subfolders) that have not been imported yet.
+    /// nil when the folder cannot be read (card removed, or access lost).
+    static func newLogFiles(in folder: URL, existing: [FlightLogEntry]) -> [URL]? {
+        let known = Set(existing.map { $0.originalFilename.lowercased() })
+        let fm = FileManager.default
+        var found: [URL] = []
+        let keys: [URLResourceKey] = [.isDirectoryKey]
+        guard let top = try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: keys, options: [.skipsHiddenFiles]) else { return nil }
+        for url in top {
+            let isDir = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+            if isDir {
+                found += (try? fm.contentsOfDirectory(at: url, includingPropertiesForKeys: keys, options: [.skipsHiddenFiles])) ?? []
+            } else {
+                found.append(url)
+            }
+        }
+        return found
+            .filter { $0.pathExtension.lowercased() == "csv" && !known.contains($0.lastPathComponent.lowercased()) }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+    }
+
+    /// Imports every new log in a folder the pilot picked (the SD card's data_log folder) and remembers the folder.
+    func importFolder(_ folder: URL) async {
+        let scoped = folder.startAccessingSecurityScopedResource()
+        defer { if scoped { folder.stopAccessingSecurityScopedResource() } }
+        if let bookmark = try? folder.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil) {
+            UserDefaults.standard.set(bookmark, forKey: Self.folderBookmarkKey)
+        }
+        guard let files = Self.newLogFiles(in: folder, existing: entries) else {
+            UserDefaults.standard.removeObject(forKey: Self.folderBookmarkKey)
+            lastError = "That folder could not be opened. Insert the card and choose the data_log folder again."
+            return
+        }
+        if files.isEmpty {
+            importSummary = "No new flights on the card. Everything there is already imported."
+            return
+        }
+        await importFiles(files)
+    }
+
+    /// One tap: imports new logs from the folder chosen last time. Returns false when the folder must be picked again
+    /// (first use, or the card was swapped).
+    func importFromSavedFolder() async -> Bool {
+        guard let data = UserDefaults.standard.data(forKey: Self.folderBookmarkKey) else { return false }
+        var stale = false
+        guard let folder = try? URL(resolvingBookmarkData: data, options: [], relativeTo: nil, bookmarkDataIsStale: &stale),
+              !stale else {
+            UserDefaults.standard.removeObject(forKey: Self.folderBookmarkKey)
+            return false
+        }
+        await importFolder(folder)
+        return true
     }
 
     func delete(_ entry: FlightLogEntry) {

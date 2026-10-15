@@ -384,6 +384,8 @@ struct DiagnosticEventDetail: View {
 struct FlightLogsView: View {
     @EnvironmentObject private var logStore: FlightLogStore
     @State private var importing = false
+    /// What the file picker is choosing: the SD card's data_log folder, or individual log files.
+    @State private var pickingFolder = false
 
     static func detail(for entry: FlightLogEntry) -> String {
         var text = "\(entry.sampleCount) samples"
@@ -395,14 +397,38 @@ struct FlightLogsView: View {
         List {
             Section {
                 Button {
+                    Task {
+                        if !(await logStore.importFromSavedFolder()) {
+                            pickingFolder = true
+                            importing = true
+                        }
+                    }
+                } label: {
+                    Label("Import new flights from SD card", systemImage: "sdcard")
+                }
+                .disabled(logStore.isImporting)
+                if logStore.hasSavedFolder {
+                    Button {
+                        pickingFolder = true
+                        importing = true
+                    } label: {
+                        Label("Choose a different folder", systemImage: "folder")
+                    }
+                    .disabled(logStore.isImporting)
+                }
+                Button {
+                    pickingFolder = false
                     importing = true
                 } label: {
-                    Label("Import Perspective CSV Logs", systemImage: "square.and.arrow.down")
+                    Label("Import individual log files", systemImage: "square.and.arrow.down")
                 }
                 .disabled(logStore.isImporting)
                 if logStore.isImporting { ProgressView("Importing...") }
+                if let summary = logStore.importSummary {
+                    Label(summary, systemImage: "checkmark.circle").foregroundStyle(.green)
+                }
             } footer: {
-                Text("Copy the log_*.csv files from the MFD data card (data_log folder) to Files, then import them here. The app keeps its own copy. Tap a log for its post-flight report.")
+                Text("Plug the avionics data card into the iPad with a USB-C SD card reader. The first time, choose the data_log folder; after that one tap adds only the new flights. You can also share log files to this app from Files, Mail, AirDrop or Cirrus IQ. The app keeps its own copy. Tap a log for its post-flight report.")
             }
 
             Section("Imported Logs") {
@@ -429,10 +455,15 @@ struct FlightLogsView: View {
         }
         .navigationTitle("Flight Logs")
         .fileImporter(isPresented: $importing,
-                      allowedContentTypes: [.commaSeparatedText, .plainText, .data],
-                      allowsMultipleSelection: true) { result in
+                      allowedContentTypes: pickingFolder ? [.folder] : [.commaSeparatedText, .plainText, .data],
+                      allowsMultipleSelection: !pickingFolder) { result in
             switch result {
-            case .success(let urls): Task { await logStore.importFiles(urls) }
+            case .success(let urls):
+                if pickingFolder, let folder = urls.first {
+                    Task { await logStore.importFolder(folder) }
+                } else {
+                    Task { await logStore.importFiles(urls) }
+                }
             case .failure(let error): logStore.lastError = error.localizedDescription
             }
         }

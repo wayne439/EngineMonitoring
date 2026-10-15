@@ -54,6 +54,30 @@ create table if not exists public.flight_logs (
 create index if not exists flight_logs_owner_idx on public.flight_logs (owner_id);
 create index if not exists flight_logs_aircraft_started_idx on public.flight_logs (aircraft_id, started_at desc);
 
+-- ---------------------------------------------------------------- inbox_uploads
+-- Every file that arrives for a subscriber before it becomes a flight: files shared to the app in a
+-- format it cannot read yet (JPI, EI), and later uploads from flyGarmin / PlaneSync, AirSync, email-in
+-- and the web. A processing job turns them into flight_logs rows.
+create table if not exists public.inbox_uploads (
+    id                 uuid primary key default gen_random_uuid(),
+    owner_id           uuid not null default auth.uid() references auth.users (id) on delete cascade,
+    aircraft_id        uuid references public.aircraft (id) on delete set null,
+    source             text not null default 'app'
+                       check (source in ('app', 'share', 'sd-card', 'email', 'web', 'flygarmin', 'airsync', 'cirrus-iq')),
+    original_filename  text not null,
+    storage_path       text not null,
+    size_bytes         bigint,
+    format             text not null default 'unknown',   -- garmin-csv, jpi, ei, unknown
+    status             text not null default 'received'
+                       check (status in ('received', 'processing', 'imported', 'unsupported', 'failed')),
+    detail             text,
+    received_at        timestamptz not null default now(),
+    processed_at       timestamptz
+);
+
+create index if not exists inbox_uploads_owner_idx on public.inbox_uploads (owner_id, received_at desc);
+create index if not exists inbox_uploads_status_idx on public.inbox_uploads (status) where status in ('received', 'processing');
+
 -- ---------------------------------------------------------------- updated_at
 create or replace function public.set_updated_at() returns trigger
 language plpgsql as $$
@@ -76,6 +100,17 @@ create policy "aircraft: owner only" on public.aircraft
     for all to authenticated
     using (owner_id = auth.uid())
     with check (owner_id = auth.uid());
+
+alter table public.inbox_uploads enable row level security;
+
+drop policy if exists "inbox_uploads: owner only" on public.inbox_uploads;
+create policy "inbox_uploads: owner only" on public.inbox_uploads
+    for all to authenticated
+    using (owner_id = auth.uid())
+    with check (
+        owner_id = auth.uid()
+        and (aircraft_id is null or exists (select 1 from public.aircraft a where a.id = aircraft_id and a.owner_id = auth.uid()))
+    );
 
 drop policy if exists "flight_logs: owner only" on public.flight_logs;
 create policy "flight_logs: owner only" on public.flight_logs

@@ -26,6 +26,7 @@ While those two Info.plist values are blank, the app runs in local-only mode and
 | --- | --- |
 | `aircraft` table | One row per airplane: tail, make/model, engine, monitor, plus the full Aircraft Profile as JSON |
 | `flight_logs` table | One row per uploaded log: times, sample count, file path, and the flight summary the app computed |
+| `inbox_uploads` table | Files received but not yet turned into flights: formats the app cannot read yet (JPI, EI), and later flyGarmin / AirSync / email / web uploads |
 | `engine-logs` bucket | The raw log files, under `<user id>/<aircraft id>/<file name>` (private, 50 MB per file limit) |
 
 Deleting an account (ACCOUNT → Delete account) removes the files, then calls `delete_my_account()`. That deletes the user, and their rows go with it.
