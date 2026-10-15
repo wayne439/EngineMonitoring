@@ -96,7 +96,7 @@ enum IssuePlaybook {
                 "If it is happening more often or at lower pressure, ask the A&P to check idle RPM, the oil pressure relief valve setting and the oil grade (XC 20W-50).",
                 "Compare with the oil temperature and oil analysis trends.",
             ],
-            copaTopic: "OIL PRESS caution at idle after landing, IO-550-N"),
+            copaTopic: "OIL PRESS caution at idle after landing"),
         "limit.cht-warning": chtGuide, "limit.cht-caution": chtGuide,
 
         // MARK: POH limits - electrical
@@ -286,7 +286,7 @@ enum IssuePlaybook {
                     "If it repeats: have the A&P check the plugs (gap, fouling, cracked insulators), the ignition leads and the magneto timing.",
                     "Open DIAGNOSTICS > Run-Up Mag Check to see whether it is one mag and whether a cylinder's EGT stayed flat.",
                 ],
-                copaTopic: "SR22T/TN mag drop over limit at run-up")
+                copaTopic: "Mag drop over limit at run-up")
         case "mag.one":
             return IssueGuide(
                 title: "Only one mag drop recorded",
@@ -320,14 +320,14 @@ enum IssuePlaybook {
             pohProcedureID: nil, pohReference: nil,
             inFlight: [
                 "If the engine runs rough lean of peak, enrichen to smooth operation; run rich of peak per the POH until the spread is fixed.",
-                "Stay within the POH and Tornado Alley supplement limits for CHT and TIT at all times.",
+                "Stay within the POH/AFM and supplement limits for CHT and TIT at all times.",
             ],
             toResolve: [
                 "Repeat the guided lean test once to confirm (DIAGNOSTICS > GAMI Lean Test).",
                 "Ask the A&P to clean and flow-check the injectors; check the intake couplers and gaskets on the leanest cylinder.",
                 "If the spread stays near 1 gph, consider a matched (GAMIjector) set from GAMI.",
             ],
-            copaTopic: "SR22 TN GAMI spread over 0.5 gph")
+            copaTopic: "GAMI spread over 0.5 gph")
     }
 
     /// Turbonormalizer and induction checks (TurboCheck).
@@ -356,10 +356,10 @@ enum IssuePlaybook {
             pohProcedureID: nil, pohReference: "POH 4-16 Takeoff Power Check",
             inFlight: [
                 "Check full-throttle engine operation early in the takeoff run; discontinue the takeoff at any sign of rough operation or sluggish acceleration (POH 4-16).",
-                "Turbonormalizer limits: follow the Tornado Alley AFM supplement.",
+                "Turbo limits: follow your POH/AFM and any turbo supplement.",
             ],
             toResolve: resolve,
-            copaTopic: "SR22 Tornado Alley turbonormalized: " + (kind.hasPrefix("turbo.induction") ? "induction leak suspected" : "low manifold pressure / takeoff power"))
+            copaTopic: "Turbocharged/turbonormalized engine: " + (kind.hasPrefix("turbo.induction") ? "induction leak suspected" : "low manifold pressure / takeoff power"))
     }
 
     /// Early warning (EarlyWarning): a value drifting across flights before it reaches a limit.
@@ -401,9 +401,9 @@ enum IssuePlaybook {
             meaning: "\(label). This is an operating-technique reference (Jim Barker flight profile), not a POH limit.",
             pohProcedureID: nil, pohReference: nil,
             inFlight: ["Climb: add airspeed, use boost pump per the TAT supplement, or enrich - as your CFII taught."],
-            toResolve: ["Review your climb profile with a CFII familiar with TAT turbonormalized SR22s.",
-                        "Approved TIT limits need the Tornado Alley AFM supplement (not on file)."],
-            copaTopic: "Turbonormalized SR22 climb CHT and TIT technique")
+            toResolve: ["Review your climb profile with a CFI familiar with your aircraft type.",
+                        "Approved TIT limits come from your POH/AFM or turbo supplement."],
+            copaTopic: "Turbo engine climb CHT and TIT technique")
     }
 
     private static func trendGuide(_ kind: String) -> IssueGuide {

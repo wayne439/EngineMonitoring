@@ -282,7 +282,7 @@ struct GAMIView: View {
             } header: {
                 Text("Guided Lean Test")
             } footer: {
-                Text("Technique, not a POH procedure. Engine limits in the POH and the Tornado Alley supplement apply throughout.")
+                Text("Technique, not a POH procedure. Engine limits in your POH/AFM and approved supplements apply throughout.")
             }
 
             if tests.count > 1 {
@@ -460,7 +460,7 @@ enum PreShopPDF {
         renderer.addPrintFormatter(formatter, startingAtPageAt: 0)
         let data = NSMutableData()
         UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "Pre-shop engine report",
-                                                     kCGPDFContextAuthor as String: "Engine Monitoring"])
+                                                     kCGPDFContextAuthor as String: "EngineAI"])
         renderer.prepare(forDrawingPages: NSRange(location: 0, length: renderer.numberOfPages))
         for i in 0..<renderer.numberOfPages {
             UIGraphicsBeginPDFPage()

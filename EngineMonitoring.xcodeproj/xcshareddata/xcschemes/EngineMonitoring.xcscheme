@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "000000000000000000000105"
-               BuildableName = "Engine Monitoring.app"
+               BuildableName = "EngineAI.app"
                BlueprintName = "EngineMonitoring"
                ReferencedContainer = "container:EngineMonitoring.xcodeproj">
             </BuildableReference>
@@ -55,7 +55,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000000000105"
-            BuildableName = "Engine Monitoring.app"
+            BuildableName = "EngineAI.app"
             BlueprintName = "EngineMonitoring"
             ReferencedContainer = "container:EngineMonitoring.xcodeproj">
          </BuildableReference>
@@ -72,7 +72,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "000000000000000000000105"
-            BuildableName = "Engine Monitoring.app"
+            BuildableName = "EngineAI.app"
             BlueprintName = "EngineMonitoring"
             ReferencedContainer = "container:EngineMonitoring.xcodeproj">
          </BuildableReference>

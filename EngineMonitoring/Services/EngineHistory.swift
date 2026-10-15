@@ -302,7 +302,7 @@ enum PreShopReport {
         let hours = flights.compactMap { $0.engineChecks?.card?.airborneHours }.reduce(0, +)
         var lookAt: [String] = []
         var t = "PRE-SHOP ENGINE REPORT\n"
-        t += "2009 Cirrus SR22 G3 Turbo (IO-550-N, Tornado Alley turbonormalizer). Generated \(d.string(from: generated)) by Engine Monitoring from "
+        t += "\(AircraftKnowledge.aircraftSummary). Generated \(d.string(from: generated)) by EngineAI from "
         t += "\(flights.count) engine data logs"
         if let a = flights.first, let b = flights.last { t += " (\(d.string(from: a.start)) to \(d.string(from: b.start)), " + String(format: "%.0f", hours) + " flight hours)" }
         t += ". Recorded values compared with this airplane's own history; advisory only.\n\n"

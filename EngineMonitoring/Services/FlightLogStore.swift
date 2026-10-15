@@ -8,7 +8,7 @@ final class FlightLogStore: ObservableObject {
     /// One compact summary per imported log; the aircraft's normal ranges are built from these.
     @Published private(set) var summaries: [String: FlightSummary] = [:]
     @Published private(set) var isSummarizing = false
-    /// Flights bundled with the app (none in Engine Monitoring; kept so older code paths still work).
+    /// Flights bundled with the app (none in EngineAI; kept so older code paths still work).
     let bundled: BundledFlightHistory?
     private let bundledByName: [String: FlightSummary]
 

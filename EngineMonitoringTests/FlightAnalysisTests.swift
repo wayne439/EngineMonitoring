@@ -128,13 +128,13 @@ final class FlightAnalysisTests: XCTestCase {
             XCTAssertEqual(limit.kind, .reference)
         }
         XCTAssertFalse(AircraftKnowledge.limits.contains { $0.metric == .tit && $0.authority == .approved },
-                       "No approved TIT limit until the Tornado Alley supplement is loaded")
+                       "No approved TIT limit: TIT is a technique reference only")
     }
 
     func testMarkdownReportMentionsMissingSupplement() throws {
         let report = FlightReport.build(log: try SyntheticFlight.log("m.csv", SyntheticFlight.csv()), history: [])
         let md = report.markdown()
-        XCTAssertTrue(md.contains("Tornado Alley AFM supplement is not loaded"))
+        XCTAssertTrue(md.contains("TIT and manifold-pressure limits are not checked"))
         XCTAssertTrue(md.contains("No cause is assigned"))
     }
 

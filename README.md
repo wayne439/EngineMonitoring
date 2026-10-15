@@ -1,6 +1,6 @@
-# Engine Monitoring
+# EngineAI
 
-iPad app for piston aircraft owners: import engine monitor logs, learn each aircraft's normals, and get post-flight engine reports, early warnings and maintenance tracking.
+iPad app for aircraft owners whose avionics record engine data (Garmin and other modern engine monitors; piston first, turbine later): import engine monitor logs, learn each aircraft's normals, and get post-flight engine reports, early warnings and maintenance tracking.
 
 Advisory only. Not FAA-approved; the POH/AFM, the engine monitor and your A&P remain the authority.
 
@@ -8,10 +8,10 @@ Advisory only. Not FAA-approved; the POH/AFM, the engine monitor and your A&P re
 Engine analysis: valve watch, probe check, early warning, trend charts, report card, run-up mag check, GAMI, turbo/induction checks and the A&P pre-shop report. No data about any specific aircraft ships with the app.
 
 ## App identity
-- Name: Engine Monitoring (working name)
+- Name: EngineAI (App Store name to be reserved, e.g. "EngineAI Aviation"); repo and bundle ID keep the EngineMonitoring name
 - Bundle ID: com.fueledconsulting.EngineMonitoring (tests: com.fueledconsulting.EngineMonitoringTests)
 - Team: D64ZNA8J2P, automatic signing (Xcode Cloud manages distribution signing)
-- Version 0.3.0 (3)
+- Version 0.3.1 (4)
 
 ## Roadmap (see Multi-Aircraft-App-Plan.pdf)
 1. v0.1.0 - starting code base, renamed. DONE
@@ -20,6 +20,7 @@ Engine analysis: valve watch, probe check, early warning, trend charts, report c
 4. v0.4.0 - onboarding questionnaire that fills the Aircraft Profile; download logs on a new iPad.
 5. v0.5.0 - several aircraft per account; G3X / EI / JPI importers.
 6. External TestFlight beta, then App Store.
+7. Turbine engine checks (ITT, Ng/Np, torque, start temperatures).
 
 ## Build and release
 Pull request -> Xcode Cloud build check -> merge to `main` -> Xcode Cloud archive -> TestFlight. See BUILD_GUIDE.md.

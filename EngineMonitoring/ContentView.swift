@@ -39,7 +39,7 @@ struct ContentView: View {
             List(SectionItem.allCases, selection: $selection) { item in
                 Label(item.rawValue, systemImage: item.icon).tag(item)
             }
-            .navigationTitle("Engine Monitoring")
+            .navigationTitle("EngineAI")
             .safeAreaInset(edge: .bottom) {
                 // Shows which build is running, so an old install is easy to spot.
                 Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"))")

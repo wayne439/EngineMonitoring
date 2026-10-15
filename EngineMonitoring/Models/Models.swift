@@ -28,7 +28,7 @@ enum SourceAuthority: String, Codable, CaseIterable, Identifiable {
     var explanation: String {
         switch self {
         case .approved: "FAA-approved aircraft documentation."
-        case .manufacturer: "Published by Cirrus or Garmin."
+        case .manufacturer: "Published by the aircraft, engine or avionics manufacturer."
         case .training: "Training aid. Not approved data; controlling documents govern."
         case .experience: "Pilot technique or experience. Not approved data."
         }

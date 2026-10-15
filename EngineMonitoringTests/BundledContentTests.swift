@@ -2,7 +2,7 @@ import XCTest
 import PDFKit
 @testable import EngineMonitoring
 
-/// Checks the app bundle itself. Runs inside the host app, so Bundle.main is Engine Monitoring.
+/// Checks the app bundle itself. Runs inside the host app, so Bundle.main is EngineAI.
 @MainActor
 final class BundledContentTests: XCTestCase {
     func testCatalogDecodesAndEveryDocumentIsBundled() {
@@ -31,7 +31,7 @@ final class BundledContentTests: XCTestCase {
     }
 
     func testEveryKneeboardCardIsOnePage() throws {
-        // Engine Monitoring 0.2.0: approach cards are no longer bundled.
+        // EngineAI 0.2.0: approach cards are no longer bundled.
         guard let book = ApproachGuideStore(bundle: .main).book else { throw XCTSkip("No approach cards bundled") }
         for card in book.cards {
             for mode in FlyingMode.allCases {
@@ -56,7 +56,7 @@ final class BundledContentTests: XCTestCase {
         }
     }
 
-    /// Engine Monitoring ships no data about any particular aircraft: no flight history,
+    /// EngineAI ships no data about any particular aircraft: no flight history,
     /// no POH text and no approach cards. Owners supply their own.
     func testNoAircraftSpecificDataIsBundled() {
         for name in ["flight_history", "poh_index", "approach_cards"] {

@@ -126,7 +126,7 @@ struct TakeoffRecord: Codable, Hashable, Sendable, Identifiable {
             TechniqueCheck(name: "Takeoff power", value: [maxRPM.map { String(format: "%.0f RPM", $0) }, maxMAP.map { String(format: "%.1f in", $0) }]
                 .compactMap { $0 }.joined(separator: ", "), target: "Full power, 2,650-2,710 RPM (POH 2-6 max 2,700)", pass: fullPower),
             TechniqueCheck(name: "Fuel flow at takeoff", value: maxFuelFlow.map { String(format: "%.1f gph", $0) } ?? "-",
-                           target: "Per Tornado Alley supplement (not on file)", pass: nil),
+                           target: "Per your POH/AFM or turbo supplement", pass: nil),
             TechniqueCheck(name: "Speed passing ~20 ft", value: iasLiftoff.map { String(format: "%.0f KIAS", $0) } ?? "-",
                            target: "Rotate 70 KIAS flaps 50% (POH 4-3)", pass: nil),
             TechniqueCheck(name: "Initial climb 100-1,000 ft", value: [climbIAS.map { String(format: "%.0f KIAS", $0) }, climbRate.map { String(format: "%.0f fpm", $0) }]

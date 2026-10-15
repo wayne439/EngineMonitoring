@@ -584,7 +584,7 @@ struct FlightReport: Sendable {
         md += "- Phases: " + phaseLine.joined(separator: ", ") + "\n"
         md += "- Compared with \(baselineFlights) earlier flights\n\n"
 
-        md += "## Approved limits (POH Section 2, basic SR22)\n\n"
+        md += "## Limits (from your Aircraft Profile)\n\n"
         if approvedExceedances.isEmpty {
             md += "No recorded value outside the POH limits checked by the app.\n\n"
         } else {
@@ -593,7 +593,7 @@ struct FlightReport: Sendable {
             }
             md += "\n"
         }
-        md += "Turbonormalizer limits (TIT, manifold pressure) are not checked: the Tornado Alley AFM supplement is not loaded.\n\n"
+        md += "TIT and manifold-pressure limits are not checked: follow your POH/AFM and any turbo supplement.\n\n"
 
         md += "## Compared with this aircraft's normal\n\n"
         if baselineFlights < Baseline.minimumFlights {

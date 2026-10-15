@@ -32,7 +32,7 @@ struct AccountView: View {
             }
 
             Section {
-                Text("Engine Monitoring is advisory only. It is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")
+                Text("EngineAI is advisory only. It is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

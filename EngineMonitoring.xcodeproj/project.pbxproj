@@ -83,7 +83,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		000000000000000000000106 /* Engine Monitoring.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Engine Monitoring.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000106 /* EngineAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "EngineAI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000108 /* EngineMonitoringTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EngineMonitoringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00000000000000000000011A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00000000000000000000011B /* EngineMonitoringApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineMonitoringApp.swift; path = EngineMonitoringApp.swift; sourceTree = "<group>"; };
@@ -182,7 +182,7 @@
 		000000000000000000000102 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000106 /* Engine Monitoring.app */,
+				000000000000000000000106 /* EngineAI.app */,
 				000000000000000000000108 /* EngineMonitoringTests.xctest */,
 			);
 			name = Products;
@@ -284,7 +284,7 @@
 			);
 			name = EngineMonitoring;
 			productName = EngineMonitoring;
-			productReference = 000000000000000000000106 /* Engine Monitoring.app */;
+			productReference = 000000000000000000000106 /* EngineAI.app */;
 			productType = "com.apple.product-type.application";
 		};
 		000000000000000000000107 /* EngineMonitoringTests */ = {
@@ -493,7 +493,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -502,10 +502,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
-				PRODUCT_NAME = "Engine Monitoring";
+				PRODUCT_NAME = EngineAI;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -516,7 +516,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -525,10 +525,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
-				PRODUCT_NAME = "Engine Monitoring";
+				PRODUCT_NAME = EngineAI;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -539,16 +539,16 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Engine Monitoring.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Engine Monitoring";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EngineAI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EngineAI";
 			};
 			name = Debug;
 		};
@@ -557,16 +557,16 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Engine Monitoring.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Engine Monitoring";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EngineAI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EngineAI";
 			};
 			name = Release;
 		};

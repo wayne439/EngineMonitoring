@@ -12,6 +12,13 @@ enum AircraftKnowledge {
 
     private static var profile: AircraftProfile { AircraftProfileSnapshot.shared.profile }
 
+    /// One line describing the aircraft, for report headers, e.g. "N12345 - 2015 Cirrus SR22 (Continental IO-550-N, turbo)".
+    static var aircraftSummary: String {
+        let p = profile
+        let engine = [p.engineModel, p.isTurbocharged ? "turbo" : ""].filter { !$0.isEmpty }.joined(separator: ", ")
+        return engine.isEmpty ? p.displayName : "\(p.displayName) (\(engine))"
+    }
+
     static var facts: [Fact] {
         let p = profile
         var out: [Fact] = [Fact(label: "Aircraft", value: p.displayName, source: "Aircraft profile")]

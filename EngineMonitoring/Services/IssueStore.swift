@@ -55,7 +55,7 @@ enum IssueHistory {
         d.dateFormat = "yyyy-MM-dd"
         func cell(_ s: String) -> String { s.replacingOccurrences(of: "|", with: "/").replacingOccurrences(of: "\n", with: " ") }
         let tracked = groups.filter(\.needsTracking)
-        var md = "# Issue review log\n\nExported \(d.string(from: generated)) from Engine Monitoring. "
+        var md = "# Issue review log\n\nExported \(d.string(from: generated)) from EngineAI. "
         md += "\(tracked.filter(\.needsReview).count) of \(tracked.count) WARNING/CAUTION/WATCH issues need review.\n\n"
         md += "| Kind | Issue | Severity | Status | Occurrences | New since review | Last review | Reviewed through |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n"
         for g in tracked {
