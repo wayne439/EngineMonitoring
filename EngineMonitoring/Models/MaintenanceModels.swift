@@ -124,8 +124,7 @@ struct MaintenanceStatus: Hashable, Sendable {
 
 enum MaintenanceSchedule {
     /// Flight hours (airborne time) from the logs that start on or after `since`.
-    /// N63KA's logbook total time tracks airborne time: from the Dec 22, 2025 annual (1,940.3) the logs give 31.4 h by
-    /// Apr 28 (logbook 1,971.9, +31.6) and 59.3 h by Aug 25 (logbook 2,002.1, +61.8).
+    /// Airborne time from the logs tracks logbook total time within a few percent.
     static func flightHours(since: Date, summaries: [FlightSummary]) -> Double {
         summaries.filter { $0.start >= since }.reduce(0) { $0 + Double($1.airborneSeconds) / 3600 }
     }
@@ -140,22 +139,8 @@ enum MaintenanceSchedule {
         return (last.0 + flightHours(since: last.1, summaries: summaries), last.0, last.1)
     }
 
-    /// Records from the logbook (Wayne, Oct 7 2026), added once so the schedule starts from real dates.
-    static func baselineEntries() -> [MaintenanceEntry] {
-        func day(_ s: String) -> Date {
-            var c = DateComponents(); c.calendar = Calendar(identifier: .gregorian); c.timeZone = TimeZone(identifier: "America/Phoenix")
-            let p = s.split(separator: "-").compactMap { Int($0) }; c.year = p[0]; c.month = p[1]; c.day = p[2]; c.hour = 12
-            return c.date ?? Date(timeIntervalSince1970: 0)
-        }
-        let matched = "Date matched to the Blackstone oil sample and the flight hours in the logs; correct it if your logbook says otherwise."
-        return [
-            MaintenanceEntry(itemID: "annual", date: day("2025-12-22"), values: ["tach": "1940.3"], notes: "From the logbook.", by: "Logbook"),
-            MaintenanceEntry(itemID: "oil-change", date: day("2026-04-28"), values: ["tach": "1971.9", "filter": "yes", "sample": "yes"],
-                             notes: "30-hour service. " + matched, by: "Logbook"),
-            MaintenanceEntry(itemID: "oil-change", date: day("2026-08-25"), values: ["tach": "2002.1", "filter": "yes", "sample": "yes"],
-                             notes: "30-hour service. " + matched, by: "Logbook"),
-        ]
-    }
+    /// Starting records for a new aircraft. Empty: owners enter their own logbook entries.
+    static func baselineEntries() -> [MaintenanceEntry] { [] }
 
     static func status(of item: MaintenanceItem, entries: [MaintenanceEntry], summaries: [FlightSummary],
                        now: Date = Date(), calendar: Calendar = .current) -> MaintenanceStatus {
@@ -193,27 +178,27 @@ enum MaintenanceSchedule {
 
     static let defaults: [MaintenanceItem] = [
         MaintenanceItem(
-            id: "oil-change", name: "30-hour service and oil change", kind: .service,
+            id: "oil-change", name: "Oil change", kind: .service,
             intervalDays: 120, intervalHours: 30, warnDays: 14, warnHours: 3,
             instructions: [
-                "Record each 30-hour service and oil and filter change with the total time (tach) from the logbook.",
+                "Record each oil and filter change with the total time (tach) from the logbook.",
                 "Hours since then = today's estimated total time (last recorded tach + flight hours from the data card logs), so upload every card.",
-                "Send an oil sample with each change and record it here; results go to Oil analysis under AIRCRAFT.",
+                "Send an oil sample with each change if you use oil analysis.",
             ],
             fields: [
                 MaintenanceField(key: "tach", label: "Tach hours at change", kind: .number, unit: "h", optional: true),
-                MaintenanceField(key: "quarts", label: "Oil added", kind: .number, unit: "qt", low: 6, high: 8, optional: true),
+                MaintenanceField(key: "quarts", label: "Oil added", kind: .number, unit: "qt", optional: true),
                 MaintenanceField(key: "oil", label: "Oil type", kind: .text, optional: true),
                 MaintenanceField(key: "filter", label: "Filter changed", kind: .yesNo),
                 MaintenanceField(key: "sample", label: "Oil sample sent", kind: .yesNo, optional: true),
             ],
-            source: "Interval: your 30-hour services (logbook: 1,971.9 and 2,002.1) or 4 months, whichever first - confirm with your A&P. Oil: 8 qt Phillips XC 20W-50 (records).",
+            source: "Default interval: 30 hours or 4 months, whichever comes first. Set the hours in Aircraft Profile and confirm with your A&P; oil type and quantity per your engine manual.",
             authority: .experience, builtIn: true),
         MaintenanceItem(
             id: "fiki-test", name: "FIKI ice protection system test", kind: .pilotCheck,
             intervalDays: 30, intervalHours: nil, warnDays: 5, warnHours: 0,
             instructions: [
-                "Run the ice protection system test exactly as the Ice Protection System AFM supplement says. The supplement is not on file yet: upload it to SharePoint so its steps can be added here.",
+                "Run the ice protection system test exactly as the Ice Protection System AFM supplement says. Keep your supplement handy; the app records the result, it does not replace the procedure.",
                 "Record what you saw: fluid quantity, fluid on every protected surface and the propeller, windshield spray, and any messages on the MFD.",
                 "A failed test stays at the top of MAINTENANCE until a passing test is recorded.",
             ],
@@ -223,24 +208,24 @@ enum MaintenanceSchedule {
                 MaintenanceField(key: "surfaces", label: "Fluid on all surfaces and prop", kind: .yesNo),
                 MaintenanceField(key: "windshield", label: "Windshield spray works", kind: .yesNo, optional: true),
             ],
-            source: "Interval: pilot practice, every 30 days. Procedure: Ice Protection System AFM supplement (not on file).",
+            source: "Interval: pilot practice, every 30 days. Procedure: your Ice Protection System AFM supplement. Only for FIKI-equipped aircraft.",
             authority: .training, builtIn: true),
         MaintenanceItem(
             id: "tire-pressure", name: "Tire pressure check", kind: .pilotCheck,
             intervalDays: 30, intervalHours: nil, warnDays: 5, warnHours: 0,
             instructions: [
-                "Remove the inspection buttons on the wheel pants to reach the valve stems; check with a dial-type gauge (POH 8-18).",
-                "Nose tire 30-35 psi, main tires 60-65 psi; the left and right mains must be within 20 psi of each other (POH Temporary Change TPOH 15-15R2).",
+                "Check each tire with a dial-type gauge at the pressures in your POH (usually Section 8, Handling, Servicing and Maintenance).",
+                "Record what you measured; compare with your POH values.",
                 "Look at each tire for wear, cuts, nicks and bruises while you are there.",
             ],
             fields: [
-                MaintenanceField(key: "nose", label: "Nose", kind: .number, unit: "psi", low: 30, high: 35),
-                MaintenanceField(key: "left", label: "Left main", kind: .number, unit: "psi", low: 60, high: 65),
-                MaintenanceField(key: "right", label: "Right main", kind: .number, unit: "psi", low: 60, high: 65),
+                MaintenanceField(key: "nose", label: "Nose / tail", kind: .number, unit: "psi"),
+                MaintenanceField(key: "left", label: "Left main", kind: .number, unit: "psi"),
+                MaintenanceField(key: "right", label: "Right main", kind: .number, unit: "psi"),
                 MaintenanceField(key: "condition", label: "Tires free of cuts and wear", kind: .yesNo),
             ],
-            source: "Pressures: POH 8-18 and Temporary Change TPOH 15-15R2 (APPROVED). Interval: pilot practice, monthly.",
-            authority: .approved, builtIn: true),
+            source: "Pressures: your POH. Interval: pilot practice, monthly.",
+            authority: .training, builtIn: true),
         MaintenanceItem(
             id: "annual", name: "Annual inspection", kind: .inspection,
             intervalDays: 365, intervalHours: nil, warnDays: 45, warnHours: 0,
@@ -253,7 +238,7 @@ enum MaintenanceSchedule {
                 MaintenanceField(key: "tach", label: "Tach hours", kind: .number, unit: "h", optional: true),
                 MaintenanceField(key: "wo", label: "Work order", kind: .text, optional: true),
             ],
-            source: "14 CFR 91.409 annual inspection. Last annual Dec 22, 2025 at 1,940.3 total time (logbook): due by Dec 31, 2026.",
+            source: "14 CFR 91.409 annual inspection: due by the end of the 12th calendar month after the last one. Record yours here.",
             authority: .approved, builtIn: true),
     ]
 }

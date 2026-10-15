@@ -43,7 +43,7 @@ struct EventPersistence {
     static func defaultDirectory() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
-        return base.appendingPathComponent("N63KA", isDirectory: true)
+        return base.appendingPathComponent("EngineMonitoring", isDirectory: true)
     }
 }
 
@@ -108,12 +108,12 @@ struct FlightLogLibrary: Sendable {
         index.append(entry)
         index.sort { $0.start > $1.start }
         try saveIndex(index)
-        // Keep a compact summary for N63KA's normal ranges; a failure here must not lose the import.
+        // Keep a compact summary for the aircraft's normal ranges; a failure here must not lose the import.
         try? saveSummary(FlightSummarizer.summarize(log))
         return (entry, log, index)
     }
 
-    // MARK: - Flight summaries (for N63KA's normal ranges)
+    // MARK: - Flight summaries (for the aircraft's normal ranges)
 
     private var summaryDirectory: URL { directory.appendingPathComponent("Summaries", isDirectory: true) }
 

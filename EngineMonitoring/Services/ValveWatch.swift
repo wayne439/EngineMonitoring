@@ -30,7 +30,7 @@ struct ValveWatchResult: Codable, Hashable, Sendable {
 /// a slow, rhythmic EGT oscillation on ONE cylinder, about one cycle per minute, 30-100 °F, in steady cruise.
 /// A valve that is not seating fully leaks some exhaust; as the valve rotator turns it the leak comes and goes,
 /// and that cylinder's EGT swings slowly. Built from that description (not Savvy's model).
-/// Same method as tools/n63ka_valves.py. Advisory (TRAINING): a flag means "ask the A&P to borescope".
+/// Same method as the reference implementation. Advisory (TRAINING): a flag means "ask the A&P to borescope".
 enum ValveWatch {
     static let windowSeconds = 480          // 8 minutes
     static let stepSeconds = 120

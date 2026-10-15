@@ -76,7 +76,7 @@ struct FlyView: View {
                     .font(.headline)
             }
             Section {
-                Text("Training aids only. Current charts, NOTAMs, the N63KA AFM/POH and approved supplements control.")
+                Text("Training aids only. Current charts, NOTAMs, the AFM/POH and approved supplements control.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

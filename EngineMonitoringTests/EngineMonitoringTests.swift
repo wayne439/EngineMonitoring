@@ -38,7 +38,7 @@ final class PerspectiveLogParserTests: XCTestCase {
     func testMetadataAndShape() throws {
         let log = try fixture()
         XCTAssertEqual(log.airframeName, "Cirrus SR22 Turbo Normalized")
-        XCTAssertEqual(log.systemID, "2157B6FAB")
+        XCTAssertEqual(log.systemID, "0000TEST0")
         XCTAssertEqual(log.softwareVersion, "15.26")
         XCTAssertEqual(log.sampleCount, 121)
         XCTAssertTrue(log.columns.contains("E1 RPM"))
@@ -255,7 +255,7 @@ final class DiagnosticEventStoreTests: XCTestCase {
     func testMarkNowCapturesTapTimeNotSaveTime() throws {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: dir) }
-        let defaults = UserDefaults(suiteName: "N63KATests-\(UUID().uuidString)")!
+        let defaults = UserDefaults(suiteName: "EMTests-\(UUID().uuidString)")!
         let store = DiagnosticEventStore(directory: dir, defaults: defaults)
 
         let tap = Date(timeIntervalSince1970: 1_790_000_000)
@@ -281,13 +281,13 @@ final class DiagnosticEventStoreTests: XCTestCase {
     func testMigratesV1EventsFromUserDefaults() throws {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: dir) }
-        let defaults = UserDefaults(suiteName: "N63KATests-\(UUID().uuidString)")!
+        let defaults = UserDefaults(suiteName: "EMTests-\(UUID().uuidString)")!
         let json = #"[{"id":"7E2B1D3A-1111-4C2B-9C1A-1234567890AB","timestamp":781000000,"system":"Other","note":"old"}]"#
-        defaults.set(Data(json.utf8), forKey: "N63KA.DiagnosticEvents.v1")
+        defaults.set(Data(json.utf8), forKey: "EM.DiagnosticEvents.v1")
 
         let store = DiagnosticEventStore(directory: dir, defaults: defaults)
         XCTAssertEqual(store.events.count, 1)
-        XCTAssertNil(defaults.data(forKey: "N63KA.DiagnosticEvents.v1"), "Legacy data removed after migration")
+        XCTAssertNil(defaults.data(forKey: "EM.DiagnosticEvents.v1"), "Legacy data removed after migration")
         XCTAssertEqual(DiagnosticEventStore(directory: dir, defaults: defaults).events.count, 1)
     }
 }

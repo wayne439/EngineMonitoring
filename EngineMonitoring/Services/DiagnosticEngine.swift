@@ -50,7 +50,7 @@ struct DiagnosticEngine {
                         confidence: measured ? .low : .insufficient,
                         dataSource: log.filename,
                         limitations: "Values are shown as recorded by the Perspective data log (1-second samples). "
-                            + "They are not compared against N63KA limits; check them against the AFM/POH. "
+                            + "They are not compared against the aircraft limits; check them against the AFM/POH. "
                             + "Confidence stays LOW because no cause is assigned by the app.")
     }
 
@@ -66,7 +66,7 @@ struct DiagnosticEngine {
                 possibleCauses: ["Prime/fuel-delivery pattern", "Ignition/combustion establishment",
                                  "Cranking/electrical performance", "Hot/cold start conditions"],
                 nextChecks: ["Compare RPM, fuel flow, EGT rise and bus voltage across the start",
-                             "Correlate with the approved N63KA starting procedure and ambient/engine conditions",
+                             "Correlate with the approved starting procedure and ambient/engine conditions",
                              "Compare with a normal start from another log"],
                 limitations: limitations + " Over-prime versus under-prime must be supported by the actual event signature.",
                 dataSource: dataSource)
@@ -116,7 +116,7 @@ struct DiagnosticEngine {
                 title: "Aircraft event",
                 confidence: confidence, evidence: evidence,
                 possibleCauses: ["Requires system-specific evidence"],
-                nextChecks: ["Add observed annunciations and symptoms", "Cross-reference controlling N63KA documentation"],
+                nextChecks: ["Add observed annunciations and symptoms", "Cross-reference controlling aircraft documentation"],
                 limitations: limitations,
                 dataSource: dataSource)
         }

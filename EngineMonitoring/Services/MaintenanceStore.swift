@@ -41,7 +41,7 @@ final class MaintenanceStore: ObservableObject {
                 lastError = "Maintenance records could not be read: \(error.localizedDescription)"
             }
         }
-        // Logbook baseline (annual, 30-hour services), added once for items with no records yet.
+        // Starting records (none for a new aircraft), added once for items with no records yet.
         let seededURL = directory.appendingPathComponent("baseline-2026-10-07")
         if !FileManager.default.fileExists(atPath: seededURL.path) {
             let seeds = MaintenanceSchedule.baselineEntries().filter { seed in !entries.contains { $0.itemID == seed.itemID && $0.by != "Logbook" } }
@@ -90,7 +90,7 @@ final class MaintenanceStore: ObservableObject {
         save()
     }
 
-    /// Every record as CSV for the shop, SharePoint or the Claude review.
+    /// Every record as CSV for the shop, the owner's records or the Claude review.
     func csv() -> String {
         var lines = ["item,date,result,values,notes,by"]
         func q(_ s: String) -> String { "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\"" }

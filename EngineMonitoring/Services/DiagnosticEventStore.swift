@@ -8,7 +8,7 @@ final class DiagnosticEventStore: ObservableObject {
 
     private let persistence: EventPersistence
     private let defaults: UserDefaults
-    private static let legacyKey = "N63KA.DiagnosticEvents.v1"
+    private static let legacyKey = "EM.DiagnosticEvents.v1"
 
     init(directory: URL = EventPersistence.defaultDirectory(), defaults: UserDefaults = .standard) {
         persistence = EventPersistence(directory: directory)

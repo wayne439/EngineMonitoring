@@ -45,7 +45,7 @@ struct ProbeCheckResult: Codable, Hashable, Sendable {
 /// Finds sensor faults (probe, clamp, connector, wiring) so they are not mistaken for engine problems, and so a failing
 /// probe is caught early. Readings are judged against the other channels of their group where possible (EGT vs the
 /// other EGTs, CHT vs the other CHTs, TIT1 vs TIT2): a real engine change moves the group together, a probe fault moves
-/// one channel alone. Same method as tools/n63ka_probes.py. Recorded values only; never an engine diagnosis.
+/// one channel alone. Same method as the reference implementation. Recorded values only; never an engine diagnosis.
 enum ProbeCheck {
     enum Group: Sendable { case egt, cht, tit, oilTemp, oilPressure }
 

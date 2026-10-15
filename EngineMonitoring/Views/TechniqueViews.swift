@@ -363,7 +363,7 @@ struct LandingDetailView: View {
         .navigationTitle("Landing")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ShareLink(item: shareText, subject: Text("N63KA landing")) { Label("Share", systemImage: "square.and.arrow.up") }
+            ShareLink(item: shareText, subject: Text("Landing")) { Label("Share", systemImage: "square.and.arrow.up") }
         }
     }
 
@@ -395,7 +395,7 @@ struct LandingDetailView: View {
     }
 
     private var shareText: String {
-        var s = "N63KA landing \(landing.touchdown.formatted(date: .abbreviated, time: .shortened))"
+        var s = "Landing \(landing.touchdown.formatted(date: .abbreviated, time: .shortened))"
         if let airport { s += " \(airport)" }
         s += " - \(landing.score.passed)/\(landing.score.of) checks\n"
         for c in landing.checks { s += "\(c.pass == nil ? "-" : (c.pass! ? "OK" : "X")) \(c.name): \(c.value) (target \(c.target))\n" }

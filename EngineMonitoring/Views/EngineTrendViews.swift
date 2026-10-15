@@ -32,7 +32,7 @@ struct EarlyWarningView: View {
                     Text("Needs at least \(EarlyWarning.baselineMin + EarlyWarning.recent) flights with 5 minutes of steady cruise (\(report.flightsUsed) so far).")
                         .foregroundStyle(.secondary)
                 } else if report.patterns.isEmpty {
-                    Label("Nothing drifting: every value below is within N63KA's normal and not trending the wrong way.", systemImage: "checkmark.circle")
+                    Label("Nothing drifting: every value below is within this aircraft's normal and not trending the wrong way.", systemImage: "checkmark.circle")
                 }
                 ForEach(report.patterns) { p in
                     VStack(alignment: .leading, spacing: 4) {
@@ -59,7 +59,7 @@ struct EarlyWarningView: View {
                 } header: {
                     Text("All Cylinders - CHT In Cruise")
                 } footer: {
-                    Text("Each flight, corrected to N63KA's typical outside air temperature and fuel flow. Dashed line: 400 °F.")
+                    Text("Each flight, corrected to this aircraft's typical outside air temperature and fuel flow. Dashed line: 400 °F.")
                 }
                 Section {
                     CylinderOverviewChart(report: report, prefix: "cycle", threshold: ValveWatch.minPeakToPeak, unit: "°F")
@@ -112,7 +112,7 @@ struct TrendDetailView: View {
                 Section {
                     TrendChart(analysis: a, compact: false)
                 } footer: {
-                    Text("Dots: each flight\(a.metric.corrected ? ", corrected to typical outside air temperature and fuel flow" : ""). Green band: N63KA's normal (from the \(a.baselineFlights) flights before the newest 5). Line: trend over the newest 10 flights; dashed: where it leads at this rate.")
+                    Text("Dots: each flight\(a.metric.corrected ? ", corrected to typical outside air temperature and fuel flow" : ""). Green band: this aircraft's normal (from the \(a.baselineFlights) flights before the newest 5). Line: trend over the newest 10 flights; dashed: where it leads at this rate.")
                 }
                 Section("Reading") {
                     LabeledContent("Newest 5 flights", value: a.metric.format(a.recentValue))
@@ -144,7 +144,7 @@ struct TrendDetailView: View {
     }
 }
 
-/// Flights (x = flight hours), N63KA's normal band, the trend line and its projection, and the threshold.
+/// Flights (x = flight hours), the aircraft's normal band, the trend line and its projection, and the threshold.
 struct TrendChart: View {
     let analysis: TrendAnalysis
     let compact: Bool

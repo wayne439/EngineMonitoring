@@ -1,6 +1,6 @@
 import Foundation
 
-/// Step-by-step approach guides for the Perspective / GFC 700 in N63KA (Resources/Data/approach_cards.json).
+/// Step-by-step approach guides for the Perspective / GFC 700 in the aircraft (Resources/Data/approach_cards.json).
 /// Training aids: steps marked APPROVED restate the POH; everything else must be checked by a CFII
 /// against the GFC 700 AFM supplement and the Cockpit Reference Guide.
 struct ApproachGuideBook: Codable, Sendable {
@@ -142,7 +142,7 @@ enum ApproachPrinter {
             if let c = line.check { h += "<div class=\"chk\">\(esc(c))</div>" }
             h += "</td></tr>"
         }
-        h += "</table><div class=\"foot\">N63KA training aid \(esc(card.revision)). Speeds POH 4-3 / 4-21. Charts, POH and approved supplements control.</div></body></html>"
+        h += "</table><div class=\"foot\">Training aid \(esc(card.revision)). Speeds POH 4-3 / 4-21. Charts, POH and approved supplements control.</div></body></html>"
         return h
     }
 
@@ -159,7 +159,7 @@ enum ApproachPrinter {
         .when{font-weight:700} .key{border:1px solid #000;border-radius:3px;padding:0 2px;font-size:7.8pt;white-space:nowrap}
         .verify{color:#333;font-style:italic} .appr{font-size:7.5pt;font-weight:700} .foot{font-size:7pt;color:#444;margin-top:3px}
         </style></head><body>
-        <h1>N63KA &middot; \(esc(card.title)) &middot; \(mode.rawValue)</h1>
+        <h1>\(esc(card.title)) &middot; \(mode.rawValue)</h1>
         <div class="sub">\(esc(card.subtitle)) &middot; Final on \(card.navSource) &middot; Vertical: \(esc(card.verticalGuidance))</div>
         <div class="trap">\(esc(card.keyTrap))</div>
         """

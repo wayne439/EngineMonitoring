@@ -61,7 +61,7 @@ struct ReportCardSection: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Label("Report Card", systemImage: "list.number").font(.headline)
                         let notable = rows.compactMap { r in ReportCard.reading(r).map { "\(r.metric.label): \($0)" } }
-                        Text(notable.isEmpty ? "Every number within N63KA's usual range." : notable.prefix(3).joined(separator: " · "))
+                        Text(notable.isEmpty ? "Every number within this aircraft's usual range." : notable.prefix(3).joined(separator: " · "))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }
@@ -93,7 +93,7 @@ struct ReportCardView: View {
                         LabeledContent("Days since previous flight", value: String(format: "%.0f", d))
                     }
                 } footer: {
-                    Text("Percentile: where this flight sits among N63KA's earlier flights (50 = typical). Bars turn orange at the far ends; for CHT, TIT and spreads lower is better, for speed, mpg and climb higher is better.")
+                    Text("Percentile: where this flight sits among this aircraft's earlier flights (50 = typical). Bars turn orange at the far ends; for CHT, TIT and spreads lower is better, for speed, mpg and climb higher is better.")
                 }
                 ForEach(ReportCard.groups, id: \.self) { g in
                     let items = rows.filter { $0.metric.group == g }
@@ -141,7 +141,7 @@ struct ReportCardRowView: View {
                     Text(String(format: "%.0f%%ile", p)).font(.caption).monospacedDigit().foregroundStyle(.secondary)
                 }
                 if let lo = row.low, let hi = row.high, let m = row.median {
-                    Text("N63KA: \(row.metric.format(lo)) to \(row.metric.format(hi)), typical \(row.metric.format(m)) (\(row.earlier) flights)"
+                    Text("Normal: \(row.metric.format(lo)) to \(row.metric.format(hi)), typical \(row.metric.format(m)) (\(row.earlier) flights)"
                          + (ReportCard.reading(row).map { " · \($0)" } ?? ""))
                         .font(.caption2).foregroundStyle(.secondary)
                 }
@@ -266,7 +266,7 @@ struct GAMIView: View {
                     .frame(height: 180)
                     Text(GAMICheck.describe(t)).font(.caption).foregroundStyle(.secondary)
                 } else {
-                    Text("No lean test in the logs yet. N63KA's logs show big-mixture-pull leaning, which is too fast to measure the spread. Fly the test below once; the app finds it in the next log you import.")
+                    Text("No lean test in the logs yet. This aircraft's logs show big-mixture-pull leaning, which is too fast to measure the spread. Fly the test below once; the app finds it in the next log you import.")
                         .foregroundStyle(.secondary)
                 }
             } header: {
@@ -317,7 +317,7 @@ struct TurboChecksView: View {
         List {
             Section {
                 if recent.isEmpty {
-                    Label("Takeoff power, full-throttle MAP and low-power EGTs within N63KA's normal on the last 20 flights.", systemImage: "checkmark.circle")
+                    Label("Takeoff power, full-throttle MAP and low-power EGTs within this aircraft's normal on the last 20 flights.", systemImage: "checkmark.circle")
                 }
                 ForEach(Array(recent), id: \.summary.filename) { b in
                     VStack(alignment: .leading, spacing: 4) {
@@ -345,7 +345,7 @@ struct TurboChecksView: View {
                 }
                 let rpm = cards.compactMap { $0.1.takeoffRPM }, map = cards.compactMap { $0.1.takeoffMAP }, ff = cards.compactMap { $0.1.takeoffFF }
                 if !rpm.isEmpty {
-                    LabeledContent("N63KA normal", value: String(format: "%.0f RPM · %.1f inHg · %.1f gph", EngineChecks.median(rpm) ?? 0,
+                    LabeledContent("Normal", value: String(format: "%.0f RPM · %.1f inHg · %.1f gph", EngineChecks.median(rpm) ?? 0,
                                                                  EngineChecks.median(map) ?? 0, EngineChecks.median(ff) ?? 0))
                 }
             } header: {
@@ -432,14 +432,14 @@ struct PreShopReportView: View {
                 if let fileURL {
                     ShareLink(item: fileURL) { Label("Share PDF", systemImage: "doc.richtext") }
                 }
-                ShareLink(item: text, subject: Text("N63KA pre-shop engine report"), preview: SharePreview("N63KA pre-shop engine report")) {
+                ShareLink(item: text, subject: Text("Pre-shop engine report"), preview: SharePreview("Pre-shop engine report")) {
                     Label("Share Text", systemImage: "square.and.arrow.up")
                 }
             }
         }
         .task(id: text) {
             if let data = PreShopPDF.render(text) {
-                fileURL = KneeboardPDF.file(data, name: "N63KA pre-shop engine report.pdf")
+                fileURL = KneeboardPDF.file(data, name: "Pre-shop engine report.pdf")
             }
         }
     }
@@ -459,7 +459,7 @@ enum PreShopPDF {
         formatter.perPageContentInsets = UIEdgeInsets(top: 36, left: 40, bottom: 36, right: 40)
         renderer.addPrintFormatter(formatter, startingAtPageAt: 0)
         let data = NSMutableData()
-        UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "N63KA pre-shop engine report",
+        UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "Pre-shop engine report",
                                                      kCGPDFContextAuthor as String: "Engine Monitoring"])
         renderer.prepare(forDrawingPages: NSRange(location: 0, length: renderer.numberOfPages))
         for i in 0..<renderer.numberOfPages {

@@ -17,7 +17,7 @@ final class MaintenanceTests: XCTestCase {
 
     func testThirtyDayCheckBecomesDueSoonThenOverdue() {
         let fiki = item("fiki-test")
-        let e = MaintenanceEntry(itemID: fiki.id, date: day("2026-09-10"), values: ["result": "pass", "surfaces": "yes"], notes: "", by: "Wayne")
+        let e = MaintenanceEntry(itemID: fiki.id, date: day("2026-09-10"), values: ["result": "pass", "surfaces": "yes"], notes: "", by: "Pilot")
         XCTAssertEqual(MaintenanceSchedule.status(of: fiki, entries: [e], summaries: [], now: day("2026-09-20"), calendar: cal).state, .ok)
         let soon = MaintenanceSchedule.status(of: fiki, entries: [e], summaries: [], now: day("2026-10-07"), calendar: cal)
         XCTAssertEqual(soon.state, .dueSoon)
@@ -27,11 +27,11 @@ final class MaintenanceTests: XCTestCase {
 
     func testFailedCheckStaysOnTopUntilAPass() {
         let fiki = item("fiki-test")
-        let fail = MaintenanceEntry(itemID: fiki.id, date: day("2026-10-01"), values: ["result": "fail", "surfaces": "no"], notes: "Left wing panel dry", by: "Wayne")
+        let fail = MaintenanceEntry(itemID: fiki.id, date: day("2026-10-01"), values: ["result": "fail", "surfaces": "no"], notes: "Left wing panel dry", by: "Pilot")
         var s = MaintenanceSchedule.status(of: fiki, entries: [fail], summaries: [], now: day("2026-10-02"), calendar: cal)
         XCTAssertEqual(s.state, .failed)
         XCTAssertEqual(s.problems.count, 2)
-        let pass = MaintenanceEntry(itemID: fiki.id, date: day("2026-10-05"), values: ["result": "pass", "surfaces": "yes"], notes: "", by: "Wayne")
+        let pass = MaintenanceEntry(itemID: fiki.id, date: day("2026-10-05"), values: ["result": "pass", "surfaces": "yes"], notes: "", by: "Pilot")
         s = MaintenanceSchedule.status(of: fiki, entries: [fail, pass], summaries: [], now: day("2026-10-06"), calendar: cal)
         XCTAssertEqual(s.state, .ok)
     }
@@ -71,13 +71,12 @@ final class MaintenanceTests: XCTestCase {
     }
 
     func testLogbookBaseline() {
-        let b = MaintenanceSchedule.baselineEntries()
-        XCTAssertEqual(b.map(\.itemID), ["annual", "oil-change", "oil-change"])
-        XCTAssertEqual(b.compactMap { $0.values["tach"] }, ["1940.3", "1971.9", "2002.1"])
+        // A new subscriber starts with no maintenance records; nothing from any other aircraft is seeded.
+        XCTAssertTrue(MaintenanceSchedule.baselineEntries().isEmpty)
     }
 
     func testEntriesRoundTrip() throws {
-        let e = MaintenanceEntry(itemID: "tire-pressure", date: day("2026-10-01"), values: ["nose": "32"], notes: "ok", by: "Wayne")
+        let e = MaintenanceEntry(itemID: "tire-pressure", date: day("2026-10-01"), values: ["nose": "32"], notes: "ok", by: "Pilot")
         let back = try EventPersistence.decoder.decode([MaintenanceEntry].self, from: EventPersistence.encoder.encode([e]))
         XCTAssertEqual(back.first?.values["nose"], "32")
         let items = try EventPersistence.decoder.decode([MaintenanceItem].self, from: EventPersistence.encoder.encode(MaintenanceSchedule.defaults))

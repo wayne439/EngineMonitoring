@@ -55,7 +55,7 @@ struct DiagnosticsView: View {
             } header: {
                 Text("Past Issues And How To Resolve")
             } footer: {
-                Text("From every engine data card log on SharePoint (bundled in the app) plus logs you import, and the maintenance records. Every WARNING, CAUTION and WATCH item stays here until it is reviewed; new occurrences bring it back.")
+                Text("From every engine log you import and your maintenance records. Every WARNING, CAUTION and WATCH item stays here until it is reviewed; new occurrences bring it back.")
             }
 
             Section {
@@ -139,7 +139,7 @@ struct DiagnosticsView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if !eventStore.events.isEmpty {
                     ShareLink(item: EventMarkersCSV(events: eventStore.events),
-                              preview: SharePreview("N63KA event markers")) {
+                              preview: SharePreview("Event markers")) {
                         Label("Export Markers", systemImage: "square.and.arrow.up")
                     }
                 }
@@ -188,7 +188,7 @@ struct EventMarkersCSV: Transferable {
         DataRepresentation(exportedContentType: .commaSeparatedText) { item in
             Data(EventExporter.csv(item.events).utf8)
         }
-        .suggestedFileName("N63KA-event-markers.csv")
+        .suggestedFileName("event-markers.csv")
     }
 }
 

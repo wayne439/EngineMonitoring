@@ -25,7 +25,7 @@ enum KneeboardPDF {
             renderer.addPrintFormatter(formatter, startingAtPageAt: renderer.numberOfPages)
         }
         let data = NSMutableData()
-        UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "N63KA kneeboard cards",
+        UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "Kneeboard cards",
                                                      kCGPDFContextAuthor as String: "Engine Monitoring"])
         renderer.prepare(forDrawingPages: NSRange(location: 0, length: renderer.numberOfPages))
         for i in 0..<renderer.numberOfPages {
@@ -108,7 +108,7 @@ struct KneeboardPDFScreen: View {
                     Button {
                         let controller = UIPrintInteractionController.shared
                         let info = UIPrintInfo(dictionary: nil)
-                        info.jobName = "N63KA \(title) \(mode.rawValue)"
+                        info.jobName = "\(title) \(mode.rawValue)"
                         controller.printInfo = info
                         controller.printingItem = data
                         controller.present(animated: true)
@@ -128,7 +128,7 @@ struct KneeboardPDFScreen: View {
         failed = false
         data = pdf
         let base = cards.count == 1 ? cards[0].id : "all"
-        fileURL = KneeboardPDF.file(pdf, name: "N63KA_\(base)_\(mode == .autopilot ? "autopilot" : "handflown").pdf")
+        fileURL = KneeboardPDF.file(pdf, name: "Card_\(base)_\(mode == .autopilot ? "autopilot" : "handflown").pdf")
     }
 }
 

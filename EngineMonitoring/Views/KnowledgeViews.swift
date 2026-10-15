@@ -7,10 +7,21 @@ import UIKit
 struct AircraftView: View {
     @EnvironmentObject private var logStore: FlightLogStore
     @EnvironmentObject private var repository: DocumentRepository
+    @EnvironmentObject private var aircraft: AircraftProfileStore
 
     var body: some View {
         List {
             Section {
+                NavigationLink {
+                    AircraftProfileView()
+                } label: {
+                    if aircraft.needsSetup {
+                        Label("Set up your aircraft profile", systemImage: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
+                    } else {
+                        Label("Edit aircraft profile", systemImage: "pencil")
+                    }
+                }
                 ForEach(AircraftKnowledge.facts) { fact in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(fact.label).font(.caption).foregroundStyle(.secondary)
@@ -19,21 +30,21 @@ struct AircraftView: View {
                     }
                 }
             } header: {
-                Text("N63KA")
+                Text(aircraft.profile.displayName)
             } footer: {
-                Text("From the SharePoint records, compiled \(AircraftKnowledge.compiledOn).")
+                Text("From your aircraft profile. Limits come from your POH/AFM; the app never replaces them.")
             }
 
             Section("Engine Data") {
                 NavigationLink {
                     NormalRangesView()
                 } label: {
-                    LabeledContent("N63KA normal ranges", value: "\(logStore.baseline().flightCount) flights")
+                    LabeledContent("Normal ranges", value: "\(logStore.baseline().flightCount) flights")
                 }
                 NavigationLink {
                     FlightLogsView()
                 } label: {
-                    LabeledContent("Imported Perspective logs", value: "\(logStore.entries.count)")
+                    LabeledContent("Imported engine logs", value: "\(logStore.entries.count)")
                 }
                 NavigationLink {
                     LimitsView()
@@ -47,6 +58,7 @@ struct AircraftView: View {
                 }
             }
 
+            if !AircraftKnowledge.watchList.isEmpty {
             Section {
                 ForEach(AircraftKnowledge.watchList) { item in
                     VStack(alignment: .leading, spacing: 2) {
@@ -59,6 +71,7 @@ struct AircraftView: View {
                 Text("Maintenance Watch List")
             } footer: {
                 Text("Questions raised by the records. Confirm each with your A&P; some may already be closed.")
+            }
             }
 
             OnlineResourcesSection()
@@ -78,6 +91,7 @@ struct AircraftView: View {
 
 struct OnlineResourcesSection: View {
     var body: some View {
+        if !AircraftKnowledge.onlineResources.isEmpty {
         Section {
             ForEach(AircraftKnowledge.onlineResources) { resource in
                 if let url = URL(string: resource.url) {
@@ -98,6 +112,7 @@ struct OnlineResourcesSection: View {
         } footer: {
             Text("Need internet, so not available in flight. COPA content is community and training material, not approved data.")
         }
+        }
     }
 }
 
@@ -109,9 +124,9 @@ struct LimitsView: View {
                     LimitRow(limit: limit)
                 }
             } header: {
-                Text("Approved - POH Section 2")
+                Text("Limits - from your POH/AFM")
             } footer: {
-                Text("Basic SR22 POH. Turbonormalizer limits (TIT, manifold pressure) need the Tornado Alley AFM supplement, which is not loaded.")
+                Text("Set in Aircraft Profile. Until you confirm them there, these are template values and must be checked against your own POH/AFM.")
             }
             Section {
                 ForEach(AircraftKnowledge.limits.filter { $0.authority != .approved }) { limit in
@@ -120,7 +135,7 @@ struct LimitsView: View {
             } header: {
                 Text("Technique References")
             } footer: {
-                Text("From the Jim Barker flight profile (A&P/IA). Shown as notes, never as limits.")
+                Text("Technique references you set in Aircraft Profile. Shown as notes, never as limits.")
             }
         }
         .navigationTitle("Limits")
@@ -142,7 +157,7 @@ private struct LimitRow: View {
     }
 }
 
-// MARK: - N63KA normal ranges
+// MARK: - Normal ranges
 
 struct NormalRangesView: View {
     @EnvironmentObject private var logStore: FlightLogStore
@@ -162,7 +177,7 @@ struct NormalRangesView: View {
 
             if baseline.flightCount < Baseline.minimumFlights {
                 Section {
-                    Label("Import at least \(Baseline.minimumFlights) flights to learn N63KA's normal ranges (\(baseline.flightCount) so far).",
+                    Label("Import at least \(Baseline.minimumFlights) flights to learn this aircraft's normal ranges (\(baseline.flightCount) so far).",
                           systemImage: "info.circle")
                 }
             }
@@ -186,7 +201,7 @@ struct NormalRangesView: View {
                 .disabled(logStore.isSummarizing)
             }
         }
-        .navigationTitle("N63KA Normal")
+        .navigationTitle("Normal Ranges")
     }
 }
 
@@ -223,7 +238,8 @@ struct OilAnalysisView: View {
             } header: {
                 Text("Wear Metals (ppm)")
             } footer: {
-                Text("Nickel alert guide in your spreadsheet: \(Int(AircraftKnowledge.oilAlertGuide["Nickel"] ?? 0)) ppm. April 2026 measured 11.")
+                Text(points.isEmpty ? "No oil analysis results yet. Entering lab results comes in a later version."
+                     : "General nickel alert guide: \(Int(AircraftKnowledge.oilAlertGuide["Nickel"] ?? 0)) ppm. Your lab's report is the reference.")
             }
 
             Section("Samples") {
@@ -266,8 +282,8 @@ struct FlightReportView: View {
         .toolbar {
             if let report {
                 ToolbarItem(placement: .topBarTrailing) {
-                    ShareLink(item: report.markdown(), subject: Text("N63KA post-flight report"),
-                              preview: SharePreview("N63KA post-flight report")) {
+                    ShareLink(item: report.markdown(), subject: Text("Post-flight report"),
+                              preview: SharePreview("Post-flight report")) {
                         Label("Share Report", systemImage: "square.and.arrow.up")
                     }
                 }
@@ -315,7 +331,7 @@ struct FlightReportView: View {
             if report.baselineFlights < Baseline.minimumFlights {
                 Text("Needs \(Baseline.minimumFlights) earlier flights (\(report.baselineFlights) so far).").foregroundStyle(.secondary)
             } else if report.deviations.isEmpty {
-                Label("Climb and cruise values are within N63KA's usual ranges.", systemImage: "checkmark.circle")
+                Label("Climb and cruise values are within this aircraft's usual ranges.", systemImage: "checkmark.circle")
             }
             ForEach(report.deviations, id: \.self) { d in
                 VStack(alignment: .leading, spacing: 4) {
@@ -325,7 +341,7 @@ struct FlightReportView: View {
                 }
             }
         } header: {
-            Text("Compared With N63KA's Normal")
+            Text("Compared With This Aircraft's Normal")
         }
 
         ValveWatchSection(result: report.summary.valveWatch)
@@ -390,7 +406,7 @@ struct FlightReportView: View {
         } header: {
             Text("Get a Second Opinion (Online)")
         } footer: {
-            Text("Share the report to SharePoint for the Claude post-flight review, or ask COPA. Community answers are not approved data.")
+            Text("Share the report with your A&P or another pilot. Community answers are not approved data.")
         }
     }
 
@@ -402,7 +418,7 @@ struct FlightReportView: View {
     }
 }
 
-// MARK: - ASK N63KA (offline search across the POH and N63KA records)
+// MARK: - ASK (offline search across the POH and the aircraft profile)
 
 struct AskView: View {
     @EnvironmentObject private var poh: POHRepository
@@ -424,7 +440,7 @@ struct AskView: View {
         List {
             if query.trimmingCharacters(in: .whitespaces).isEmpty {
                 Section {
-                    Label("Search the full POH and N63KA's records. Works offline.", systemImage: "magnifyingglass")
+                    Label("Search the full POH and this aircraft's records. Works offline.", systemImage: "magnifyingglass")
                     Text("Try: oil pressure, alternator, partial power, CHT, CAPS, icing")
                         .foregroundStyle(.secondary)
                 }
@@ -456,7 +472,7 @@ struct AskView: View {
                     }
                 }
                 if !recordHits.isEmpty {
-                    Section("N63KA Records") {
+                    Section("Aircraft Profile") {
                         ForEach(recordHits) { fact in
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(fact.label).font(.headline)
@@ -471,7 +487,7 @@ struct AskView: View {
         }
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search POH and records")
         .autocorrectionDisabled()
-        .navigationTitle("ASK N63KA")
+        .navigationTitle("ASK")
     }
 }
 

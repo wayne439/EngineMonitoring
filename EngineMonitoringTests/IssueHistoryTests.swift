@@ -26,7 +26,7 @@ enum IssueFixture {
 }
 
 final class IssueHistoryTests: XCTestCase {
-    /// Caught, stopped, caught again (like the 15 Jul 2026 KPRC start).
+    /// Caught, stopped, caught again (like a real start seen in testing).
     func testStartThatStopsIsRecorded() throws {
         let s = try IssueFixture.summary("start.csv", seconds: 200) { t in
             let rpm: Double
@@ -110,7 +110,7 @@ final class IssueHistoryTests: XCTestCase {
         let first = try oilSlow("a.csv", day: 1)
         var record = IssueStatusRecord(status: .open)
         let covered = try XCTUnwrap(first.issues.first { $0.kind == "start.oil-pressure" }).time
-        record.apply(IssueReview(date: Date(), action: .reviewed, reviewedBy: "Wayne", discovered: "Sender connector loose",
+        record.apply(IssueReview(date: Date(), action: .reviewed, reviewedBy: "Pilot", discovered: "Sender connector loose",
                                  actionTaken: "", reference: "", coversThrough: covered))
         var g = try XCTUnwrap(IssueHistory.build(summaries: [first], records: ["start.oil-pressure": record], includeRecords: false)
             .first { $0.kind == "start.oil-pressure" })
@@ -147,7 +147,7 @@ final class IssueHistoryTests: XCTestCase {
     func testReviewLogExportListsFindings() throws {
         let first = try oilSlow("a.csv")
         var record = IssueStatusRecord(status: .open)
-        record.apply(IssueReview(date: Date(), action: .monitoring, reviewedBy: "Wayne", discovered: "Cold morning, short prime",
+        record.apply(IssueReview(date: Date(), action: .monitoring, reviewedBy: "Pilot", discovered: "Cold morning, short prime",
                                  actionTaken: "Longer prime next time", reference: "", coversThrough: first.end))
         let groups = IssueHistory.build(summaries: [first], records: ["start.oil-pressure": record], includeRecords: false)
         let md = IssueHistory.reviewLogMarkdown(groups)
@@ -185,15 +185,6 @@ final class IssueHistoryTests: XCTestCase {
         }
     }
 
-    func testBundledHistoryFileDecodes() throws {
-        // Repository copy (the app reads the same file from its bundle).
-        let url = URL(fileURLWithPath: #filePath).resolvingSymlinksInPath().deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("EngineMonitoring/Resources/Data/flight_history.json")
-        let h = try XCTUnwrap(BundledFlightHistory.load(from: url))
-        XCTAssertGreaterThan(h.summaries.count, 100)
-        XCTAssertTrue(h.summaries.contains { $0.filename == "log_260715_063701_KPRC.csv" && $0.issues.contains { $0.kind == "start.stopped" } })
-    }
-
     // MARK: - OAT and TIT
 
     private func cruise(_ name: String, oat: Double, oilT: Double, tit1: Double = 1480, tit2: Double = 1540) -> FlightSummary {
@@ -203,7 +194,7 @@ final class IssueHistoryTests: XCTestCase {
     }
 
     func testOilTemperatureIsComparedAtTheSameOAT() throws {
-        // N63KA pattern: oil temperature rises about 1 °F per °C of OAT.
+        // the aircraft pattern: oil temperature rises about 1 °F per °C of OAT.
         var flights: [FlightSummary] = []
         for (i, oat) in stride(from: 0.0, through: 36.0, by: 3.0).enumerated() {
             flights.append(cruise("f\(i).csv", oat: oat, oilT: 174 + oat + (i.isMultiple(of: 2) ? 2 : -2)))

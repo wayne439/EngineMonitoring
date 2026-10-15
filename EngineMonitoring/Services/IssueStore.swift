@@ -1,6 +1,6 @@
 import Foundation
 
-/// Flight history built from the SharePoint data_log folder and bundled with the app
+/// Flight history built from the the owner's records data_log folder and bundled with the app
 /// (Resources/Data/flight_history.json). Rebuild with tools/build_history.sh when new logs are uploaded.
 struct BundledFlightHistory: Codable, Sendable {
     let generatedOn: String
@@ -47,7 +47,7 @@ enum IssueHistory {
         }
     }
 
-    /// Review log for the shop, SharePoint or the Claude engine-card review: every WARNING/CAUTION/WATCH
+    /// Review log for the shop, the owner's records or the Claude engine-card review: every WARNING/CAUTION/WATCH
     /// issue with its status, what was discovered and what was done.
     static func reviewLogMarkdown(_ groups: [IssueGroup], generated: Date = Date()) -> String {
         let d = DateFormatter()
@@ -55,7 +55,7 @@ enum IssueHistory {
         d.dateFormat = "yyyy-MM-dd"
         func cell(_ s: String) -> String { s.replacingOccurrences(of: "|", with: "/").replacingOccurrences(of: "\n", with: " ") }
         let tracked = groups.filter(\.needsTracking)
-        var md = "# N63KA issue review log\n\nExported \(d.string(from: generated)) from Engine Monitoring. "
+        var md = "# Issue review log\n\nExported \(d.string(from: generated)) from Engine Monitoring. "
         md += "\(tracked.filter(\.needsReview).count) of \(tracked.count) WARNING/CAUTION/WATCH issues need review.\n\n"
         md += "| Kind | Issue | Severity | Status | Occurrences | New since review | Last review | Reviewed through |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n"
         for g in tracked {

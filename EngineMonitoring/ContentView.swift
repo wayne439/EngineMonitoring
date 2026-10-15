@@ -5,6 +5,8 @@ struct ContentView: View {
     @EnvironmentObject private var flightLogs: FlightLogStore
     @EnvironmentObject private var issues: IssueStore
     @EnvironmentObject private var maintenance: MaintenanceStore
+    @EnvironmentObject private var aircraft: AircraftProfileStore
+    @EnvironmentObject private var cloud: CloudStore
 
     enum SectionItem: String, CaseIterable, Identifiable {
         case fly = "FLY"
@@ -13,7 +15,8 @@ struct ContentView: View {
         case myFlying = "MY FLYING"
         case maintenance = "MAINTENANCE"
         case aircraft = "AIRCRAFT"
-        case ask = "ASK N63KA"
+        case ask = "ASK"
+        case account = "ACCOUNT"
 
         var id: String { rawValue }
 
@@ -26,6 +29,7 @@ struct ContentView: View {
             case .maintenance: "checklist"
             case .aircraft: "wrench.and.screwdriver"
             case .ask: "bubble.left.and.text.bubble.right"
+            case .account: "person.crop.circle"
             }
         }
     }
@@ -53,6 +57,7 @@ struct ContentView: View {
                 case .maintenance: MaintenanceView()
                 case .aircraft: AircraftView()
                 case .ask: AskView()
+                case .account: AccountView()
                 }
             }
             // A fresh stack per section, so switching sections never leaves a stale pushed screen.
@@ -63,6 +68,12 @@ struct ContentView: View {
             await issues.refresh(summaries: Array(flightLogs.summaries.values))
             MaintenanceReminders.reschedule(store: maintenance, summaries: Array(flightLogs.summaries.values))
             EarlyWarningNotifier.check(summaries: Array(flightLogs.summaries.values))
+            // New logs go to the subscriber's cloud account (no-op when signed out or not configured).
+            await cloud.sync(profile: aircraft.profile, logs: flightLogs)
+        }
+        // Profile edits are uploaded when the owner leaves the profile screen (it stamps updatedAt).
+        .onChange(of: aircraft.profile.updatedAt) {
+            Task { await cloud.sync(profile: aircraft.profile, logs: flightLogs) }
         }
         .onAppear {
             let store = maintenance, logs = flightLogs

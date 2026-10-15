@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Report card
 
-/// One line of a flight's report card: the value and where it sits among N63KA's earlier flights.
+/// One line of a flight's report card: the value and where it sits among the aircraft's earlier flights.
 struct ReportCardRow: Identifiable, Hashable, Sendable {
     let metric: ReportCard.Metric
     let value: Double
@@ -16,8 +16,8 @@ struct ReportCardRow: Identifiable, Hashable, Sendable {
     var id: String { metric.id }
 }
 
-/// About twenty numbers per flight, each with its percentile against N63KA's own earlier flights, so "is this normal
-/// for this airplane?" has an answer at a glance. Same numbers as tools/n63ka_reportcard.py.
+/// About twenty numbers per flight, each with its percentile against the aircraft's own earlier flights, so "is this normal
+/// for this airplane?" has an answer at a glance. Same numbers as the reference implementation.
 enum ReportCard {
     struct Metric: Hashable, Sendable {
         let id: String
@@ -123,9 +123,9 @@ enum ReportCard {
         if p >= 95 || p <= 5 {
             let high = p >= 95
             switch r.metric.lowerIsBetter {
-            case true?: return high ? "highest of N63KA's flights" : "among the best"
-            case false?: return high ? "among the best" : "lowest of N63KA's flights"
-            case nil: return high ? "unusually high for N63KA" : "unusually low for N63KA"
+            case true?: return high ? "highest of this aircraft's flights" : "among the best"
+            case false?: return high ? "among the best" : "lowest of this aircraft's flights"
+            case nil: return high ? "unusually high for this aircraft" : "unusually low for this aircraft"
             }
         }
         return nil
@@ -136,7 +136,7 @@ enum ReportCard {
         guard !rows.isEmpty else { return "No report card (less than 10 minutes airborne).\n\n" }
         var md = ""
         if let d = daysSincePrevious(s, in: summaries) { md += String(format: "%.0f days since the previous flight.\n\n", d) }
-        md += "| | This flight | Percentile | N63KA range (median) |\n| --- | --- | --- | --- |\n"
+        md += "| | This flight | Percentile | Normal range (median) |\n| --- | --- | --- | --- |\n"
         for r in rows {
             let range = r.low.map { lo in "\(r.metric.format(lo)) - \(r.metric.format(r.high ?? lo)) (\(r.metric.format(r.median ?? lo)))" } ?? "-"
             md += "| \(r.metric.group): \(r.metric.label) | \(r.metric.format(r.value)) | \(r.percentile.map { String(format: "%.0f", $0) } ?? "-") | \(range) |\n"
@@ -164,21 +164,21 @@ struct TurboFinding: Identifiable, Hashable, Sendable {
 
     var text: String {
         switch kind {
-        case .takeoffRPM: return String(format: "Takeoff RPM %.0f, below N63KA's normal %.0f (POH 4-16: about 2,700). Have the prop governor (high-RPM stop) checked.", value, normal)
-        case .takeoffMAP: return String(format: "Takeoff manifold pressure %.1f inHg, below N63KA's normal %.1f. Points at the turbonormalizer (wastegate, controller) or an induction or exhaust leak.", value, normal)
-        case .takeoffFF: return String(format: "Takeoff fuel flow %.1f gph, below N63KA's normal %.1f. Less fuel means less cooling at full power: check the mixture rigging, fuel servo, flow divider and injectors (and that the takeoff was not leaned).", value, normal)
+        case .takeoffRPM: return String(format: "Takeoff RPM %.0f, below this aircraft's normal %.0f (POH 4-16: about 2,700). Have the prop governor (high-RPM stop) checked.", value, normal)
+        case .takeoffMAP: return String(format: "Takeoff manifold pressure %.1f inHg, below this aircraft's normal %.1f. Points at the turbonormalizer (wastegate, controller) or an induction or exhaust leak.", value, normal)
+        case .takeoffFF: return String(format: "Takeoff fuel flow %.1f gph, below this aircraft's normal %.1f. Less fuel means less cooling at full power: check the mixture rigging, fuel servo, flow divider and injectors (and that the takeoff was not leaned).", value, normal)
         case .deck:
             let ft = Int(band ?? "0") ?? 0
-            return String(format: "Full-throttle MAP %.1f inHg at %ld-%ld ft, below N63KA's normal %.1f. A turbonormalized engine holds its MAP to the critical altitude; MAP sagging early points at the wastegate, controller or an exhaust/induction leak.",
+            return String(format: "Full-throttle MAP %.1f inHg at %ld-%ld ft, below this aircraft's normal %.1f. A turbonormalized engine holds its MAP to the critical altitude; MAP sagging early points at the wastegate, controller or an exhaust/induction leak.",
                           value, ft, ft + 2000, normal)
         case .induction:
-            return String(format: "Cylinder %ld runs %.0f °F hotter (vs the others) at low manifold pressure than in cruise; N63KA's normal is %+.0f °F. A leak between the throttle and that cylinder leans it most at low MAP: check its intake tube couplers, gaskets and hoses.",
+            return String(format: "Cylinder %ld runs %.0f °F hotter (vs the others) at low manifold pressure than in cruise; this aircraft's normal is %+.0f °F. A leak between the throttle and that cylinder leans it most at low MAP: check its intake tube couplers, gaskets and hoses.",
                           cylinder ?? 0, value, normal)
         }
     }
 }
 
-/// Takeoff power, full-throttle MAP by altitude (deck pressure) and the induction-leak check, each against N63KA's
+/// Takeoff power, full-throttle MAP by altitude (deck pressure) and the induction-leak check, each against the aircraft's
 /// own earlier flights (robust median and spread of the last 40). Same rules as tools/turbo_bt.py.
 enum TurboCheck {
     static let historyMax = 40, historyMin = 10
@@ -277,7 +277,7 @@ enum TurboCheck {
         }
     }
 
-    /// N63KA's normal full-throttle MAP per altitude band, and the newest flight's value.
+    /// the aircraft's normal full-throttle MAP per altitude band, and the newest flight's value.
     static func deckTable(_ summaries: [FlightSummary]) -> [(band: Int, normal: Double, flights: Int, latest: Double?)] {
         let cards = ReportCard.flights(summaries).compactMap { $0.engineChecks?.card }
         let latest = cards.last { !$0.deckMAP.isEmpty }
@@ -292,7 +292,7 @@ enum TurboCheck {
 // MARK: - A&P pre-shop report
 
 /// One page for the A&P before an annual or a squawk visit: what the engine data shows, by system, and what to look at.
-/// Recorded values and N63KA's own history only; advisory, never a diagnosis.
+/// Recorded values and the aircraft's own history only; advisory, never a diagnosis.
 enum PreShopReport {
     static func text(summaries: [FlightSummary], openIssues: [IssueGroup] = [], generated: Date = Date()) -> String {
         let flights = ReportCard.flights(summaries)
@@ -301,7 +301,7 @@ enum PreShopReport {
         d.dateFormat = "yyyy-MM-dd"
         let hours = flights.compactMap { $0.engineChecks?.card?.airborneHours }.reduce(0, +)
         var lookAt: [String] = []
-        var t = "N63KA PRE-SHOP ENGINE REPORT\n"
+        var t = "PRE-SHOP ENGINE REPORT\n"
         t += "2009 Cirrus SR22 G3 Turbo (IO-550-N, Tornado Alley turbonormalizer). Generated \(d.string(from: generated)) by Engine Monitoring from "
         t += "\(flights.count) engine data logs"
         if let a = flights.first, let b = flights.last { t += " (\(d.string(from: a.start)) to \(d.string(from: b.start)), " + String(format: "%.0f", hours) + " flight hours)" }
@@ -358,7 +358,7 @@ enum PreShopReport {
         for ch in probes.faultyChannels where ch.flights >= 2 { lookAt.append("Sensor: \(ProbeCheck.label(ch.channel)) probe, clamp, connector and wiring (faults on \(ch.flights) flights).") }
         let ew = EarlyWarning.analyze(summaries)
         if ew.patterns.isEmpty {
-            t += "- Early warning: nothing drifting outside N63KA's normal.\n"
+            t += "- Early warning: nothing drifting outside this aircraft's normal.\n"
         } else {
             for p in ew.patterns {
                 t += "- \(p.level.rawValue): \(p.title)" + (p.cylinder.map { " (cylinder \($0))" } ?? "") + ". \(p.advice)\n"
@@ -411,8 +411,8 @@ enum PreShopReport {
         t += "\nPLEASE LOOK AT\n"
         if lookAt.isEmpty { t += "- Nothing specific from the engine data. Routine annual: compressions, borescope, plugs, mags, induction and exhaust.\n" }
         for (i, s) in lookAt.prefix(10).enumerated() { t += "\(i + 1). \(s)\n" }
-        t += "\nMethods: run-up per POH 4-14; GAMI spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with N63KA's own normal. "
-        t += "Logs: Garmin Perspective engine data card, 1 sample per second. Owner: Wayne Dickert.\n"
+        t += "\nMethods: run-up per POH 4-14; GAMI spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with this aircraft's own normal. "
+        t += "Logs: engine monitor data card, 1 sample per second.\n"
         return t
     }
 }
