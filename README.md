@@ -11,7 +11,7 @@ Engine analysis: valve watch, probe check, early warning, trend charts, report c
 - Name: AI Engine Monitoring (App Store and home screen); repo, bundle ID and module keep the EngineMonitoring name
 - Bundle ID: com.fueledconsulting.EngineMonitoring (tests: com.fueledconsulting.EngineMonitoringTests)
 - Team: D64ZNA8J2P, automatic signing (Xcode Cloud manages distribution signing)
-- Version 0.5.0 (6)
+- Version 0.6.0 (7)
 
 ## Roadmap (see Multi-Aircraft-App-Plan.pdf)
 1. v0.1.0 - starting code base, renamed. DONE
@@ -27,3 +27,6 @@ Pull request -> Xcode Cloud build check -> merge to `main` -> Xcode Cloud archiv
 
 ## Cloud
 Subscriber data is stored in Supabase (Postgres + private file storage) with row-level security. See supabase/README.md.
+
+## Upload website
+See web/README.md. Static page on the same Supabase backend; deploys from this repo.

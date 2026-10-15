@@ -125,6 +125,17 @@ struct CloudAPI: Sendable {
         _ = try await perform(request)
     }
 
+    func downloadFile(path: String, token: String) async throws -> Data {
+        let request = makeRequest("GET", "storage/v1/object/\(Self.bucket)/\(path)", query: [], token: token)
+        return try await perform(request)
+    }
+
+    /// Updates rows matching `filter` (PostgREST, e.g. ["id": "eq.<uuid>"]).
+    func update(table: String, filter: [String: String], values: [String: Any], token: String) async throws {
+        _ = try await send("PATCH", "rest/v1/\(table)", query: filter.map { URLQueryItem(name: $0.key, value: $0.value) },
+                           json: values, token: token, extraHeaders: ["Prefer": "return=minimal"])
+    }
+
     func deleteFiles(paths: [String], token: String) async throws {
         guard !paths.isEmpty else { return }
         _ = try await send("DELETE", "storage/v1/object/\(Self.bucket)", query: [], json: ["prefixes": paths], token: token)
@@ -174,6 +185,15 @@ struct CloudAPI: Sendable {
     }
 
     // MARK: Row building
+
+    /// Postgres timestamps come back with or without fractional seconds.
+    static func parseDate(_ text: String) -> Date? {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let d = f.date(from: text) { return d }
+        f.formatOptions = [.withInternetDateTime]
+        return f.date(from: text)
+    }
 
     static let isoFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
@@ -240,6 +260,46 @@ struct CloudAPI: Sendable {
     }
 }
 
+/// A file in the subscriber's cloud inbox (uploaded on the website, shared to the app, or later by a data link).
+struct InboxItem: Identifiable, Hashable, Sendable {
+    let id: String
+    let filename: String
+    let storagePath: String
+    let category: String
+    let format: String
+    let status: String
+    let source: String
+    let receivedAt: Date?
+
+    static let categories: [(id: String, title: String)] = [
+        ("logs", "Engine monitor logs"),
+        ("poh-limits", "POH / AFM engine limits"),
+        ("logbook", "Logbook entries (annual, oil changes)"),
+        ("engine-time", "Engine times and overhaul records"),
+        ("turbo", "Turbo limits / supplement"),
+        ("oil-analysis", "Oil analysis reports"),
+        ("squawks", "Open squawks / recent engine work"),
+        ("other", "Other"),
+    ]
+
+    var categoryTitle: String { Self.categories.first { $0.id == category }?.title ?? category }
+
+    var isLog: Bool { category == "logs" && filename.lowercased().hasSuffix(".csv") }
+
+    init?(row: [String: Any]) {
+        guard let id = row["id"] as? String, let name = row["original_filename"] as? String,
+              let path = row["storage_path"] as? String else { return nil }
+        self.id = id
+        filename = name
+        storagePath = path
+        category = row["category"] as? String ?? "other"
+        format = row["format"] as? String ?? "unknown"
+        status = row["status"] as? String ?? "received"
+        source = row["source"] as? String ?? "app"
+        receivedAt = (row["received_at"] as? String).flatMap { CloudAPI.parseDate($0) }
+    }
+}
+
 /// Stores the session in the Keychain (this device only).
 enum CloudKeychain {
     private static let service = "com.fueledconsulting.EngineMonitoring.cloud"
@@ -279,6 +339,8 @@ final class CloudStore: ObservableObject {
     @Published var lastError: String?
     @Published private(set) var uploadedLogs: Set<String>
     @Published private(set) var lastSync: Date?
+    /// Documents and files in the cloud inbox (everything except logs already turned into flights).
+    @Published private(set) var inboxItems: [InboxItem] = []
 
     let api: CloudAPI?
     /// Cloud id of this device's aircraft (one aircraft per device for now).
@@ -437,7 +499,7 @@ final class CloudStore: ObservableObject {
 
     /// Saves a file the app cannot analyze yet (JPI, EI, other) to the subscriber's cloud inbox, so it can be
     /// processed when support arrives. Returns a message for the pilot.
-    func uploadToInbox(fileURL: URL, source: String = "share") async -> String {
+    func uploadToInbox(fileURL: URL, source: String = "share", category: String = "logs") async -> String {
         guard isConfigured else { return "This file type can't be analyzed yet. Cloud storage isn't set up in this build, so it wasn't saved." }
         guard isSignedIn else { return "This file type can't be analyzed yet. Sign in (ACCOUNT) and share it again to save it to your account for when support arrives." }
         isBusy = true
@@ -451,23 +513,115 @@ final class CloudStore: ObservableObject {
             let stamp = Int(Date().timeIntervalSince1970)
             let path = "\(s.userID.lowercased())/inbox/\(stamp)-\(FlightLogLibrary.storedFilename(for: name))"
             try await api.uploadFile(path: path, data: data, contentType: "application/octet-stream", token: s.accessToken)
-            let ext = fileURL.pathExtension.lowercased()
+            let format = Self.format(for: fileURL)
+            let isDocument = category != "logs"
             let row: [String: Any] = [
                 "aircraft_id": aircraftID.uuidString.lowercased(),
                 "source": source,
+                "category": category,
                 "original_filename": name,
                 "storage_path": path,
                 "size_bytes": data.count,
-                "format": ext == "jpi" ? "jpi" : (ext == "csv" ? "garmin-csv" : "unknown"),
-                "status": "unsupported",
+                "format": format,
+                "status": isDocument ? "stored" : "unsupported",
             ]
             // The aircraft row must exist before the inbox row can point at it.
             try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: AircraftProfileSnapshot.shared.profile)],
                                  onConflict: "id", token: s.accessToken)
             try await api.upsert(table: "inbox_uploads", rows: [row], onConflict: "id", token: s.accessToken)
-            return "\(name) was saved to your account. It will be analyzed when support for this file type arrives."
+            await refreshInbox()
+            return isDocument
+                ? "\(name) was saved to your account."
+                : "\(name) was saved to your account. It will be analyzed when support for this file type arrives."
         } catch {
             return "\(fileURL.lastPathComponent) could not be saved: \(error.localizedDescription)"
+        }
+    }
+
+    static func format(for url: URL) -> String {
+        switch url.pathExtension.lowercased() {
+        case "csv": return "garmin-csv"
+        case "jpi": return "jpi"
+        case "pdf": return "pdf"
+        case "jpg", "jpeg", "png", "heic": return "image"
+        default: return "unknown"
+        }
+    }
+
+    /// Lists the inbox (newest first) for the Documents screen.
+    func refreshInbox() async {
+        guard isConfigured, isSignedIn else { inboxItems = []; return }
+        do {
+            let (api, s) = try await token()
+            let rows = try await api.select(table: "inbox_uploads",
+                                            query: [URLQueryItem(name: "select", value: "id,original_filename,storage_path,category,format,status,source,received_at"),
+                                                    URLQueryItem(name: "order", value: "received_at.desc")],
+                                            token: s.accessToken)
+            inboxItems = rows.compactMap(InboxItem.init(row:))
+        } catch {
+            lastError = "Could not load your uploads: \(error.localizedDescription)"
+        }
+    }
+
+    /// Brings uploads from the website into the app: engine log CSVs become flights, documents are kept
+    /// in Documents. Runs when the app opens or comes back to the foreground.
+    func pullInbox(logs: FlightLogStore) async {
+        guard isConfigured, isSignedIn, !isBusy else { return }
+        await refreshInbox()
+        let waiting = inboxItems.filter { $0.status == "received" }
+        guard !waiting.isEmpty else { return }
+        isBusy = true
+        defer { isBusy = false }
+        var imported = 0
+        do {
+            let (api, s) = try await token()
+            let folder = FileManager.default.temporaryDirectory.appendingPathComponent("inbox-\(UUID().uuidString)", isDirectory: true)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            defer { try? FileManager.default.removeItem(at: folder) }
+            for item in waiting {
+                var newStatus = "stored"
+                var detail: Any = NSNull()
+                if item.isLog {
+                    let data = try await api.downloadFile(path: item.storagePath, token: s.accessToken)
+                    let file = folder.appendingPathComponent(item.filename)
+                    try data.write(to: file)
+                    logs.lastError = nil
+                    await logs.importFiles([file])
+                    if let error = logs.lastError {
+                        newStatus = "failed"
+                        detail = error
+                        logs.lastError = nil
+                    } else {
+                        newStatus = "imported"
+                        imported += 1
+                    }
+                } else if item.category == "logs" {
+                    newStatus = "unsupported"
+                }
+                try await api.update(table: "inbox_uploads", filter: ["id": "eq.\(item.id)"],
+                                     values: ["status": newStatus, "detail": detail,
+                                              "processed_at": CloudAPI.isoFormatter.string(from: Date())],
+                                     token: s.accessToken)
+            }
+            status = imported > 0 ? "Added \(imported) flight\(imported == 1 ? "" : "s") from your uploads." : "Your uploads are up to date."
+            lastError = nil
+        } catch {
+            lastError = "Could not bring in your uploads: \(error.localizedDescription)"
+        }
+        await refreshInbox()
+    }
+
+    /// Downloads one inbox file to a temporary place for viewing.
+    func download(_ item: InboxItem) async -> URL? {
+        do {
+            let (api, s) = try await token()
+            let data = try await api.downloadFile(path: item.storagePath, token: s.accessToken)
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(item.filename)
+            try data.write(to: url, options: [.atomic])
+            return url
+        } catch {
+            lastError = "Could not open \(item.filename): \(error.localizedDescription)"
+            return nil
         }
     }
 

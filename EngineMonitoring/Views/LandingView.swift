@@ -9,6 +9,8 @@ struct RootView: View {
     @EnvironmentObject private var flightLogs: FlightLogStore
     @AppStorage("EM.exploreWithoutAccount") private var exploring = false
     @State private var incomingMessage: String?
+    @AppStorage("EM.documentsPromptShown") private var documentsPromptShown = false
+    @State private var showDocuments = false
 
     var body: some View {
         Group {
@@ -16,6 +18,21 @@ struct RootView: View {
                 ContentView()
             } else {
                 LandingView(exploring: $exploring)
+            }
+        }
+        // Right after a pilot first signs in (usually straight after Register): upload your documents.
+        .onChange(of: cloud.isSignedIn) {
+            if cloud.isSignedIn && !documentsPromptShown {
+                documentsPromptShown = true
+                showDocuments = true
+            }
+        }
+        .sheet(isPresented: $showDocuments) {
+            NavigationStack {
+                DocumentsView()
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) { Button("Done") { showDocuments = false } }
+                    }
             }
         }
         // Files shared to the app (Files, Mail, AirDrop, Cirrus IQ, Garmin Pilot): "Open in AI Engine Monitoring".
@@ -259,7 +276,13 @@ struct RegisterView: View {
                 }
                 .disabled(problem != nil || cloud.isBusy || !cloud.isConfigured)
             } footer: {
-                if let problem, !email.isEmpty || !password.isEmpty { Text(problem) }
+                // Always say why Register is grey, so a pilot is never stuck guessing.
+                if !cloud.isConfigured {
+                    Text("Register is turned off because accounts are not switched on in this test build yet. Use Explore without an account for now.")
+                        .foregroundStyle(.orange)
+                } else if let problem {
+                    Text(problem).foregroundStyle(.orange)
+                }
             }
             MessagesSection()
             if done && !cloud.isSignedIn {

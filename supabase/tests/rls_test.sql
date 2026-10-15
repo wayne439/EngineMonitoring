@@ -17,6 +17,18 @@ values ('11111111-1111-1111-1111-111111111111', 'log1.csv', 'log1.csv', now() - 
 insert into storage.objects (bucket_id, name) values ('engine-logs', '00000000-0000-0000-0000-00000000000a/11111111-1111-1111-1111-111111111111/log1.csv');
 insert into public.inbox_uploads (aircraft_id, source, original_filename, storage_path, format, status)
 values ('11111111-1111-1111-1111-111111111111', 'share', 'flight.jpi', '00000000-0000-0000-0000-00000000000a/inbox/flight.jpi', 'jpi', 'unsupported');
+insert into public.inbox_uploads (aircraft_id, source, category, original_filename, storage_path, format, status)
+values ('11111111-1111-1111-1111-111111111111', 'web', 'poh-limits', 'poh-section2.pdf', '00000000-0000-0000-0000-00000000000a/inbox/poh.pdf', 'pdf', 'received');
+-- The app marks web uploads once handled.
+update public.inbox_uploads set status = 'stored', processed_at = now() where category = 'poh-limits';
+do $$ begin
+    if (select status from public.inbox_uploads where category = 'poh-limits') <> 'stored' then raise exception 'owner could not update status'; end if;
+    begin
+        insert into public.inbox_uploads (original_filename, storage_path, category) values ('a.pdf', 'x', 'bogus');
+        raise exception 'category check did not fire';
+    exception when check_violation then null;
+    end;
+end $$;
 
 -- owner_id was filled from the signed-in user.
 do $$ begin
