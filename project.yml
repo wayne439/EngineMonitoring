@@ -8,8 +8,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.3.0"
-    CURRENT_PROJECT_VERSION: "3"
+    MARKETING_VERSION: "0.3.1"
+    CURRENT_PROJECT_VERSION: "4"
 targets:
   EngineMonitoring:
     type: application
@@ -28,7 +28,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.fueledconsulting.EngineMonitoring
-        PRODUCT_NAME: Engine Monitoring
+        PRODUCT_NAME: EngineAI
         PRODUCT_MODULE_NAME: EngineMonitoring
         CODE_SIGN_ENTITLEMENTS: EngineMonitoring/EngineMonitoring.entitlements
         TARGETED_DEVICE_FAMILY: "1,2"

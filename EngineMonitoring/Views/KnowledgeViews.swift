@@ -324,7 +324,7 @@ struct FlightReportView: View {
         } header: {
             Text("POH Limits (Approved)")
         } footer: {
-            Text("TIT and manifold-pressure limits are not checked until the Tornado Alley supplement is loaded.")
+            Text("TIT and manifold-pressure limits are not checked; follow your POH/AFM and any turbo supplement.")
         }
 
         Section {

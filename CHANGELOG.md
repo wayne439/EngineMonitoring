@@ -1,4 +1,11 @@
-# Engine Monitoring changelog
+# AI Engine Monitoring changelog
+
+## 0.3.1 (2026-10-15)
+- App renamed AI Engine Monitoring (briefly EngineAI): home-screen name, title, PDF and export wording; app binary EngineAI.app. Bundle ID, module and repo keep the EngineMonitoring name.
+- Pre-shop report header now describes the owner's aircraft from the profile instead of a fixed SR22 line.
+- Remaining SR22 / Tornado Alley wording in guidance, reports and COPA questions made aircraft-neutral.
+- New app icon: gauge arc, pulse line, AI spark and an "ENGINE AI" wordmark, replacing the N63KA icon.
+- Version 0.3.1 (4).
 
 ## 0.3.0 (2026-10-15)
 - Cloud database (Supabase): `supabase/schema.sql` creates the `aircraft` and `flight_logs` tables, the private `engine-logs` file bucket, row-level security (each subscriber sees only their own data) and `delete_my_account()`. Tested on Postgres 16 with `supabase/tests` (ALL RLS TESTS PASSED). Setup steps: `supabase/README.md`.

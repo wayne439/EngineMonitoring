@@ -1,11 +1,11 @@
-# Engine Monitoring cloud backend (Supabase)
+# AI Engine Monitoring cloud backend (Supabase)
 
 Each subscriber signs in with Apple. Their aircraft profile, engine logs and flight summaries are stored in a Postgres database and a private file bucket, and row-level security lets each subscriber see only their own data.
 
 ## One-time setup (about 15 minutes)
 
 1. **Create the project**
-   - Sign up at supabase.com and create a project named `enginemonitoring`. Pick the US West region, set a strong database password and save it in your password manager.
+   - Sign up at supabase.com and create a project named `engineai`. Pick the US West region, set a strong database password and save it in your password manager.
 2. **Create the tables, bucket and security rules**
    - In the dashboard, open **SQL Editor → New query**. Paste all of `schema.sql`, click **Run**, and check that it reports "Success".
 3. **Turn on Sign in with Apple**

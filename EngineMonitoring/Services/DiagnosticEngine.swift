@@ -78,7 +78,7 @@ struct DiagnosticEngine {
                                  "Controller, servo or network/LRU issue", "Mode/configuration state"],
                 nextChecks: ["Record the FMA/annunciations and whether the controller was illuminated",
                              "Check the bus voltage at the event time",
-                             "Check applicable Garmin/Cirrus approved troubleshooting information and maintenance history"],
+                             "Check the manufacturer's approved troubleshooting information and the maintenance history"],
                 limitations: limitations + " The Perspective log does not contain GFC 700 internal fault data.",
                 dataSource: dataSource)
         case .electrical:
