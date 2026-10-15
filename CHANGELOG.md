@@ -1,5 +1,14 @@
 # AI Engine Monitoring changelog
 
+## 0.6.0 (2026-10-15)
+- Register button now says why it is grey (accounts not switched on yet, or which field is missing).
+- Upload website (`web/`): pilots sign in with the same account, see the data checklist, and drop logs and documents (POH limits, logbook entries, engine times, turbo, oil analysis, squawks). Tested in a headless browser against a stand-in backend.
+- The app brings website uploads in automatically when it opens or returns to the front: engine-log CSVs become flights, documents are kept with the aircraft.
+- New Documents and uploads screen (AIRCRAFT, and shown once right after registering): link to the website, upload from the iPad by category, list and preview everything uploaded.
+- `inbox_uploads` gains a category and a `stored` status (RLS tests pass).
+- `EMWebPortalURL` in Info.plist for the website address (blank until the site is live).
+- Version 0.6.0 (7).
+
 ## 0.5.0 (2026-10-15)
 - Getting data in without fuss:
   - One-tap SD card import (DIAGNOSTICS > Flight Logs > Import new flights from SD card): choose the data_log folder once, then each tap adds only new flights and skips ones already imported.

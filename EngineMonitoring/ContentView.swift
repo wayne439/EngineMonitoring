@@ -7,6 +7,7 @@ struct ContentView: View {
     @EnvironmentObject private var maintenance: MaintenanceStore
     @EnvironmentObject private var aircraft: AircraftProfileStore
     @EnvironmentObject private var cloud: CloudStore
+    @Environment(\.scenePhase) private var scenePhase
 
     enum SectionItem: String, CaseIterable, Identifiable {
         case fly = "FLY"
@@ -70,6 +71,11 @@ struct ContentView: View {
             EarlyWarningNotifier.check(summaries: Array(flightLogs.summaries.values))
             // New logs go to the subscriber's cloud account (no-op when signed out or not configured).
             await cloud.sync(profile: aircraft.profile, logs: flightLogs)
+        }
+        // Files uploaded on the website arrive whenever the app opens or comes back to the front.
+        .task { await cloud.pullInbox(logs: flightLogs) }
+        .onChange(of: scenePhase) {
+            if scenePhase == .active { Task { await cloud.pullInbox(logs: flightLogs) } }
         }
         // Profile edits are uploaded when the owner leaves the profile screen (it stamps updatedAt).
         .onChange(of: aircraft.profile.updatedAt) {

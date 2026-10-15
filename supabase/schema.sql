@@ -67,13 +67,25 @@ create table if not exists public.inbox_uploads (
     original_filename  text not null,
     storage_path       text not null,
     size_bytes         bigint,
-    format             text not null default 'unknown',   -- garmin-csv, jpi, ei, unknown
-    status             text not null default 'received'
-                       check (status in ('received', 'processing', 'imported', 'unsupported', 'failed')),
+    format             text not null default 'unknown',   -- garmin-csv, jpi, ei, pdf, image, unknown
+    -- Which checklist item the file answers (see the app's data checklist and the web upload page).
+    category           text not null default 'logs',
+    -- received: waiting for the app; imported: became a flight; stored: kept as a document;
+    -- unsupported: format not readable yet; failed: could not be read.
+    status             text not null default 'received',
     detail             text,
     received_at        timestamptz not null default now(),
     processed_at       timestamptz
 );
+
+-- Columns and rules added after the first release (safe to re-run on an existing database).
+alter table public.inbox_uploads add column if not exists category text not null default 'logs';
+alter table public.inbox_uploads drop constraint if exists inbox_uploads_status_check;
+alter table public.inbox_uploads add constraint inbox_uploads_status_check
+    check (status in ('received', 'processing', 'imported', 'stored', 'unsupported', 'failed'));
+alter table public.inbox_uploads drop constraint if exists inbox_uploads_category_check;
+alter table public.inbox_uploads add constraint inbox_uploads_category_check
+    check (category in ('logs', 'poh-limits', 'logbook', 'engine-time', 'oil-analysis', 'squawks', 'turbo', 'other'));
 
 create index if not exists inbox_uploads_owner_idx on public.inbox_uploads (owner_id, received_at desc);
 create index if not exists inbox_uploads_status_idx on public.inbox_uploads (status) where status in ('received', 'processing');

@@ -27,6 +27,11 @@ struct AircraftView: View {
                 } label: {
                     Label("Data checklist", systemImage: "checklist")
                 }
+                NavigationLink {
+                    DocumentsView()
+                } label: {
+                    Label("Documents and uploads", systemImage: "tray.and.arrow.up")
+                }
                 ForEach(AircraftKnowledge.facts) { fact in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(fact.label).font(.caption).foregroundStyle(.secondary)

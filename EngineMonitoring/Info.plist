@@ -100,5 +100,7 @@
 	</array>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<false/>
+	<key>EMWebPortalURL</key>
+	<string></string>
 </dict>
 </plist>
