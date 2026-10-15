@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+__MACOSX/
+
+# Xcode per-user state
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.xcarchive
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Python bytecode
+__pycache__/
+*.pyc
