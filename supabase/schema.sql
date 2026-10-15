@@ -1,4 +1,4 @@
--- EngineAI: cloud database schema (Supabase / Postgres).
+-- AI Engine Monitoring: cloud database schema (Supabase / Postgres).
 -- Run once in the Supabase dashboard: SQL Editor > New query > paste this file > Run.
 -- Safe to re-run: every statement checks whether its object already exists.
 --

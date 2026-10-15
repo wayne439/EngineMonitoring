@@ -460,7 +460,7 @@ enum PreShopPDF {
         renderer.addPrintFormatter(formatter, startingAtPageAt: 0)
         let data = NSMutableData()
         UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "Pre-shop engine report",
-                                                     kCGPDFContextAuthor as String: "EngineAI"])
+                                                     kCGPDFContextAuthor as String: "AI Engine Monitoring"])
         renderer.prepare(forDrawingPages: NSRange(location: 0, length: renderer.numberOfPages))
         for i in 0..<renderer.numberOfPages {
             UIGraphicsBeginPDFPage()

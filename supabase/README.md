@@ -1,4 +1,4 @@
-# EngineAI cloud backend (Supabase)
+# AI Engine Monitoring cloud backend (Supabase)
 
 Each subscriber signs in with Apple. Their aircraft profile, engine logs and flight summaries are stored in a Postgres database and a private file bucket, and row-level security lets each subscriber see only their own data.
 
