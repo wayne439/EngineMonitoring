@@ -43,7 +43,7 @@ struct EventPersistence {
     static func defaultDirectory() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
-        return base.appendingPathComponent("N63KA", isDirectory: true)
+        return base.appendingPathComponent("EngineMonitoring", isDirectory: true)
     }
 }
 

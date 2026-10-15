@@ -577,7 +577,7 @@ struct FlightReport: Sendable {
         t.dateFormat = "HH:mm:ss"
         func minutes(_ s: Int) -> String { "\(s / 60) min" }
 
-        var md = "# N63KA post-flight report\n\n"
+        var md = "# Post-flight report\n\n"
         md += "- Log: \(summary.filename)\n"
         md += "- From \(f.string(from: summary.start)) to \(t.string(from: summary.end)) (\(timeZone.identifier))\n"
         let phaseLine = FlightPhase.allCases.compactMap { p in summary.phaseSeconds[p].map { "\(p.rawValue) \(minutes($0))" } }
@@ -595,11 +595,11 @@ struct FlightReport: Sendable {
         }
         md += "Turbonormalizer limits (TIT, manifold pressure) are not checked: the Tornado Alley AFM supplement is not loaded.\n\n"
 
-        md += "## Compared with N63KA's normal\n\n"
+        md += "## Compared with this aircraft's normal\n\n"
         if baselineFlights < Baseline.minimumFlights {
             md += "Not enough earlier flights yet (\(baselineFlights) of \(Baseline.minimumFlights)).\n\n"
         } else if deviations.isEmpty {
-            md += "Every climb and cruise median is inside N63KA's usual range.\n\n"
+            md += "Every climb and cruise median is inside this aircraft's usual range.\n\n"
         } else {
             for d in deviations {
                 let at = d.range.oat.map { String(format: " for OAT %.0f °C", $0) } ?? ""

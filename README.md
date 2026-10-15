@@ -11,11 +11,11 @@ Started on 2026-10-15 as a copy of N63KA Copilot `main` at 003a563 (v0.9.7: valv
 - Name: Engine Monitoring (working name)
 - Bundle ID: com.fueledconsulting.EngineMonitoring (tests: com.fueledconsulting.EngineMonitoringTests)
 - Team: D64ZNA8J2P, automatic signing (Xcode Cloud manages distribution signing)
-- Version 0.1.0 (1)
+- Version 0.2.0 (2)
 
 ## Roadmap (see Multi-Aircraft-App-Plan.pdf)
-1. v0.1.0 - copy of N63KA Copilot, renamed (this version; still shows N63KA content).
-2. v0.2.0 - remove bundled N63KA data (flight history, normals, POH text, approach cards); AircraftProfile model.
+1. v0.1.0 - copy of N63KA Copilot, renamed. DONE
+2. v0.2.0 - remove bundled N63KA data (flight history, normals, POH text, approach cards); AircraftProfile model and screen. DONE
 3. v0.3.0 - Sign in with Apple, onboarding questionnaire, account deletion.
 4. v0.4.0 - multi-aircraft import (Garmin Perspective / G1000 CSV), per-aircraft baselines.
 5. External TestFlight beta, then App Store.

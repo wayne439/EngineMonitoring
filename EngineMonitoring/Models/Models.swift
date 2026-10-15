@@ -103,22 +103,3 @@ struct KnowledgeDocument: Identifiable, Codable, Hashable {
         return f
     }()
 }
-
-struct AircraftProfile: Codable, Equatable {
-    let registration: String
-    let serialNumber: String
-    let description: String
-    let avionics: String
-    let autopilot: String
-    let engine: String
-
-    /// N63KA. Verify against the aircraft records before relying on it.
-    static let n63ka = AircraftProfile(
-        registration: "N63KA",
-        serialNumber: "3444",
-        description: "2009 Cirrus SR22 G3 - Perspective - turbonormalized configuration",
-        avionics: "Cirrus Perspective (Garmin)",
-        autopilot: "Garmin GFC 700",
-        engine: "Continental IO-550-N family / TAT turbonormalized configuration"
-    )
-}

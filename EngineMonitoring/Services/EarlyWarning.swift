@@ -227,7 +227,7 @@ enum EarlyWarning {
     static let shiftSigma = 2.5, actSigma = 4.0
     static let driftZ = 2.75, driftChangeSigma = 1.5, driftRecentSigma = 1.0
     static let actHours = 10.0, minProjectSpanHours = 8.0, projectionHorizonHours = 25.0
-    static let source = "N63KA's own history, corrected for outside air temperature and fuel flow; method in tools/n63ka_early_warning.py"
+    static let source = "This aircraft's own history, corrected for outside air temperature and fuel flow; method in tools/n63ka_early_warning.py"
 
     struct Flight {
         let summary: FlightSummary
@@ -383,7 +383,7 @@ enum EarlyWarning {
     }
 
     static func describe(_ a: TrendAnalysis) -> String {
-        var s = "Newest flights \(a.metric.format(a.recentValue)), " + String(format: "%+.1f", a.shiftSigma) + " sigma from N63KA's normal"
+        var s = "Newest flights \(a.metric.format(a.recentValue)), " + String(format: "%+.1f", a.shiftSigma) + " sigma from this aircraft's normal"
         s += a.findings.contains(.drift) ? String(format: ", trending %+.\(a.metric.digits + 1)f %@ per flight hour", a.slopePerHour, a.metric.unit) : ""
         if let h = a.hoursToThreshold, let t = a.metric.threshold {
             s += String(format: "; about %.0f flight hours to %@ at this rate", h, a.metric.format(t))
@@ -393,7 +393,7 @@ enum EarlyWarning {
 
     static func markdown(_ report: EarlyWarningReport) -> String {
         var md = "Over \(report.flightsUsed) flights with steady cruise (" + String(format: "%.0f", report.hoursCovered) + " flight hours).\n\n"
-        if report.findings.isEmpty { return md + "Nothing drifting: every tracked value is within N63KA's normal and not trending the wrong way.\n\n" }
+        if report.findings.isEmpty { return md + "Nothing drifting: every tracked value is within this aircraft's normal and not trending the wrong way.\n\n" }
         for p in report.patterns {
             md += "- **\(p.level.rawValue): \(p.title)**" + (p.cylinder.map { " (cylinder \($0))" } ?? "") + ". \(p.advice)\n"
         }
@@ -479,7 +479,7 @@ enum EarlyWarningNotifier {
         defaults.set(Array(current), forKey: defaultsKey)
         guard !current.subtracting(previous).isEmpty, let first = report.patterns.first else { return }
         let content = UNMutableNotificationContent()
-        content.title = "N63KA early warning"
+        content.title = "Early warning"
         content.body = "\(first.level.rawValue): \(first.title)" + (first.cylinder.map { " (cylinder \($0))" } ?? "")
             + ". Open DIAGNOSTICS > Early Warning & Trends."
         content.sound = .default

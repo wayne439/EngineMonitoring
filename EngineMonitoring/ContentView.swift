@@ -13,7 +13,7 @@ struct ContentView: View {
         case myFlying = "MY FLYING"
         case maintenance = "MAINTENANCE"
         case aircraft = "AIRCRAFT"
-        case ask = "ASK N63KA"
+        case ask = "ASK"
 
         var id: String { rawValue }
 

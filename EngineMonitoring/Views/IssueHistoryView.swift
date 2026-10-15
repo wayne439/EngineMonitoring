@@ -72,8 +72,8 @@ struct IssueHistoryView: View {
         .navigationTitle(system.map { "\($0.rawValue) Issues" } ?? "Issue History")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                ShareLink(item: issues.reviewLogMarkdown(), subject: Text("N63KA issue review log"),
-                          preview: SharePreview("N63KA issue review log")) {
+                ShareLink(item: issues.reviewLogMarkdown(), subject: Text("Issue review log"),
+                          preview: SharePreview("Issue review log")) {
                     Label("Export Review Log", systemImage: "square.and.arrow.up")
                 }
             }

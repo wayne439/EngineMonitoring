@@ -336,16 +336,16 @@ enum IssuePlaybook {
         let resolve: [String]
         if kind.hasPrefix("turbo.induction") {
             let c = String(kind.dropFirst("turbo.induction.cyl".count))
-            what = "On consecutive flights cylinder \(c) ran much hotter than the others at low manifold pressure (descent, approach) compared with cruise, more than N63KA's normal. A leak between the throttle and that cylinder (intake tube coupler, gasket, hose) lets in unmetered air that leans it most when manifold pressure is low."
+            what = "On consecutive flights cylinder \(c) ran much hotter than the others at low manifold pressure (descent, approach) compared with cruise, more than this aircraft's normal. A leak between the throttle and that cylinder (intake tube coupler, gasket, hose) lets in unmetered air that leans it most when manifold pressure is low."
             resolve = ["Ask the A&P to inspect cylinder \(c)'s intake tube couplers, clamps and gaskets (a soapy-water or smoke test of the induction finds leaks).",
                        "Check the cylinder \(c) injector for a partial blockage too.",
                        "DIAGNOSTICS > Turbo & Induction shows the numbers per cylinder."]
         } else if kind == "turbo.deck" {
-            what = "In climb at full throttle, manifold pressure at some altitude was lower than N63KA normally makes there. A turbonormalized engine holds about sea-level manifold pressure to its critical altitude; less points at the wastegate or its controller, or an exhaust or induction leak."
+            what = "In climb at full throttle, manifold pressure at some altitude was lower than this aircraft normally makes there. A turbonormalized engine holds about sea-level manifold pressure to its critical altitude; less points at the wastegate or its controller, or an exhaust or induction leak."
             resolve = ["Ask the A&P to inspect the wastegate and controller, the exhaust (slip joints, V-band clamps, cracks) and the induction for leaks.",
                        "Compare with the TIT1/TIT2 trend in DIAGNOSTICS > Early Warning & Trends."]
         } else {
-            what = "The full-power takeoff (20 s before to 60 s after lift-off) showed lower RPM, manifold pressure or fuel flow than N63KA normally makes. Low fuel flow means less cooling fuel at full power; low MAP points at the turbonormalizer or a leak; low RPM at the propeller governor."
+            what = "The full-power takeoff (20 s before to 60 s after lift-off) showed lower RPM, manifold pressure or fuel flow than this aircraft normally makes. Low fuel flow means less cooling fuel at full power; low MAP points at the turbonormalizer or a leak; low RPM at the propeller governor."
             resolve = ["Make sure the mixture was full rich / set per the POH for the takeoff.",
                        "Fuel flow low: have the fuel servo, flow divider, injectors and mixture rigging checked.",
                        "MAP low: wastegate, controller, exhaust and induction leaks. RPM low: governor high-RPM stop."]
@@ -379,7 +379,7 @@ enum IssuePlaybook {
         }
         return IssueGuide(
             title: "Early warning: \(name)",
-            meaning: "Across N63KA's recent flights this value has moved outside its normal or is trending the wrong way, after correcting for outside air temperature and fuel flow. "
+            meaning: "Across this aircraft's recent flights this value has moved outside its normal or is trending the wrong way, after correcting for outside air temperature and fuel flow. "
                 + "Nothing has reached a limit; the warning is meant to give time to look before it does. Open DIAGNOSTICS > Early Warning & Trends for the chart and the hours left at the current rate.",
             pohProcedureID: nil, pohReference: nil,
             inFlight: [
@@ -416,11 +416,11 @@ enum IssuePlaybook {
         var checks = ["Compare with the oil analysis and the shop's last inspection.", "If the trend continues over several flights, show the history to your A&P."]
         switch metric {
         case .oilTemp?: poh = ("3-oil-temperature-high", "POH 3-19 if OIL TEMP warning")
-            checks.insert("Already compared with N63KA flights at a similar outside air temperature, so a hot day alone does not trigger this. If it repeats, ask the A&P to check the oil cooler, cooler baffles and winterization plate.", at: 0)
+            checks.insert("Already compared with this aircraft's flights at a similar outside air temperature, so a hot day alone does not trigger this. If it repeats, ask the A&P to check the oil cooler, cooler baffles and winterization plate.", at: 0)
         case .oilPressure?: poh = ("3-oil-pressure-out-of-range", "POH 3-19 if OIL PRESS warning")
             checks.insert("Check oil quantity and for leaks.", at: 0)
         case .chtMax?, .cht1?, .cht2?, .cht3?, .cht4?, .cht5?, .cht6?: poh = ("3-high-cylinder-head-temperature", "POH 3-20 if CHT annunciation")
-            checks.insert("Compared with N63KA flights at a similar outside air temperature. Check that cylinder's baffles, injector nozzle and probe.", at: 0)
+            checks.insert("Compared with this aircraft's flights at a similar outside air temperature. Check that cylinder's baffles, injector nozzle and probe.", at: 0)
         case .egtSpread?: checks.insert("A widening EGT spread can come from an injector, intake leak or probe: ask the A&P about a GAMI spread check and nozzle cleaning (past due Nov 2025).", at: 0)
         case .volt1?, .volt2?: poh = ("3a-low-voltage-on-main-bus-1", "POH 3A-10 if M BUS caution")
             checks.insert("Have the battery and alternator output checked.", at: 0)
@@ -428,7 +428,7 @@ enum IssuePlaybook {
         }
         return IssueGuide(
             title: "Trend: \(phase.lowercased()) \(name) \(high ? "higher" : "lower") than usual",
-            meaning: "The median for this phase was well outside the range of N63KA's other flights (10th-90th percentile). Not a limit; a change worth watching.",
+            meaning: "The median for this phase was well outside the range of this aircraft's other flights (10th-90th percentile). Not a limit; a change worth watching.",
             pohProcedureID: poh.0, pohReference: poh.1,
             inFlight: ["Nothing to do unless an annunciation appears; then use the POH procedure."],
             toResolve: checks,
@@ -437,57 +437,7 @@ enum IssuePlaybook {
 
     // MARK: - Items from the maintenance records (SharePoint Cirrus/Records)
 
-    static let recordIssues: [(issue: FlightIssue, guide: IssueGuide)] = {
-        func date(_ s: String) -> Date {
-            let f = DateFormatter()
-            f.locale = Locale(identifier: "en_US_POSIX")
-            f.timeZone = TimeZone(identifier: "America/Phoenix")
-            f.dateFormat = "yyyy-MM-dd"
-            return f.date(from: s) ?? Date(timeIntervalSince1970: 0)
-        }
-        func item(_ kind: String, _ system: DiagnosticSystem, _ sev: IssueSeverity, _ source: String, _ day: String,
-                  _ title: String, _ detail: String, _ resolve: [String], copa: String) -> (FlightIssue, IssueGuide) {
-            (FlightIssue(kind: kind, system: system, severity: sev, origin: .records, source: source, time: date(day), title: title, detail: detail),
-             IssueGuide(title: title, meaning: detail, pohProcedureID: nil, pohReference: nil,
-                        inFlight: ["Nothing specific in flight; follow POH procedures for any annunciation."],
-                        toResolve: resolve, copaTopic: copa))
-        }
-        return [
-            item("record.oil-nickel", .engine, .watch, "Oil Analysis (2).xlsx", "2026-08-25",
-                 "Oil analysis: nickel above the alert guide",
-                 "Nickel 11 ppm in Apr 2026 (guide 5), 6 ppm in Aug 2026; iron 16 to 22 ppm since 2024.",
-                 ["Send the next sample at the normal interval and compare.", "Ask the A&P/Blackstone whether a borescope of the cylinders/valves is warranted.", "Watch CHT and EGT trends in Engine / In Flight."],
-                 copa: "Rising nickel in Blackstone oil analysis on IO-550"),
-            item("record.injectors", .engine, .watch, "Status sheet Nov 2025", "2025-11-14",
-                 "Fuel injector nozzles inspect/clean past due",
-                 "Shown 35 hours past due on the Nov 2025 status sheet.",
-                 ["Confirm with the shop whether this was done; if not, schedule it (it also bears on hard starts and EGT spread)."],
-                 copa: "Fuel injector nozzle cleaning interval"),
-            item("record.turbo-lines", .engine, .watch, "Status sheet Nov 2025", "2025-11-14",
-                 "TAT flexible turbo lines 120-month replacement past due",
-                 "Shown past due on the Nov 2025 status sheet.",
-                 ["Confirm status with the shop and the TAT ICA."], copa: "Tornado Alley flexible line replacement"),
-            item("record.mag-filter", .engine, .watch, "Status sheet Nov 2025", "2025-11-14",
-                 "Magneto pressurization filter past due",
-                 "Shown past due on the Nov 2025 status sheet.",
-                 ["Confirm status with the shop."], copa: "Pressurized magneto filter replacement"),
-            item("record.prebuy-leaks", .engine, .watch, "Pre Buy Discrepancy List", "2025-11-01",
-                 "Turbo wastegate oil leak and prop governor leak",
-                 "Listed as discrepancies at the Nov 2025 prebuy.",
-                 ["Confirm both were repaired (logbook entry).", "Until confirmed, check oil quantity and the cowling for oil each preflight."],
-                 copa: "Wastegate and prop governor oil leaks"),
-            item("record.caps-cutters", .other, .watch, "Status sheet Nov 2025", "2026-03-31",
-                 "CAPS reefing line cutters due 31 Mar 2026",
-                 "An install record PDF exists; confirm the logbook entry.",
-                 ["Confirm the logbook entry and the new due date."], copa: "CAPS line cutter replacement"),
-            item("record.prop-serial", .other, .info, "Status sheet; AD record", "2025-11-14",
-                 "Propeller serial differs between documents",
-                 "NJ91B on the status sheet vs NJ97B on the AD record.",
-                 ["Read the prop data plate and have the records corrected."], copa: "Propeller serial mismatch in records"),
-            item("record.tat-afm", .engine, .info, "POH.pdf", "2026-10-06",
-                 "Tornado Alley AFM supplement not on file",
-                 "Needed for the approved TIT and manifold pressure limits; the app cannot check them.",
-                 ["Upload the TAT AFM supplement to SharePoint Cirrus so it can be added."], copa: "Tornado Alley turbonormalizer AFM supplement limits"),
-        ]
-    }()
+    /// Issues raised by the aircraft's own records (open squawks, oil analysis). Nothing is bundled;
+    /// these will come from the owner's records in a later version.
+    static let recordIssues: [(issue: FlightIssue, guide: IssueGuide)] = []
 }

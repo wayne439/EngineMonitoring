@@ -23,7 +23,7 @@ enum IssueOrigin: String, Codable, Sendable {
     /// Found in a Perspective data-card log.
     case engineData = "Engine data card"
     /// Compared with N63KA's normal ranges from earlier flights.
-    case trend = "Trend vs N63KA normal"
+    case trend = "Trend vs normal"
     /// From the maintenance records on SharePoint.
     case records = "Maintenance records"
 }

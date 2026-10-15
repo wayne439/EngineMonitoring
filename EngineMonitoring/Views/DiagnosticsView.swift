@@ -139,7 +139,7 @@ struct DiagnosticsView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if !eventStore.events.isEmpty {
                     ShareLink(item: EventMarkersCSV(events: eventStore.events),
-                              preview: SharePreview("N63KA event markers")) {
+                              preview: SharePreview("Event markers")) {
                         Label("Export Markers", systemImage: "square.and.arrow.up")
                     }
                 }
@@ -188,7 +188,7 @@ struct EventMarkersCSV: Transferable {
         DataRepresentation(exportedContentType: .commaSeparatedText) { item in
             Data(EventExporter.csv(item.events).utf8)
         }
-        .suggestedFileName("N63KA-event-markers.csv")
+        .suggestedFileName("event-markers.csv")
     }
 }
 

@@ -43,9 +43,6 @@
 		00000000000000000000015E /* MaintenanceReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000015D /* MaintenanceReminders.swift */; };
 		000000000000000000000160 /* MaintenanceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000015F /* MaintenanceViews.swift */; };
 		000000000000000000000162 /* documents.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000161 /* documents.json */; };
-		000000000000000000000164 /* poh_index.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000163 /* poh_index.json */; };
-		000000000000000000000166 /* approach_cards.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000165 /* approach_cards.json */; };
-		000000000000000000000168 /* flight_history.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000167 /* flight_history.json */; };
 		00000000000000000000016A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000169 /* Assets.xcassets */; };
 		00000000000000000000016C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000016B /* PrivacyInfo.xcprivacy */; };
 		00000000000000000000016E /* EngineMonitoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000016D /* EngineMonitoringTests.swift */; };
@@ -62,9 +59,12 @@
 		000000000000000000000186 /* EarlyWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000185 /* EarlyWarning.swift */; };
 		000000000000000000000188 /* EngineTrendViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000187 /* EngineTrendViews.swift */; };
 		00000000000000000000018A /* EarlyWarningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000189 /* EarlyWarningTests.swift */; };
+		000000000000000000000194 /* AircraftProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000193 /* AircraftProfile.swift */; };
+		000000000000000000000196 /* AircraftProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000195 /* AircraftProfileView.swift */; };
 		00000000000000000000018C /* EngineChecks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018B /* EngineChecks.swift */; };
 		00000000000000000000018E /* EngineHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018D /* EngineHistory.swift */; };
 		000000000000000000000190 /* EngineChecksViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018F /* EngineChecksViews.swift */; };
+		000000000000000000000198 /* AircraftProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000197 /* AircraftProfileTests.swift */; };
 		000000000000000000000192 /* EngineChecksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000191 /* EngineChecksTests.swift */; };
 		00000000000000000000017C /* MaintenanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000017B /* MaintenanceTests.swift */; };
 /* End PBXBuildFile section */
@@ -119,9 +119,6 @@
 		00000000000000000000015D /* MaintenanceReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceReminders.swift; path = Services/MaintenanceReminders.swift; sourceTree = "<group>"; };
 		00000000000000000000015F /* MaintenanceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceViews.swift; path = Views/MaintenanceViews.swift; sourceTree = "<group>"; };
 		000000000000000000000161 /* documents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = documents.json; path = Resources/Data/documents.json; sourceTree = "<group>"; };
-		000000000000000000000163 /* poh_index.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = poh_index.json; path = Resources/Data/poh_index.json; sourceTree = "<group>"; };
-		000000000000000000000165 /* approach_cards.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = approach_cards.json; path = Resources/Data/approach_cards.json; sourceTree = "<group>"; };
-		000000000000000000000167 /* flight_history.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = flight_history.json; path = Resources/Data/flight_history.json; sourceTree = "<group>"; };
 		000000000000000000000169 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Assets.xcassets; sourceTree = "<group>"; };
 		00000000000000000000016B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		00000000000000000000016D /* EngineMonitoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineMonitoringTests.swift; path = EngineMonitoringTests.swift; sourceTree = "<group>"; };
@@ -138,9 +135,12 @@
 		000000000000000000000185 /* EarlyWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EarlyWarning.swift; path = Services/EarlyWarning.swift; sourceTree = "<group>"; };
 		000000000000000000000187 /* EngineTrendViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineTrendViews.swift; path = Views/EngineTrendViews.swift; sourceTree = "<group>"; };
 		000000000000000000000189 /* EarlyWarningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EarlyWarningTests.swift; path = EarlyWarningTests.swift; sourceTree = "<group>"; };
+		000000000000000000000193 /* AircraftProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftProfile.swift; path = Models/AircraftProfile.swift; sourceTree = "<group>"; };
+		000000000000000000000195 /* AircraftProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftProfileView.swift; path = Views/AircraftProfileView.swift; sourceTree = "<group>"; };
 		00000000000000000000018B /* EngineChecks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecks.swift; path = Services/EngineChecks.swift; sourceTree = "<group>"; };
 		00000000000000000000018D /* EngineHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineHistory.swift; path = Services/EngineHistory.swift; sourceTree = "<group>"; };
 		00000000000000000000018F /* EngineChecksViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecksViews.swift; path = Views/EngineChecksViews.swift; sourceTree = "<group>"; };
+		000000000000000000000197 /* AircraftProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftProfileTests.swift; path = AircraftProfileTests.swift; sourceTree = "<group>"; };
 		000000000000000000000191 /* EngineChecksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecksTests.swift; path = EngineChecksTests.swift; sourceTree = "<group>"; };
 		00000000000000000000017B /* MaintenanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceTests.swift; path = MaintenanceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -218,6 +218,8 @@
 				000000000000000000000181 /* ProbeCheck.swift */,
 				000000000000000000000185 /* EarlyWarning.swift */,
 				000000000000000000000187 /* EngineTrendViews.swift */,
+				000000000000000000000193 /* AircraftProfile.swift */,
+				000000000000000000000195 /* AircraftProfileView.swift */,
 				00000000000000000000018B /* EngineChecks.swift */,
 				00000000000000000000018D /* EngineHistory.swift */,
 				00000000000000000000018F /* EngineChecksViews.swift */,
@@ -228,9 +230,6 @@
 				00000000000000000000015F /* MaintenanceViews.swift */,
 				00000000000000000000011A /* Info.plist */,
 				000000000000000000000161 /* documents.json */,
-				000000000000000000000163 /* poh_index.json */,
-				000000000000000000000165 /* approach_cards.json */,
-				000000000000000000000167 /* flight_history.json */,
 				000000000000000000000169 /* Assets.xcassets */,
 				00000000000000000000016B /* PrivacyInfo.xcprivacy */,
 			);
@@ -251,6 +250,7 @@
 				00000000000000000000017F /* ValveWatchTests.swift */,
 				000000000000000000000183 /* ProbeCheckTests.swift */,
 				000000000000000000000189 /* EarlyWarningTests.swift */,
+				000000000000000000000197 /* AircraftProfileTests.swift */,
 				000000000000000000000191 /* EngineChecksTests.swift */,
 			);
 			path = EngineMonitoringTests;
@@ -338,9 +338,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				000000000000000000000162 /* documents.json in Resources */,
-				000000000000000000000164 /* poh_index.json in Resources */,
-				000000000000000000000166 /* approach_cards.json in Resources */,
-				000000000000000000000168 /* flight_history.json in Resources */,
 				00000000000000000000016A /* Assets.xcassets in Resources */,
 				00000000000000000000016C /* PrivacyInfo.xcprivacy in Resources */,
 			);
@@ -394,6 +391,8 @@
 				000000000000000000000182 /* ProbeCheck.swift in Sources */,
 				000000000000000000000186 /* EarlyWarning.swift in Sources */,
 				000000000000000000000188 /* EngineTrendViews.swift in Sources */,
+				000000000000000000000194 /* AircraftProfile.swift in Sources */,
+				000000000000000000000196 /* AircraftProfileView.swift in Sources */,
 				00000000000000000000018C /* EngineChecks.swift in Sources */,
 				00000000000000000000018E /* EngineHistory.swift in Sources */,
 				000000000000000000000190 /* EngineChecksViews.swift in Sources */,
@@ -420,6 +419,7 @@
 				000000000000000000000180 /* ValveWatchTests.swift in Sources */,
 				000000000000000000000184 /* ProbeCheckTests.swift in Sources */,
 				00000000000000000000018A /* EarlyWarningTests.swift in Sources */,
+				000000000000000000000198 /* AircraftProfileTests.swift in Sources */,
 				000000000000000000000192 /* EngineChecksTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -479,7 +479,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = EngineMonitoring/Info.plist;
@@ -487,7 +487,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = "Engine Monitoring";
@@ -501,7 +501,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = EngineMonitoring/Info.plist;
@@ -509,7 +509,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = "Engine Monitoring";
@@ -523,10 +523,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -541,10 +541,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

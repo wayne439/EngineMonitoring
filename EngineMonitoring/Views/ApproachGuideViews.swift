@@ -8,7 +8,7 @@ final class ApproachGuideStore: ObservableObject {
 
     init(bundle: Bundle = .main) {
         guard let url = bundle.url(forResource: "approach_cards", withExtension: "json") else {
-            loadError = "approach_cards.json is missing from this build."
+            loadError = "Approach guides are not included in this version."
             return
         }
         do { book = try ApproachGuideBook.decode(Data(contentsOf: url)) } catch {
@@ -172,7 +172,7 @@ struct ApproachCardView: View {
     private func printQuick() {
         guard let html = ApproachPrinter.quickHTML(card, mode: mode) else { return }
         let info = UIPrintInfo(dictionary: nil)
-        info.jobName = "N63KA \(card.title) \(mode.rawValue) card"
+        info.jobName = "\(card.title) \(mode.rawValue) card"
         info.outputType = .general
         let controller = UIPrintInteractionController.shared
         controller.printInfo = info
@@ -296,7 +296,7 @@ struct ApproachDetailView: View {
     private func printCard() {
         let formatter = UIMarkupTextPrintFormatter(markupText: ApproachPrinter.html(card, mode: mode, basis: basis))
         let info = UIPrintInfo(dictionary: nil)
-        info.jobName = "N63KA \(card.title) \(mode.rawValue)"
+        info.jobName = "\(card.title) \(mode.rawValue)"
         info.outputType = .general
         let controller = UIPrintInteractionController.shared
         controller.printInfo = info

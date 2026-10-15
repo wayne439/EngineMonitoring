@@ -185,15 +185,6 @@ final class IssueHistoryTests: XCTestCase {
         }
     }
 
-    func testBundledHistoryFileDecodes() throws {
-        // Repository copy (the app reads the same file from its bundle).
-        let url = URL(fileURLWithPath: #filePath).resolvingSymlinksInPath().deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("EngineMonitoring/Resources/Data/flight_history.json")
-        let h = try XCTUnwrap(BundledFlightHistory.load(from: url))
-        XCTAssertGreaterThan(h.summaries.count, 100)
-        XCTAssertTrue(h.summaries.contains { $0.filename == "log_260715_063701_KPRC.csv" && $0.issues.contains { $0.kind == "start.stopped" } })
-    }
-
     // MARK: - OAT and TIT
 
     private func cruise(_ name: String, oat: Double, oilT: Double, tit1: Double = 1480, tit2: Double = 1540) -> FlightSummary {

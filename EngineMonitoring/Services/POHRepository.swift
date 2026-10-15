@@ -14,7 +14,7 @@ final class POHRepository: ObservableObject {
 
     func load() async {
         guard let url = bundle.url(forResource: "poh_index", withExtension: "json") else {
-            loadError = "poh_index.json is missing from this build."
+            loadError = "No POH is loaded. Adding your own POH comes in a later version; use your printed POH/AFM."
             return
         }
         do {

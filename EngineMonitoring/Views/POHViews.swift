@@ -8,7 +8,7 @@ struct ProceduresView: View {
         List {
             if let index = poh.index {
                 Section {
-                    Label("Text from the N63KA POH (\(index.document.partNumber), \(index.document.revision)). Verify against the printed POH; the turbonormalizer supplement is not loaded.",
+                    Label("Text from the POH (\(index.document.partNumber), \(index.document.revision)). Verify against the printed POH; the turbonormalizer supplement is not loaded.",
                           systemImage: "checkmark.shield")
                         .font(.footnote)
                 }

@@ -178,7 +178,7 @@ enum IssueDetector {
             kind: "trend.\(d.phase.rawValue).\(kindMetric).\(high ? "high" : "low")",
             system: system(for: metric), severity: .watch, origin: .trend, source: f.filename, time: f.start,
             title: "\(d.phase.rawValue) \(metric.sentenceLabel) \(high ? "higher" : "lower") than usual",
-            detail: "\(metric.label) median \(metric.format(d.value)); N63KA usual \(metric.format(d.range.low))-\(metric.format(d.range.high))"
+            detail: "\(metric.label) median \(metric.format(d.value)); usual \(metric.format(d.range.low))-\(metric.format(d.range.high))"
                 + (d.range.oat.map { String(format: " for OAT %.0f °C", $0) } ?? "")
                 + (f.departure.map { ", from \($0)" } ?? "") + " (\(d.range.flights) flights)")
     }

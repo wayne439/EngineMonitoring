@@ -1,5 +1,16 @@
 # Engine Monitoring changelog
 
+## 0.2.0 (2026-10-15)
+- New Aircraft Profile (AIRCRAFT > Set up your aircraft profile): tail number, make/model/year, serial, engine, 4/6/8 cylinders, turbo and TIT probes, engine monitor, propeller, home airport, FIKI, oil change interval, engine limits, technique references. Saved on the device (Application Support/EngineMonitoring/aircraft-profile.json).
+- Every post-flight check now reads its limits from the profile. Starting values are an SR22 Turbo template, marked "template - confirm in Aircraft Profile" until the owner confirms them against their POH/AFM. The TIT reference only applies to turbo engines.
+- Removed all N63KA data: bundled flight history (flight_history.json), POH text (poh_index.json), approach cards (approach_cards.json), N63KA facts, oil analysis samples, maintenance watch list and record-based issues.
+- COPA links show only for Cirrus profiles; the COPA question describes the owner's aircraft.
+- User-facing wording no longer says N63KA ("this aircraft's normal", "Post-flight report"); the ASK N63KA section is now ASK.
+- Data folder renamed from N63KA to EngineMonitoring.
+- Removed the unused old AircraftProfile struct in Models.swift.
+- Tests: new AircraftProfileTests; bundle tests now check that no aircraft-specific data ships.
+- Version 0.2.0 (2).
+
 ## 0.1.0 (2026-10-15)
 - New app created from N63KA Copilot 0.9.7 (main 003a563).
 - Renamed project, targets, scheme and module to EngineMonitoring; display name "Engine Monitoring"; bundle ID com.fueledconsulting.EngineMonitoring.

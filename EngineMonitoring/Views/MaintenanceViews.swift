@@ -45,13 +45,13 @@ struct MaintenanceView: View {
                                value: String(format: "%.1f h", MaintenanceSchedule.flightHours(since: Date().addingTimeInterval(-30 * 86400), summaries: summaries)))
                 Button { addingItem = true } label: { Label("Add a check or service", systemImage: "plus.circle") }
             } footer: {
-                Text("Hours come from the data card logs (airborne time, which tracks N63KA's logbook total time within a few percent). Each service you record with its tach resets the estimate. Upload every card or the hour-based items fall behind. Reminders are a planning aid: the logbook and your A&P govern.")
+                Text("Hours come from the data card logs (airborne time, which tracks this aircraft's logbook total time within a few percent). Each service you record with its tach resets the estimate. Upload every card or the hour-based items fall behind. Reminders are a planning aid: the logbook and your A&P govern.")
             }
         }
         .navigationTitle("MAINTENANCE")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                ShareLink(item: maintenance.csv(), subject: Text("N63KA maintenance log"), preview: SharePreview("N63KA maintenance log")) {
+                ShareLink(item: maintenance.csv(), subject: Text("Maintenance log"), preview: SharePreview("Maintenance log")) {
                     Label("Export Log", systemImage: "square.and.arrow.up")
                 }
             }

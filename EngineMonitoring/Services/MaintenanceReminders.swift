@@ -21,7 +21,7 @@ enum MaintenanceReminders {
                 var comps = cal.dateComponents([.year, .month, .day], from: date)
                 comps.hour = 9
                 let content = UNMutableNotificationContent()
-                content.title = "N63KA: \(item.name)"
+                content.title = "Maintenance: \(item.name)"
                 content.body = body
                 content.sound = .default
                 center.add(UNNotificationRequest(identifier: id, content: content,
