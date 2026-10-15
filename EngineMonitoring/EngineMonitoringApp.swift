@@ -14,7 +14,8 @@ struct EngineMonitoringApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // Landing page (register / log in / about) until signed in or exploring, then the app.
+            RootView()
                 .environmentObject(repository)
                 .environmentObject(diagnosticEvents)
                 .environmentObject(flightLogs)

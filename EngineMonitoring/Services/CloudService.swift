@@ -40,7 +40,7 @@ enum CloudError: LocalizedError {
         switch self {
         case .notConfigured: return "Cloud storage is not set up in this build."
         case .notSignedIn: return "Sign in first."
-        case .server(let code, let body): return "Server error \(code): \(body.prefix(300))"
+        case .server(let code, let body): return body.isEmpty ? "Server error \(code)." : String(body.prefix(300))
         case .badResponse: return "Unexpected response from the server."
         }
     }
@@ -58,6 +58,26 @@ struct CloudAPI: Sendable {
         let body: [String: Any] = ["provider": "apple", "id_token": idToken, "nonce": nonce]
         let data = try await send("POST", "auth/v1/token", query: [URLQueryItem(name: "grant_type", value: "id_token")], json: body, token: nil)
         return try Self.session(from: data)
+    }
+
+    /// Creates an account with email and password. Returns a session when the project does not require
+    /// email confirmation, or nil when Supabase has emailed a confirmation link first.
+    func signUp(email: String, password: String, fullName: String) async throws -> CloudSession? {
+        let body: [String: Any] = ["email": email, "password": password, "data": ["full_name": fullName]]
+        let data = try await send("POST", "auth/v1/signup", query: [], json: body, token: nil)
+        guard let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw CloudError.badResponse }
+        return obj["access_token"] == nil ? nil : try Self.session(from: data)
+    }
+
+    func signIn(email: String, password: String) async throws -> CloudSession {
+        let body: [String: Any] = ["email": email, "password": password]
+        let data = try await send("POST", "auth/v1/token", query: [URLQueryItem(name: "grant_type", value: "password")], json: body, token: nil)
+        return try Self.session(from: data)
+    }
+
+    /// Emails a password-reset link.
+    func resetPassword(email: String) async throws {
+        _ = try await send("POST", "auth/v1/recover", query: [], json: ["email": email], token: nil)
     }
 
     func refresh(_ session: CloudSession) async throws -> CloudSession {
@@ -138,9 +158,19 @@ struct CloudAPI: Sendable {
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw CloudError.badResponse }
         guard (200..<300).contains(http.statusCode) else {
-            throw CloudError.server(http.statusCode, String(data: data, encoding: .utf8) ?? "")
+            throw CloudError.server(http.statusCode, Self.message(from: data))
         }
         return data
+    }
+
+    /// The human-readable part of a Supabase error body ("msg", "error_description" or "message").
+    static func message(from data: Data) -> String {
+        if let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            for key in ["msg", "error_description", "message", "error"] {
+                if let text = obj[key] as? String, !text.isEmpty { return text }
+            }
+        }
+        return String(data: data, encoding: .utf8) ?? ""
     }
 
     // MARK: Row building
@@ -291,6 +321,59 @@ final class CloudStore: ObservableObject {
         } catch {
             lastError = "Sign-in failed: \(error.localizedDescription)"
         }
+    }
+
+    /// Registers with email and password. True when the account was created (signed in, or waiting for email confirmation).
+    func register(email: String, password: String, fullName: String) async -> Bool {
+        guard let api else { lastError = CloudError.notConfigured.localizedDescription; return false }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            if let s = try await api.signUp(email: email, password: password, fullName: fullName) {
+                setSession(s)
+                status = "Account created. You're signed in."
+            } else {
+                status = "Account created. Check \(email) for a confirmation link, then log in."
+            }
+            lastError = nil
+            return true
+        } catch {
+            lastError = "Registration failed: \(error.localizedDescription)"
+            return false
+        }
+    }
+
+    func logIn(email: String, password: String) async -> Bool {
+        guard let api else { lastError = CloudError.notConfigured.localizedDescription; return false }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            setSession(try await api.signIn(email: email, password: password))
+            status = "Signed in."
+            lastError = nil
+            return true
+        } catch {
+            lastError = "Log in failed: \(error.localizedDescription)"
+            return false
+        }
+    }
+
+    func resetPassword(email: String) async {
+        guard let api else { lastError = CloudError.notConfigured.localizedDescription; return }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            try await api.resetPassword(email: email)
+            status = "If an account exists for \(email), a reset link is on its way."
+            lastError = nil
+        } catch {
+            lastError = "Could not send the reset email: \(error.localizedDescription)"
+        }
+    }
+
+    func clearMessages() {
+        status = nil
+        lastError = nil
     }
 
     func signOut() {
