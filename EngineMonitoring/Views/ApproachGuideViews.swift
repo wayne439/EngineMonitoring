@@ -63,7 +63,7 @@ struct ApproachGuideSection: View {
 struct ApproachCardView: View {
     let card: ApproachCard
     let basis: String
-    @AppStorage("N63KA.approachMode") private var modeRaw = FlyingMode.autopilot.rawValue
+    @AppStorage("EM.approachMode") private var modeRaw = FlyingMode.autopilot.rawValue
     @State private var current = 0
     @State private var briefDone: Set<Int> = []
     @State private var showBrief = true
@@ -228,7 +228,7 @@ private struct QuickLineRow: View {
 struct ApproachDetailView: View {
     let card: ApproachCard
     let basis: String
-    @AppStorage("N63KA.approachMode") private var modeRaw = FlyingMode.autopilot.rawValue
+    @AppStorage("EM.approachMode") private var modeRaw = FlyingMode.autopilot.rawValue
     @State private var done: Set<String> = []
 
     private var mode: FlyingMode { FlyingMode(rawValue: modeRaw) ?? .autopilot }

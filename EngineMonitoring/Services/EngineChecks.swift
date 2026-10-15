@@ -117,7 +117,7 @@ struct EngineCheckResult: Codable, Hashable, Sendable {
 }
 
 /// Run-up mag check, GAMI lean-test spread and the flight card for one log. Same methods as
-/// tools/n63ka_magcheck.py, tools/n63ka_gami.py and tools/n63ka_reportcard.py.
+/// the reference implementation, the reference implementation and the reference implementation.
 enum EngineChecks {
     static let air: Set<FlightPhase> = [.climb, .cruise, .descent]
 
@@ -187,7 +187,7 @@ enum EngineChecks {
         return s.count % 2 == 1 ? s[m] : (s[m - 1] + s[m]) / 2
     }
 
-    /// Linear-interpolated percentile (q 0...1), like tools/n63ka_flight.py pct().
+    /// Linear-interpolated percentile (q 0...1), like the reference implementation pct().
     static func percentile(_ v: [Double], _ q: Double) -> Double? {
         guard !v.isEmpty else { return nil }
         let s = v.sorted()

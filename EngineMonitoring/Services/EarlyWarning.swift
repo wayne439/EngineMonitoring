@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-/// Steady-cruise engine values for one flight, used to follow N63KA's engine across flights (early warning, trend charts).
+/// Steady-cruise engine values for one flight, used to follow the aircraft's engine across flights (early warning, trend charts).
 /// Only samples in cruise with steady power (±30 s) count, so flights are compared like for like.
 struct EngineTrendMetrics: Codable, Hashable, Sendable {
     /// Seconds of steady cruise in the flight (metrics are nil below `EarlyWarning.minSteadySeconds`).
@@ -151,7 +151,7 @@ struct TrendPoint: Hashable, Identifiable, Sendable {
     /// Flight hours from the first log to the end of this flight.
     let hours: Double
     let value: Double
-    /// Value corrected to N63KA's typical outside air temperature and fuel flow (equals `value` for uncorrected metrics).
+    /// Value corrected to the aircraft's typical outside air temperature and fuel flow (equals `value` for uncorrected metrics).
     let adjusted: Double
     var id: String { filename }
 }
@@ -215,7 +215,7 @@ struct EarlyWarningReport: Sendable {
 }
 
 /// Early warning across flights: looks for the slow changes that come BEFORE a failure (same method as
-/// tools/n63ka_early_warning.py, tuned on N63KA's 324 logs). For each metric: correct for outside air temperature and
+/// the reference implementation, tuned on the aircraft's 324 logs). For each metric: correct for outside air temperature and
 /// fuel flow on a rolling baseline (the 40 flights before the newest 5; at least 20 needed); SHIFT = newest 5 flights
 /// more than 2.5 sigma from normal the bad way; DRIFT = over the newest 10 flights a significant Mann-Kendall trend
 /// (z > 2.75), a fitted change over 1.5 sigma and the newest 3 flights already 1 sigma out. Hours to the threshold come
@@ -227,7 +227,7 @@ enum EarlyWarning {
     static let shiftSigma = 2.5, actSigma = 4.0
     static let driftZ = 2.75, driftChangeSigma = 1.5, driftRecentSigma = 1.0
     static let actHours = 10.0, minProjectSpanHours = 8.0, projectionHorizonHours = 25.0
-    static let source = "This aircraft's own history, corrected for outside air temperature and fuel flow; method in tools/n63ka_early_warning.py"
+    static let source = "This aircraft's own history, corrected for outside air temperature and fuel flow"
 
     struct Flight {
         let summary: FlightSummary

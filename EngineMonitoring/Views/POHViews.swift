@@ -125,7 +125,7 @@ struct POHPDFScreen: View {
     let url: URL
     let pdfPage: Int
     let title: String
-    @AppStorage("N63KA.pdfNightMode") private var nightMode = false
+    @AppStorage("EM.pdfNightMode") private var nightMode = false
 
     var body: some View {
         PDFViewer(url: url, initialPage: pdfPage)

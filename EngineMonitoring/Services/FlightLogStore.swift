@@ -5,10 +5,10 @@ final class FlightLogStore: ObservableObject {
     @Published private(set) var entries: [FlightLogEntry] = []
     @Published var lastError: String?
     @Published private(set) var isImporting = false
-    /// One compact summary per imported log; N63KA's normal ranges are built from these.
+    /// One compact summary per imported log; the aircraft's normal ranges are built from these.
     @Published private(set) var summaries: [String: FlightSummary] = [:]
     @Published private(set) var isSummarizing = false
-    /// Flights from the SharePoint data_log folder, bundled with the app (no CSV needed on the iPad).
+    /// Flights bundled with the app (none in Engine Monitoring; kept so older code paths still work).
     let bundled: BundledFlightHistory?
     private let bundledByName: [String: FlightSummary]
 
@@ -29,7 +29,7 @@ final class FlightLogStore: ObservableObject {
         Task { await refreshSummaries() }
     }
 
-    /// N63KA's normal ranges from every imported flight (optionally leaving one log out).
+    /// the aircraft's normal ranges from every imported flight (optionally leaving one log out).
     func baseline(excluding filename: String? = nil) -> Baseline {
         Baseline.build(from: summaries.values.filter { $0.filename != filename })
     }
@@ -92,6 +92,11 @@ final class FlightLogStore: ObservableObject {
         } catch {
             lastError = "Log could not be deleted: \(error.localizedDescription)"
         }
+    }
+
+    /// The stored copy of an imported log file (for cloud upload).
+    func fileURL(for entry: FlightLogEntry) -> URL {
+        library.directory.appendingPathComponent(entry.filename)
     }
 
     /// Summary for a flight (imported or bundled).

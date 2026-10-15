@@ -10,6 +10,7 @@ struct EngineMonitoringApp: App {
     @StateObject private var issues = IssueStore()
     @StateObject private var maintenance = MaintenanceStore()
     @StateObject private var aircraft = AircraftProfileStore()
+    @StateObject private var cloud = CloudStore()
 
     var body: some Scene {
         WindowGroup {
@@ -22,6 +23,7 @@ struct EngineMonitoringApp: App {
                 .environmentObject(issues)
                 .environmentObject(maintenance)
                 .environmentObject(aircraft)
+                .environmentObject(cloud)
         }
     }
 }

@@ -24,6 +24,10 @@
 	<string>public.app-category.navigation</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>EMSupabaseURL</key>
+	<string></string>
+	<key>EMSupabaseAnonKey</key>
+	<string></string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UIApplicationSceneManifest</key>

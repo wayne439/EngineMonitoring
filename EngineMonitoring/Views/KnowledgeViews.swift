@@ -406,7 +406,7 @@ struct FlightReportView: View {
         } header: {
             Text("Get a Second Opinion (Online)")
         } footer: {
-            Text("Share the report to SharePoint for the Claude post-flight review, or ask COPA. Community answers are not approved data.")
+            Text("Share the report with your A&P or another pilot. Community answers are not approved data.")
         }
     }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-/// Step-by-step approach guides for the Perspective / GFC 700 in N63KA (Resources/Data/approach_cards.json).
+/// Step-by-step approach guides for the Perspective / GFC 700 in the aircraft (Resources/Data/approach_cards.json).
 /// Training aids: steps marked APPROVED restate the POH; everything else must be checked by a CFII
 /// against the GFC 700 AFM supplement and the Cockpit Reference Guide.
 struct ApproachGuideBook: Codable, Sendable {

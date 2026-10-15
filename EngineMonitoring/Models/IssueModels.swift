@@ -22,9 +22,9 @@ enum IssueSeverity: String, Codable, CaseIterable, Comparable, Sendable {
 enum IssueOrigin: String, Codable, Sendable {
     /// Found in a Perspective data-card log.
     case engineData = "Engine data card"
-    /// Compared with N63KA's normal ranges from earlier flights.
+    /// Compared with the aircraft's normal ranges from earlier flights.
     case trend = "Trend vs normal"
-    /// From the maintenance records on SharePoint.
+    /// From the maintenance records on the owner's records.
     case records = "Maintenance records"
 }
 

@@ -194,7 +194,7 @@ struct MaintenanceEntryEditor: View {
     let item: MaintenanceItem
     @EnvironmentObject private var maintenance: MaintenanceStore
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("reviewerName") private var by = "Wayne"
+    @AppStorage("reviewerName") private var by = ""
     @State private var date = Date()
     @State private var values: [String: String] = [:]
     @State private var notes = ""

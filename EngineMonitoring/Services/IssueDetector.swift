@@ -6,7 +6,7 @@ enum IssueDetector {
     static let voltageDropThreshold = 2.0
 
     /// Issues in one log. Called when a log is summarized, so every imported log (and the bundled
-    /// history built from the SharePoint data_log folder) carries its own issues.
+    /// history built from the the owner's records data_log folder) carries its own issues.
     static func detect(log: PerspectiveLog, phases: [FlightPhase], starts: [StartRecord],
                        largestVolt1Drop: Double?, gpsFixLosses: Int) -> [FlightIssue] {
         let file = log.filename
@@ -131,7 +131,7 @@ enum IssueDetector {
         }
     }
 
-    // MARK: - Trends against N63KA's own normal
+    // MARK: - Trends against the aircraft's own normal
 
     /// Directions that matter for each metric (the other direction is not a concern).
     private static let trendWatch: [FlightMetric: Bool] = [   // true = high is the concern
@@ -144,7 +144,7 @@ enum IssueDetector {
 
     private static let cylinderMetrics: Set<FlightMetric> = [.chtMax, .cht1, .cht2, .cht3, .cht4, .cht5, .cht6]
 
-    /// Climb/cruise medians clearly outside N63KA's normal, for every flight against all the others.
+    /// Climb/cruise medians clearly outside the aircraft's normal, for every flight against all the others.
     /// The CHT metrics are combined into one "CHT" trend per flight (the cylinder furthest outside).
     static func trendIssues(_ summaries: [FlightSummary]) -> [FlightIssue] {
         let flights = summaries.filter(\.isFlight)

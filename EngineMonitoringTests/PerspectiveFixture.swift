@@ -1,6 +1,6 @@
 import Foundation
 
-/// Synthetic Perspective log in the real file format (header copied from an N63KA log).
+/// Synthetic Perspective log in the real file format (header format from a real Perspective log; identifiers replaced).
 /// 2026-07-15 09:00:00-07:00 to 09:02:00, 1 Hz:
 /// - 09:00:20-23 cranking (RPM 150), engine does not start (failed attempt)
 /// - 09:00:29-31 cranking (RPM 160), lowest bus 1 voltage 20.1 V at 09:00:30
@@ -10,7 +10,7 @@ import Foundation
 enum PerspectiveFixture {
     static let filename = "log_260715_090000_18AZ.csv"
     static let csv = #"""
-#airframe_info, log_version="1.00", airframe_name="Cirrus SR22 Turbo Normalized", unit_software_part_number="006-B0319-DG", unit_software_version="15.26", system_software_part_number="006-B0764-38", system_id="2157B6FAB", mode=NORMAL, 
+#airframe_info, log_version="1.00", airframe_name="Cirrus SR22 Turbo Normalized", unit_software_part_number="006-B0319-DG", unit_software_version="15.26", system_software_part_number="006-B0764-38", system_id="0000TEST0", mode=NORMAL, 
 #yyy-mm-dd, hh:mm:ss,   hh:mm,  ident,      degrees,      degrees, ft Baro,  inch,  ft msl, deg C,     kt,     kt,     fpm,    deg,    deg,      G,      G,   deg,   deg, volts, volts,  amps,      gph,   deg F,     psi,     Hg,    rpm,       %,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,   deg F,  ft wgs,  kt, enum,    deg,    MHz,    MHz,     MHz,     MHz,    fsd,    fsd,     kt,   deg,     nm,    deg,    deg,   bool,  enum,   enum,   deg,   deg,   fpm,   enum,   mt,    mt,     mt,    mt,     mt
   Lcl Date, Lcl Time, UTCOfst, AtvWpt,     Latitude,    Longitude,    AltB, BaroA,  AltMSL,   OAT,    IAS, GndSpd,    VSpd,  Pitch,   Roll,  LatAc, NormAc,   HDG,   TRK, volt1, volt2,  amp1, E1 FFlow, E1 OilT, E1 OilP, E1 MAP, E1 RPM, E1 %Pwr, E1 CHT1, E1 CHT2, E1 CHT3, E1 CHT4, E1 CHT5, E1 CHT6, E1 EGT1, E1 EGT2, E1 EGT3, E1 EGT4, E1 EGT5, E1 EGT6, E1 TIT1, E1 TIT2,  AltGPS, TAS, HSIS,    CRS,   NAV1,   NAV2,    COM1,    COM2,   HCDI,   VCDI, WndSpd, WndDr, WptDst, WptBrg, MagVar, AfcsOn, RollM, PitchM, RollC, PichC, VSpdG, GPSfix,  HAL,   VAL, HPLwas, HPLfd, VPLwas
 2026-07-15, 09:00:00, -07:00, , , , 1450.0, 30.01, , 25.0, 0.00, , , , , , , , , 24.8, 24.4, -20.0, 0.00, 100.0, 0.0, 29.9, 0.0, 0.00, 151.00, 152.00, 153.00, 154.00, 155.00, 156.00, 140.00, 140.00, 140.00, 140.00, 140.00, 140.00, 130.00, 130.00, , , GPS, , , , , , , , , , , , , 0, ROL, NONE, , , , NoSoln, , , , , 

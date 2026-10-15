@@ -32,7 +32,7 @@ struct PDFDocumentScreen: View {
     let document: KnowledgeDocument
     @EnvironmentObject private var repository: DocumentRepository
     /// Inverts page colors for night use. Stored per device.
-    @AppStorage("N63KA.pdfNightMode") private var nightMode = false
+    @AppStorage("EM.pdfNightMode") private var nightMode = false
     @State private var showingInfo = false
 
     var body: some View {

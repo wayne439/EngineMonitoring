@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Report card
 
-/// One line of a flight's report card: the value and where it sits among N63KA's earlier flights.
+/// One line of a flight's report card: the value and where it sits among the aircraft's earlier flights.
 struct ReportCardRow: Identifiable, Hashable, Sendable {
     let metric: ReportCard.Metric
     let value: Double
@@ -16,8 +16,8 @@ struct ReportCardRow: Identifiable, Hashable, Sendable {
     var id: String { metric.id }
 }
 
-/// About twenty numbers per flight, each with its percentile against N63KA's own earlier flights, so "is this normal
-/// for this airplane?" has an answer at a glance. Same numbers as tools/n63ka_reportcard.py.
+/// About twenty numbers per flight, each with its percentile against the aircraft's own earlier flights, so "is this normal
+/// for this airplane?" has an answer at a glance. Same numbers as the reference implementation.
 enum ReportCard {
     struct Metric: Hashable, Sendable {
         let id: String
@@ -178,7 +178,7 @@ struct TurboFinding: Identifiable, Hashable, Sendable {
     }
 }
 
-/// Takeoff power, full-throttle MAP by altitude (deck pressure) and the induction-leak check, each against N63KA's
+/// Takeoff power, full-throttle MAP by altitude (deck pressure) and the induction-leak check, each against the aircraft's
 /// own earlier flights (robust median and spread of the last 40). Same rules as tools/turbo_bt.py.
 enum TurboCheck {
     static let historyMax = 40, historyMin = 10
@@ -277,7 +277,7 @@ enum TurboCheck {
         }
     }
 
-    /// N63KA's normal full-throttle MAP per altitude band, and the newest flight's value.
+    /// the aircraft's normal full-throttle MAP per altitude band, and the newest flight's value.
     static func deckTable(_ summaries: [FlightSummary]) -> [(band: Int, normal: Double, flights: Int, latest: Double?)] {
         let cards = ReportCard.flights(summaries).compactMap { $0.engineChecks?.card }
         let latest = cards.last { !$0.deckMAP.isEmpty }
@@ -292,7 +292,7 @@ enum TurboCheck {
 // MARK: - A&P pre-shop report
 
 /// One page for the A&P before an annual or a squawk visit: what the engine data shows, by system, and what to look at.
-/// Recorded values and N63KA's own history only; advisory, never a diagnosis.
+/// Recorded values and the aircraft's own history only; advisory, never a diagnosis.
 enum PreShopReport {
     static func text(summaries: [FlightSummary], openIssues: [IssueGroup] = [], generated: Date = Date()) -> String {
         let flights = ReportCard.flights(summaries)
@@ -412,7 +412,7 @@ enum PreShopReport {
         if lookAt.isEmpty { t += "- Nothing specific from the engine data. Routine annual: compressions, borescope, plugs, mags, induction and exhaust.\n" }
         for (i, s) in lookAt.prefix(10).enumerated() { t += "\(i + 1). \(s)\n" }
         t += "\nMethods: run-up per POH 4-14; GAMI spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with this aircraft's own normal. "
-        t += "Logs: Garmin Perspective engine data card, 1 sample per second. Owner: Wayne Dickert.\n"
+        t += "Logs: engine monitor data card, 1 sample per second.\n"
         return t
     }
 }

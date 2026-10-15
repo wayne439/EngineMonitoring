@@ -45,7 +45,7 @@ struct IssueHistoryView: View {
                 .pickerStyle(.segmented)
                 Toggle("Show technique notes and info items", isOn: $includeInfo)
             } footer: {
-                Text(sourceLine + " Every WARNING, CAUTION and WATCH item needs a review; a new occurrence after a review brings it back here. Export the review log (share button) to SharePoint before each Claude engine-card review.")
+                Text(sourceLine + " Every WARNING, CAUTION and WATCH item needs a review; a new occurrence after a review brings it back here. Export the review log with the share button to send it to your A&P.")
             }
 
             if issues.isBuilding && issues.groups.isEmpty {
@@ -166,7 +166,7 @@ struct IssueDetailView: View {
     @EnvironmentObject private var logStore: FlightLogStore
     @EnvironmentObject private var poh: POHRepository
     @Environment(\.openURL) private var openURL
-    @AppStorage("reviewerName") private var reviewerName = "Wayne"
+    @AppStorage("reviewerName") private var reviewerName = ""
     @State private var showingReview = false
     @State private var copied = false
 
@@ -419,7 +419,7 @@ struct IssueReviewEditor: View {
     }
 }
 
-/// A flight from the bundled history (its CSV is on SharePoint, not on the iPad): summary values and issues.
+/// A flight from the bundled history (its CSV is on the owner's records, not on the iPad): summary values and issues.
 struct FlightSummaryView: View {
     let summary: FlightSummary
     @EnvironmentObject private var logStore: FlightLogStore
@@ -434,7 +434,7 @@ struct FlightSummaryView: View {
                     if let s = summary.phaseSeconds[p], s >= 60 { LabeledContent(p.rawValue, value: "\(s / 60) min") }
                 }
             } footer: {
-                Text("From the bundled engine data history. Import this CSV from SharePoint for the full post-flight report.")
+                Text("Import this log file for the full post-flight report.")
             }
 
             FlightTechniqueSection(summary: summary)

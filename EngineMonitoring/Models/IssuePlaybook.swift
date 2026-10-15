@@ -435,7 +435,7 @@ enum IssuePlaybook {
             copaTopic: "\(phase) \(name) \(high ? "higher" : "lower") than usual")
     }
 
-    // MARK: - Items from the maintenance records (SharePoint Cirrus/Records)
+    // MARK: - Items from the maintenance records (the owner's records Cirrus/Records)
 
     /// Issues raised by the aircraft's own records (open squawks, oil analysis). Nothing is bundled;
     /// these will come from the owner's records in a later version.

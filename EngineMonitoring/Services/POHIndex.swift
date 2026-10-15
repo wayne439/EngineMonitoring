@@ -1,6 +1,6 @@
 import Foundation
 
-/// Offline text index of the N63KA POH, generated from POH.pdf (one entry per PDF page).
+/// Offline text index of the the aircraft POH, generated from POH.pdf (one entry per PDF page).
 /// Text is machine-extracted: always verify against the printed POH page before acting.
 struct POHIndex: Codable, Sendable {
     struct DocumentInfo: Codable, Sendable {

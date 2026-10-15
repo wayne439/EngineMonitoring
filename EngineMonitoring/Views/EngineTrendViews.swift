@@ -144,7 +144,7 @@ struct TrendDetailView: View {
     }
 }
 
-/// Flights (x = flight hours), N63KA's normal band, the trend line and its projection, and the threshold.
+/// Flights (x = flight hours), the aircraft's normal band, the trend line and its projection, and the threshold.
 struct TrendChart: View {
     let analysis: TrendAnalysis
     let compact: Bool
