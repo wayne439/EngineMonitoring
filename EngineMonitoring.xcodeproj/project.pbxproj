@@ -1,0 +1,590 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00000000000000000000011C /* EngineMonitoringApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000011B /* EngineMonitoringApp.swift */; };
+		00000000000000000000011E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000011D /* ContentView.swift */; };
+		000000000000000000000120 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000011F /* Models.swift */; };
+		000000000000000000000122 /* DiagnosticsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000121 /* DiagnosticsModels.swift */; };
+		000000000000000000000124 /* DocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000123 /* DocumentRepository.swift */; };
+		000000000000000000000126 /* DiagnosticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000125 /* DiagnosticEngine.swift */; };
+		000000000000000000000128 /* DiagnosticEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000127 /* DiagnosticEventStore.swift */; };
+		00000000000000000000012A /* PerspectiveLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000129 /* PerspectiveLog.swift */; };
+		00000000000000000000012C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000012B /* Persistence.swift */; };
+		00000000000000000000012E /* FlightLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000012D /* FlightLogStore.swift */; };
+		000000000000000000000130 /* AircraftKnowledge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000012F /* AircraftKnowledge.swift */; };
+		000000000000000000000132 /* POHIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000131 /* POHIndex.swift */; };
+		000000000000000000000134 /* POHRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000133 /* POHRepository.swift */; };
+		000000000000000000000136 /* FlightAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000135 /* FlightAnalysis.swift */; };
+		000000000000000000000138 /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000137 /* PDFViewer.swift */; };
+		00000000000000000000013A /* AuthorityBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000139 /* AuthorityBadge.swift */; };
+		00000000000000000000013C /* LibraryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000013B /* LibraryViews.swift */; };
+		00000000000000000000013E /* DiagnosticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000013D /* DiagnosticsView.swift */; };
+		000000000000000000000140 /* POHViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000013F /* POHViews.swift */; };
+		000000000000000000000142 /* KnowledgeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000141 /* KnowledgeViews.swift */; };
+		000000000000000000000144 /* SystemHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000143 /* SystemHistoryView.swift */; };
+		000000000000000000000146 /* ApproachGuides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000145 /* ApproachGuides.swift */; };
+		000000000000000000000148 /* ApproachGuideViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000147 /* ApproachGuideViews.swift */; };
+		00000000000000000000014A /* IssueModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000149 /* IssueModels.swift */; };
+		00000000000000000000014C /* IssuePlaybook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000014B /* IssuePlaybook.swift */; };
+		00000000000000000000014E /* IssueDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000014D /* IssueDetector.swift */; };
+		000000000000000000000150 /* IssueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000014F /* IssueStore.swift */; };
+		000000000000000000000152 /* IssueHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000151 /* IssueHistoryView.swift */; };
+		000000000000000000000154 /* KneeboardPDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000153 /* KneeboardPDFView.swift */; };
+		000000000000000000000156 /* TechniqueAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000155 /* TechniqueAnalysis.swift */; };
+		000000000000000000000158 /* TechniqueViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000157 /* TechniqueViews.swift */; };
+		00000000000000000000015A /* MaintenanceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000159 /* MaintenanceModels.swift */; };
+		00000000000000000000015C /* MaintenanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000015B /* MaintenanceStore.swift */; };
+		00000000000000000000015E /* MaintenanceReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000015D /* MaintenanceReminders.swift */; };
+		000000000000000000000160 /* MaintenanceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000015F /* MaintenanceViews.swift */; };
+		000000000000000000000162 /* documents.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000161 /* documents.json */; };
+		000000000000000000000164 /* poh_index.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000163 /* poh_index.json */; };
+		000000000000000000000166 /* approach_cards.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000165 /* approach_cards.json */; };
+		000000000000000000000168 /* flight_history.json in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000167 /* flight_history.json */; };
+		00000000000000000000016A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000169 /* Assets.xcassets */; };
+		00000000000000000000016C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000016B /* PrivacyInfo.xcprivacy */; };
+		00000000000000000000016E /* EngineMonitoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000016D /* EngineMonitoringTests.swift */; };
+		000000000000000000000170 /* BundledContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000016F /* BundledContentTests.swift */; };
+		000000000000000000000172 /* PerspectiveFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000171 /* PerspectiveFixture.swift */; };
+		000000000000000000000174 /* FlightAnalysisTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000173 /* FlightAnalysisTests.swift */; };
+		000000000000000000000176 /* ApproachGuideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000175 /* ApproachGuideTests.swift */; };
+		000000000000000000000178 /* IssueHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000177 /* IssueHistoryTests.swift */; };
+		00000000000000000000017A /* TechniqueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000179 /* TechniqueTests.swift */; };
+		00000000000000000000017E /* ValveWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000017D /* ValveWatch.swift */; };
+		000000000000000000000180 /* ValveWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000017F /* ValveWatchTests.swift */; };
+		000000000000000000000182 /* ProbeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000181 /* ProbeCheck.swift */; };
+		000000000000000000000184 /* ProbeCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000183 /* ProbeCheckTests.swift */; };
+		000000000000000000000186 /* EarlyWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000185 /* EarlyWarning.swift */; };
+		000000000000000000000188 /* EngineTrendViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000187 /* EngineTrendViews.swift */; };
+		00000000000000000000018A /* EarlyWarningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000189 /* EarlyWarningTests.swift */; };
+		00000000000000000000018C /* EngineChecks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018B /* EngineChecks.swift */; };
+		00000000000000000000018E /* EngineHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018D /* EngineHistory.swift */; };
+		000000000000000000000190 /* EngineChecksViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018F /* EngineChecksViews.swift */; };
+		000000000000000000000192 /* EngineChecksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000191 /* EngineChecksTests.swift */; };
+		00000000000000000000017C /* MaintenanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000017B /* MaintenanceTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		00000000000000000000010F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000100 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 000000000000000000000105;
+			remoteInfo = EngineMonitoring;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		000000000000000000000106 /* Engine Monitoring.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Engine Monitoring.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000108 /* EngineMonitoringTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EngineMonitoringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00000000000000000000011A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00000000000000000000011B /* EngineMonitoringApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineMonitoringApp.swift; path = EngineMonitoringApp.swift; sourceTree = "<group>"; };
+		00000000000000000000011D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		00000000000000000000011F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Models/Models.swift; sourceTree = "<group>"; };
+		000000000000000000000121 /* DiagnosticsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiagnosticsModels.swift; path = Models/DiagnosticsModels.swift; sourceTree = "<group>"; };
+		000000000000000000000123 /* DocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DocumentRepository.swift; path = Services/DocumentRepository.swift; sourceTree = "<group>"; };
+		000000000000000000000125 /* DiagnosticEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiagnosticEngine.swift; path = Services/DiagnosticEngine.swift; sourceTree = "<group>"; };
+		000000000000000000000127 /* DiagnosticEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiagnosticEventStore.swift; path = Services/DiagnosticEventStore.swift; sourceTree = "<group>"; };
+		000000000000000000000129 /* PerspectiveLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PerspectiveLog.swift; path = Services/PerspectiveLog.swift; sourceTree = "<group>"; };
+		00000000000000000000012B /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Persistence.swift; path = Services/Persistence.swift; sourceTree = "<group>"; };
+		00000000000000000000012D /* FlightLogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlightLogStore.swift; path = Services/FlightLogStore.swift; sourceTree = "<group>"; };
+		00000000000000000000012F /* AircraftKnowledge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftKnowledge.swift; path = Models/AircraftKnowledge.swift; sourceTree = "<group>"; };
+		000000000000000000000131 /* POHIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = POHIndex.swift; path = Services/POHIndex.swift; sourceTree = "<group>"; };
+		000000000000000000000133 /* POHRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = POHRepository.swift; path = Services/POHRepository.swift; sourceTree = "<group>"; };
+		000000000000000000000135 /* FlightAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlightAnalysis.swift; path = Services/FlightAnalysis.swift; sourceTree = "<group>"; };
+		000000000000000000000137 /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PDFViewer.swift; path = Views/PDFViewer.swift; sourceTree = "<group>"; };
+		000000000000000000000139 /* AuthorityBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthorityBadge.swift; path = Views/AuthorityBadge.swift; sourceTree = "<group>"; };
+		00000000000000000000013B /* LibraryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryViews.swift; path = Views/LibraryViews.swift; sourceTree = "<group>"; };
+		00000000000000000000013D /* DiagnosticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiagnosticsView.swift; path = Views/DiagnosticsView.swift; sourceTree = "<group>"; };
+		00000000000000000000013F /* POHViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = POHViews.swift; path = Views/POHViews.swift; sourceTree = "<group>"; };
+		000000000000000000000141 /* KnowledgeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KnowledgeViews.swift; path = Views/KnowledgeViews.swift; sourceTree = "<group>"; };
+		000000000000000000000143 /* SystemHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SystemHistoryView.swift; path = Views/SystemHistoryView.swift; sourceTree = "<group>"; };
+		000000000000000000000145 /* ApproachGuides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ApproachGuides.swift; path = Models/ApproachGuides.swift; sourceTree = "<group>"; };
+		000000000000000000000147 /* ApproachGuideViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ApproachGuideViews.swift; path = Views/ApproachGuideViews.swift; sourceTree = "<group>"; };
+		000000000000000000000149 /* IssueModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssueModels.swift; path = Models/IssueModels.swift; sourceTree = "<group>"; };
+		00000000000000000000014B /* IssuePlaybook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssuePlaybook.swift; path = Models/IssuePlaybook.swift; sourceTree = "<group>"; };
+		00000000000000000000014D /* IssueDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssueDetector.swift; path = Services/IssueDetector.swift; sourceTree = "<group>"; };
+		00000000000000000000014F /* IssueStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssueStore.swift; path = Services/IssueStore.swift; sourceTree = "<group>"; };
+		000000000000000000000151 /* IssueHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssueHistoryView.swift; path = Views/IssueHistoryView.swift; sourceTree = "<group>"; };
+		000000000000000000000153 /* KneeboardPDFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KneeboardPDFView.swift; path = Views/KneeboardPDFView.swift; sourceTree = "<group>"; };
+		000000000000000000000155 /* TechniqueAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TechniqueAnalysis.swift; path = Services/TechniqueAnalysis.swift; sourceTree = "<group>"; };
+		000000000000000000000157 /* TechniqueViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TechniqueViews.swift; path = Views/TechniqueViews.swift; sourceTree = "<group>"; };
+		000000000000000000000159 /* MaintenanceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceModels.swift; path = Models/MaintenanceModels.swift; sourceTree = "<group>"; };
+		00000000000000000000015B /* MaintenanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceStore.swift; path = Services/MaintenanceStore.swift; sourceTree = "<group>"; };
+		00000000000000000000015D /* MaintenanceReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceReminders.swift; path = Services/MaintenanceReminders.swift; sourceTree = "<group>"; };
+		00000000000000000000015F /* MaintenanceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceViews.swift; path = Views/MaintenanceViews.swift; sourceTree = "<group>"; };
+		000000000000000000000161 /* documents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = documents.json; path = Resources/Data/documents.json; sourceTree = "<group>"; };
+		000000000000000000000163 /* poh_index.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = poh_index.json; path = Resources/Data/poh_index.json; sourceTree = "<group>"; };
+		000000000000000000000165 /* approach_cards.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = approach_cards.json; path = Resources/Data/approach_cards.json; sourceTree = "<group>"; };
+		000000000000000000000167 /* flight_history.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = flight_history.json; path = Resources/Data/flight_history.json; sourceTree = "<group>"; };
+		000000000000000000000169 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Assets.xcassets; sourceTree = "<group>"; };
+		00000000000000000000016B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		00000000000000000000016D /* EngineMonitoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineMonitoringTests.swift; path = EngineMonitoringTests.swift; sourceTree = "<group>"; };
+		00000000000000000000016F /* BundledContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BundledContentTests.swift; path = BundledContentTests.swift; sourceTree = "<group>"; };
+		000000000000000000000171 /* PerspectiveFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PerspectiveFixture.swift; path = PerspectiveFixture.swift; sourceTree = "<group>"; };
+		000000000000000000000173 /* FlightAnalysisTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlightAnalysisTests.swift; path = FlightAnalysisTests.swift; sourceTree = "<group>"; };
+		000000000000000000000175 /* ApproachGuideTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ApproachGuideTests.swift; path = ApproachGuideTests.swift; sourceTree = "<group>"; };
+		000000000000000000000177 /* IssueHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssueHistoryTests.swift; path = IssueHistoryTests.swift; sourceTree = "<group>"; };
+		000000000000000000000179 /* TechniqueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TechniqueTests.swift; path = TechniqueTests.swift; sourceTree = "<group>"; };
+		00000000000000000000017D /* ValveWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValveWatch.swift; path = Services/ValveWatch.swift; sourceTree = "<group>"; };
+		00000000000000000000017F /* ValveWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValveWatchTests.swift; path = ValveWatchTests.swift; sourceTree = "<group>"; };
+		000000000000000000000181 /* ProbeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProbeCheck.swift; path = Services/ProbeCheck.swift; sourceTree = "<group>"; };
+		000000000000000000000183 /* ProbeCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProbeCheckTests.swift; path = ProbeCheckTests.swift; sourceTree = "<group>"; };
+		000000000000000000000185 /* EarlyWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EarlyWarning.swift; path = Services/EarlyWarning.swift; sourceTree = "<group>"; };
+		000000000000000000000187 /* EngineTrendViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineTrendViews.swift; path = Views/EngineTrendViews.swift; sourceTree = "<group>"; };
+		000000000000000000000189 /* EarlyWarningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EarlyWarningTests.swift; path = EarlyWarningTests.swift; sourceTree = "<group>"; };
+		00000000000000000000018B /* EngineChecks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecks.swift; path = Services/EngineChecks.swift; sourceTree = "<group>"; };
+		00000000000000000000018D /* EngineHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineHistory.swift; path = Services/EngineHistory.swift; sourceTree = "<group>"; };
+		00000000000000000000018F /* EngineChecksViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecksViews.swift; path = Views/EngineChecksViews.swift; sourceTree = "<group>"; };
+		000000000000000000000191 /* EngineChecksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecksTests.swift; path = EngineChecksTests.swift; sourceTree = "<group>"; };
+		00000000000000000000017B /* MaintenanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaintenanceTests.swift; path = MaintenanceTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		00000000000000000000010B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000010E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		000000000000000000000101 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000103 /* EngineMonitoring */,
+				000000000000000000000104 /* EngineMonitoringTests */,
+				000000000000000000000102 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		000000000000000000000102 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000106 /* Engine Monitoring.app */,
+				000000000000000000000108 /* EngineMonitoringTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		000000000000000000000103 /* EngineMonitoring */ = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000011B /* EngineMonitoringApp.swift */,
+				00000000000000000000011D /* ContentView.swift */,
+				00000000000000000000011F /* Models.swift */,
+				000000000000000000000121 /* DiagnosticsModels.swift */,
+				000000000000000000000123 /* DocumentRepository.swift */,
+				000000000000000000000125 /* DiagnosticEngine.swift */,
+				000000000000000000000127 /* DiagnosticEventStore.swift */,
+				000000000000000000000129 /* PerspectiveLog.swift */,
+				00000000000000000000012B /* Persistence.swift */,
+				00000000000000000000012D /* FlightLogStore.swift */,
+				00000000000000000000012F /* AircraftKnowledge.swift */,
+				000000000000000000000131 /* POHIndex.swift */,
+				000000000000000000000133 /* POHRepository.swift */,
+				000000000000000000000135 /* FlightAnalysis.swift */,
+				000000000000000000000137 /* PDFViewer.swift */,
+				000000000000000000000139 /* AuthorityBadge.swift */,
+				00000000000000000000013B /* LibraryViews.swift */,
+				00000000000000000000013D /* DiagnosticsView.swift */,
+				00000000000000000000013F /* POHViews.swift */,
+				000000000000000000000141 /* KnowledgeViews.swift */,
+				000000000000000000000143 /* SystemHistoryView.swift */,
+				000000000000000000000145 /* ApproachGuides.swift */,
+				000000000000000000000147 /* ApproachGuideViews.swift */,
+				000000000000000000000149 /* IssueModels.swift */,
+				00000000000000000000014B /* IssuePlaybook.swift */,
+				00000000000000000000014D /* IssueDetector.swift */,
+				00000000000000000000014F /* IssueStore.swift */,
+				000000000000000000000151 /* IssueHistoryView.swift */,
+				000000000000000000000153 /* KneeboardPDFView.swift */,
+				000000000000000000000155 /* TechniqueAnalysis.swift */,
+				00000000000000000000017D /* ValveWatch.swift */,
+				000000000000000000000181 /* ProbeCheck.swift */,
+				000000000000000000000185 /* EarlyWarning.swift */,
+				000000000000000000000187 /* EngineTrendViews.swift */,
+				00000000000000000000018B /* EngineChecks.swift */,
+				00000000000000000000018D /* EngineHistory.swift */,
+				00000000000000000000018F /* EngineChecksViews.swift */,
+				000000000000000000000157 /* TechniqueViews.swift */,
+				000000000000000000000159 /* MaintenanceModels.swift */,
+				00000000000000000000015B /* MaintenanceStore.swift */,
+				00000000000000000000015D /* MaintenanceReminders.swift */,
+				00000000000000000000015F /* MaintenanceViews.swift */,
+				00000000000000000000011A /* Info.plist */,
+				000000000000000000000161 /* documents.json */,
+				000000000000000000000163 /* poh_index.json */,
+				000000000000000000000165 /* approach_cards.json */,
+				000000000000000000000167 /* flight_history.json */,
+				000000000000000000000169 /* Assets.xcassets */,
+				00000000000000000000016B /* PrivacyInfo.xcprivacy */,
+			);
+			path = EngineMonitoring;
+			sourceTree = "<group>";
+		};
+		000000000000000000000104 /* EngineMonitoringTests */ = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000016D /* EngineMonitoringTests.swift */,
+				00000000000000000000016F /* BundledContentTests.swift */,
+				000000000000000000000171 /* PerspectiveFixture.swift */,
+				000000000000000000000173 /* FlightAnalysisTests.swift */,
+				000000000000000000000175 /* ApproachGuideTests.swift */,
+				000000000000000000000177 /* IssueHistoryTests.swift */,
+				000000000000000000000179 /* TechniqueTests.swift */,
+				00000000000000000000017B /* MaintenanceTests.swift */,
+				00000000000000000000017F /* ValveWatchTests.swift */,
+				000000000000000000000183 /* ProbeCheckTests.swift */,
+				000000000000000000000189 /* EarlyWarningTests.swift */,
+				000000000000000000000191 /* EngineChecksTests.swift */,
+			);
+			path = EngineMonitoringTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		000000000000000000000105 /* EngineMonitoring */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000000000112 /* Build configuration list for PBXNativeTarget "EngineMonitoring" */;
+			buildPhases = (
+				000000000000000000000109 /* Sources */,
+				00000000000000000000010B /* Frameworks */,
+				00000000000000000000010A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EngineMonitoring;
+			productName = EngineMonitoring;
+			productReference = 000000000000000000000106 /* Engine Monitoring.app */;
+			productType = "com.apple.product-type.application";
+		};
+		000000000000000000000107 /* EngineMonitoringTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000000000113 /* Build configuration list for PBXNativeTarget "EngineMonitoringTests" */;
+			buildPhases = (
+				00000000000000000000010C /* Sources */,
+				00000000000000000000010E /* Frameworks */,
+				00000000000000000000010D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				000000000000000000000110 /* PBXTargetDependency */,
+			);
+			name = EngineMonitoringTests;
+			productName = EngineMonitoringTests;
+			productReference = 000000000000000000000108 /* EngineMonitoringTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		000000000000000000000100 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					000000000000000000000105 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					000000000000000000000107 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 000000000000000000000105;
+					};
+				};
+			};
+			buildConfigurationList = 000000000000000000000111 /* Build configuration list for PBXProject "EngineMonitoring" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 000000000000000000000101;
+			productRefGroup = 000000000000000000000102 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				000000000000000000000105 /* EngineMonitoring */,
+				000000000000000000000107 /* EngineMonitoringTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		00000000000000000000010A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000162 /* documents.json in Resources */,
+				000000000000000000000164 /* poh_index.json in Resources */,
+				000000000000000000000166 /* approach_cards.json in Resources */,
+				000000000000000000000168 /* flight_history.json in Resources */,
+				00000000000000000000016A /* Assets.xcassets in Resources */,
+				00000000000000000000016C /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000010D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		000000000000000000000109 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000011C /* EngineMonitoringApp.swift in Sources */,
+				00000000000000000000011E /* ContentView.swift in Sources */,
+				000000000000000000000120 /* Models.swift in Sources */,
+				000000000000000000000122 /* DiagnosticsModels.swift in Sources */,
+				000000000000000000000124 /* DocumentRepository.swift in Sources */,
+				000000000000000000000126 /* DiagnosticEngine.swift in Sources */,
+				000000000000000000000128 /* DiagnosticEventStore.swift in Sources */,
+				00000000000000000000012A /* PerspectiveLog.swift in Sources */,
+				00000000000000000000012C /* Persistence.swift in Sources */,
+				00000000000000000000012E /* FlightLogStore.swift in Sources */,
+				000000000000000000000130 /* AircraftKnowledge.swift in Sources */,
+				000000000000000000000132 /* POHIndex.swift in Sources */,
+				000000000000000000000134 /* POHRepository.swift in Sources */,
+				000000000000000000000136 /* FlightAnalysis.swift in Sources */,
+				000000000000000000000138 /* PDFViewer.swift in Sources */,
+				00000000000000000000013A /* AuthorityBadge.swift in Sources */,
+				00000000000000000000013C /* LibraryViews.swift in Sources */,
+				00000000000000000000013E /* DiagnosticsView.swift in Sources */,
+				000000000000000000000140 /* POHViews.swift in Sources */,
+				000000000000000000000142 /* KnowledgeViews.swift in Sources */,
+				000000000000000000000144 /* SystemHistoryView.swift in Sources */,
+				000000000000000000000146 /* ApproachGuides.swift in Sources */,
+				000000000000000000000148 /* ApproachGuideViews.swift in Sources */,
+				00000000000000000000014A /* IssueModels.swift in Sources */,
+				00000000000000000000014C /* IssuePlaybook.swift in Sources */,
+				00000000000000000000014E /* IssueDetector.swift in Sources */,
+				000000000000000000000150 /* IssueStore.swift in Sources */,
+				000000000000000000000152 /* IssueHistoryView.swift in Sources */,
+				000000000000000000000154 /* KneeboardPDFView.swift in Sources */,
+				000000000000000000000156 /* TechniqueAnalysis.swift in Sources */,
+				00000000000000000000017E /* ValveWatch.swift in Sources */,
+				000000000000000000000182 /* ProbeCheck.swift in Sources */,
+				000000000000000000000186 /* EarlyWarning.swift in Sources */,
+				000000000000000000000188 /* EngineTrendViews.swift in Sources */,
+				00000000000000000000018C /* EngineChecks.swift in Sources */,
+				00000000000000000000018E /* EngineHistory.swift in Sources */,
+				000000000000000000000190 /* EngineChecksViews.swift in Sources */,
+				000000000000000000000158 /* TechniqueViews.swift in Sources */,
+				00000000000000000000015A /* MaintenanceModels.swift in Sources */,
+				00000000000000000000015C /* MaintenanceStore.swift in Sources */,
+				00000000000000000000015E /* MaintenanceReminders.swift in Sources */,
+				000000000000000000000160 /* MaintenanceViews.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		00000000000000000000010C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00000000000000000000016E /* EngineMonitoringTests.swift in Sources */,
+				000000000000000000000170 /* BundledContentTests.swift in Sources */,
+				000000000000000000000172 /* PerspectiveFixture.swift in Sources */,
+				000000000000000000000174 /* FlightAnalysisTests.swift in Sources */,
+				000000000000000000000176 /* ApproachGuideTests.swift in Sources */,
+				000000000000000000000178 /* IssueHistoryTests.swift in Sources */,
+				00000000000000000000017A /* TechniqueTests.swift in Sources */,
+				00000000000000000000017C /* MaintenanceTests.swift in Sources */,
+				000000000000000000000180 /* ValveWatchTests.swift in Sources */,
+				000000000000000000000184 /* ProbeCheckTests.swift in Sources */,
+				00000000000000000000018A /* EarlyWarningTests.swift in Sources */,
+				000000000000000000000192 /* EngineChecksTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		000000000000000000000110 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 000000000000000000000105 /* EngineMonitoring */;
+			targetProxy = 00000000000000000000010F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		000000000000000000000114 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		000000000000000000000115 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		000000000000000000000116 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D64ZNA8J2P;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = EngineMonitoring/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
+				PRODUCT_MODULE_NAME = EngineMonitoring;
+				PRODUCT_NAME = "Engine Monitoring";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		000000000000000000000117 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D64ZNA8J2P;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = EngineMonitoring/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
+				PRODUCT_MODULE_NAME = EngineMonitoring;
+				PRODUCT_NAME = "Engine Monitoring";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		000000000000000000000118 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D64ZNA8J2P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Engine Monitoring.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Engine Monitoring";
+			};
+			name = Debug;
+		};
+		000000000000000000000119 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D64ZNA8J2P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Engine Monitoring.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Engine Monitoring";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		000000000000000000000111 /* Build configuration list for PBXProject "EngineMonitoring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000114 /* Debug */,
+				000000000000000000000115 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		000000000000000000000112 /* Build configuration list for PBXNativeTarget "EngineMonitoring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000116 /* Debug */,
+				000000000000000000000117 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		000000000000000000000113 /* Build configuration list for PBXNativeTarget "EngineMonitoringTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000118 /* Debug */,
+				000000000000000000000119 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 000000000000000000000100 /* Project object */;
+}

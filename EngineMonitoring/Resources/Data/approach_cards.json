@@ -1,0 +1,5761 @@
+{
+ "title": "N63KA Perspective Approach Guides",
+ "revision": "v5 (2026-10-06)",
+ "basis": "Cirrus SR22 POH 13772-002 Reissue A (Sections 2 and 4); Perspective system software 0764.38; GFC 700 with GMC 705 mode controller. GFC 700 AFM Supplement 13772-135 and the Cockpit Reference Guide 190-00821 are not on file: verify button names and annunciations against them.",
+ "cards": [
+  {
+   "id": "ils",
+   "title": "ILS",
+   "subtitle": "Localizer + glideslope | DA",
+   "minimaType": "DA",
+   "navSource": "LOC1",
+   "verticalGuidance": "Glideslope (approved)",
+   "keyTrap": "The ILS must be flown on LOC1, never on GPS (POH 2-19 item 4b). Capture the glideslope from below.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "ils-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the DA, then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Tune and identify",
+     "steps": [
+      {
+       "action": "Make the ILS frequency ACTIVE in NAV1. Loading the approach usually tunes it; if not, tune it with the NAV knob and press the NAV swap key.",
+       "controls": [
+        "NAV knob",
+        "NAV swap"
+       ],
+       "when": "Before the IAF or vectors to final",
+       "verify": "Correct frequency in NAV1 ACTIVE (left/top position).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-1-0"
+      },
+      {
+       "action": "Identify the station: select NAV1 on the audio panel and listen to the Morse code.",
+       "controls": [
+        "Audio panel NAV1"
+       ],
+       "when": "Before the IAF",
+       "verify": "Morse matches the chart identifier.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-1-1"
+      },
+      {
+       "action": "Course: the system sets the final course when the CDI switches to LOC1; check it matches the chart.",
+       "controls": [],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-1-2"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-2-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-2-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-2-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-2-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "ils-2-4"
+      }
+     ]
+    },
+    {
+     "title": "Intercept and arm",
+     "steps": [
+      {
+       "action": "Check the CDI: with the ILS loaded and active, it switches from GPS to LOC1 automatically as you turn inbound on the final course. If it has not, press the CDI softkey until LOC1.",
+       "controls": [
+        "CDI softkey"
+       ],
+       "when": "Inbound, before the FAF",
+       "verify": "HSI shows LOC1 in green; course pointer on the final course.",
+       "mode": "both",
+       "source": "POH 2-19 item 4c (VOR/ILS data must be displayed)",
+       "authority": "TRAINING",
+       "id": "ils-3-0"
+      },
+      {
+       "action": "Cleared for the approach and on an intercept heading (30 degrees or less): press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "On the intercept heading",
+       "verify": "FMA: LOC armed (white) and GS armed (white); HDG and ALT active (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-3-1"
+      },
+      {
+       "action": "LOC captures: lateral becomes LOC (green). Keep ALT until the glideslope.",
+       "controls": [],
+       "when": "On the localizer",
+       "verify": "FMA: LOC (green), GS (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-3-2"
+      },
+      {
+       "action": "Turn on the FD and press APR for command bars, or fly raw data: center the green CDI and wait for the glideslope diamond.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "On the intercept heading",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-3-3"
+      }
+     ]
+    },
+    {
+     "title": "Final approach",
+     "steps": [
+      {
+       "action": "Glideslope captures from below at the glideslope intercept altitude: the autopilot starts down. Reduce power to hold your approach speed.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "Glideslope intercept",
+       "verify": "FMA: LOC and GS (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-4-0"
+      },
+      {
+       "action": "Set the ALT SEL knob to the missed approach altitude (the autopilot will not level at it while on the glideslope).",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "After GS capture",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-4-1"
+      },
+      {
+       "action": "At the glideslope: reduce power to start down; keep the CDI and glideslope centered.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "Glideslope intercept",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-4-2"
+      },
+      {
+       "action": "Set the ALT SEL knob to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "After glideslope intercept",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-4-3"
+      },
+      {
+       "action": "Cross-check altitude at the FAF / outer marker with the chart.",
+       "controls": [],
+       "when": "At the FAF",
+       "verify": "Altimeter matches the chart crossing altitude.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-4-4"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Disconnect the autopilot no lower than the minimum use height in the GFC 700 AFM supplement, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Approaching DA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-5-0"
+      },
+      {
+       "action": "Continue only with the required visual references (14 CFR 91.175); otherwise go around immediately.",
+       "controls": [],
+       "when": "At DA",
+       "verify": "Altimeter at the minimums bug.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-5-1"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "ils-5-2"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "ils-6-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-6-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT). If the CDI is still on LOC1 and the missed approach is flown on GPS, press the CDI softkey until GPS.",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-6-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "ils-6-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-6-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "ils-6-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are DA. The glideslope is approved vertical guidance."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the ILS",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "INTERCEPT",
+       "do": [
+        "APR"
+       ],
+       "check": "LOC GS white"
+      },
+      {
+       "when": "ON FINAL",
+       "do": [
+        "LOC1 on HSI?"
+       ],
+       "check": "CDI if not"
+      },
+      {
+       "when": "GS CAPTURE",
+       "do": [
+        "ALT SEL MAA",
+        "Power back"
+       ],
+       "check": "LOC GS green"
+      },
+      {
+       "when": "DA",
+       "do": [
+        "AP DISC"
+       ],
+       "check": "Visual? Land. No? Missed."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the ILS",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "INTERCEPT",
+       "do": [
+        "FD",
+        "APR"
+       ],
+       "check": "Center LOC"
+      },
+      {
+       "when": "ON FINAL",
+       "do": [
+        "LOC1 on HSI?"
+       ],
+       "check": "CDI if not"
+      },
+      {
+       "when": "GLIDESLOPE",
+       "do": [
+        "Power back",
+        "ALT SEL MAA"
+       ],
+       "check": "Needles centered"
+      },
+      {
+       "when": "DA",
+       "do": [],
+       "check": "Visual? Land. No? Missed."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "loc",
+   "title": "LOC",
+   "subtitle": "Localizer only | MDA",
+   "minimaType": "MDA",
+   "navSource": "LOC1",
+   "verticalGuidance": "None",
+   "keyTrap": "No glideslope: protect the MDA with ALT SEL. The ILS must be flown on LOC1, never on GPS (POH 2-19 item 4b).",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "loc-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the MDA (round up to the next 10 ft if needed), then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Tune and identify",
+     "steps": [
+      {
+       "action": "Make the LOC frequency ACTIVE in NAV1. Loading the approach usually tunes it; if not, tune it with the NAV knob and press the NAV swap key.",
+       "controls": [
+        "NAV knob",
+        "NAV swap"
+       ],
+       "when": "Before the IAF or vectors to final",
+       "verify": "Correct frequency in NAV1 ACTIVE (left/top position).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-1-0"
+      },
+      {
+       "action": "Identify the station: select NAV1 on the audio panel and listen to the Morse code.",
+       "controls": [
+        "Audio panel NAV1"
+       ],
+       "when": "Before the IAF",
+       "verify": "Morse matches the chart identifier.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-1-1"
+      },
+      {
+       "action": "Course: the system sets the final course when the CDI switches to LOC1; check it matches the chart.",
+       "controls": [],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-1-2"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-2-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-2-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-2-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-2-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "loc-2-4"
+      }
+     ]
+    },
+    {
+     "title": "Intercept and arm",
+     "steps": [
+      {
+       "action": "Check the CDI: it switches from GPS to LOC1 automatically as you turn inbound. If not, press the CDI softkey until LOC1.",
+       "controls": [
+        "CDI softkey"
+       ],
+       "when": "Inbound, before the FAF",
+       "verify": "HSI shows LOC1 in green.",
+       "mode": "both",
+       "source": "POH 2-19 item 4c",
+       "authority": "TRAINING",
+       "id": "loc-3-0"
+      },
+      {
+       "action": "Cleared and on an intercept heading: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "On the intercept heading",
+       "verify": "FMA: LOC armed (white), then LOC (green). No GS.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-3-1"
+      },
+      {
+       "action": "Center the green CDI; FD with APR gives lateral command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "On the intercept heading",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-3-2"
+      }
+     ]
+    },
+    {
+     "title": "Final approach (step-downs to MDA)",
+     "steps": [
+      {
+       "action": "Set the ALT SEL knob to the next step-down altitude, then the MDA (round up).",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-4-0"
+      },
+      {
+       "action": "Press VS and set about 600-800 ft/min down with the NOSE UP/DN wheel.",
+       "controls": [
+        "VS",
+        "NOSE UP/DN wheel"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: VS (green), ALTS armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-4-1"
+      },
+      {
+       "action": "Reduce power and descend about 600-800 ft/min to each step-down, then the MDA.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-4-2"
+      },
+      {
+       "action": "Start the timer at the FAF if the MAP is defined by time: TMR/REF softkey, START.",
+       "controls": [
+        "TMR/REF softkey"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-4-3"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Level at the MDA (ALT captures at the ALT SEL value). Do not descend below the MDA without the required visual references (14 CFR 91.175).",
+       "controls": [
+        "ALT"
+       ],
+       "when": "At MDA",
+       "verify": "FMA: ALT (green) at the MDA.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-5-0"
+      },
+      {
+       "action": "Fly level to the missed approach point. If not visual at the MAP, go around.",
+       "controls": [],
+       "when": "MDA to MAP",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-5-1"
+      },
+      {
+       "action": "Disconnect the autopilot before leaving the MDA to land, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Visual at MDA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-5-2"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "loc-5-3"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "loc-6-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-6-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT). If the CDI is still on LOC1 and the missed approach is flown on GPS, press the CDI softkey until GPS.",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-6-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "loc-6-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-6-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "loc-6-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are MDA. Any vertical guidance shown is advisory only (POH 2-19 item 4d)."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the LOC",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "INTERCEPT",
+       "do": [
+        "APR"
+       ],
+       "check": "LOC white"
+      },
+      {
+       "when": "ON FINAL",
+       "do": [
+        "LOC1 on HSI?"
+       ],
+       "check": "CDI if not"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "VS −700",
+        "Timer"
+       ],
+       "check": "ALTS white"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "ALT holds"
+       ],
+       "check": "To MAP. Visual? AP off, land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the LOC",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "INTERCEPT",
+       "do": [
+        "FD",
+        "APR"
+       ],
+       "check": "Center LOC"
+      },
+      {
+       "when": "ON FINAL",
+       "do": [
+        "LOC1 on HSI?"
+       ],
+       "check": "CDI if not"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "Down 700 fpm",
+        "Timer"
+       ],
+       "check": null
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "Level off"
+       ],
+       "check": "To MAP. Visual? Land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "vor",
+   "title": "VOR",
+   "subtitle": "VOR course | MDA",
+   "minimaType": "MDA",
+   "navSource": "VOR1",
+   "verticalGuidance": "None",
+   "keyTrap": "The system will not switch the CDI to VOR for you: press CDI until VOR1 and set the course yourself.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "vor-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the MDA (round up to the next 10 ft if needed), then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Tune and identify",
+     "steps": [
+      {
+       "action": "Make the VOR frequency ACTIVE in NAV1. Loading the approach usually tunes it; if not, tune it with the NAV knob and press the NAV swap key.",
+       "controls": [
+        "NAV knob",
+        "NAV swap"
+       ],
+       "when": "Before the IAF or vectors to final",
+       "verify": "Correct frequency in NAV1 ACTIVE (left/top position).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-1-0"
+      },
+      {
+       "action": "Identify the station: select NAV1 on the audio panel and listen to the Morse code.",
+       "controls": [
+        "Audio panel NAV1"
+       ],
+       "when": "Before the IAF",
+       "verify": "Morse matches the chart identifier.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-1-1"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-2-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-2-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-2-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-2-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "vor-2-4"
+      }
+     ]
+    },
+    {
+     "title": "Switch to VOR and arm",
+     "steps": [
+      {
+       "action": "Press the CDI softkey until VOR1. The system does NOT switch to VOR automatically for a VOR approach, and the final course must be flown on VOR1, not GPS.",
+       "controls": [
+        "CDI softkey"
+       ],
+       "when": "Before turning inbound, well before the FAF",
+       "verify": "HSI shows VOR1 in green with the TO/FROM flag.",
+       "mode": "both",
+       "source": "POH 2-19 items 4b-4c (approaches not approved for GPS need VOR data on the display)",
+       "authority": "TRAINING",
+       "id": "vor-3-0"
+      },
+      {
+       "action": "Set the CRS knob to the final approach course (the system does not set it for VOR).",
+       "controls": [
+        "CRS knob"
+       ],
+       "when": "After switching to VOR1",
+       "verify": "Course pointer on the final course.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-3-1"
+      },
+      {
+       "action": "Cleared and established inbound or on an intercept heading: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Inbound",
+       "verify": "FMA: VAPP armed (white), then VAPP (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-3-2"
+      },
+      {
+       "action": "Center the green CDI; FD with APR gives lateral command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Inbound",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-3-3"
+      }
+     ]
+    },
+    {
+     "title": "Final approach (step-downs to MDA)",
+     "steps": [
+      {
+       "action": "Set the ALT SEL knob to the next step-down altitude, then the MDA (round up).",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "Before each step-down",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-4-0"
+      },
+      {
+       "action": "Press VS and set about 600-800 ft/min down with the NOSE UP/DN wheel.",
+       "controls": [
+        "VS",
+        "NOSE UP/DN wheel"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: VAPP and VS (green), ALTS armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-4-1"
+      },
+      {
+       "action": "Reduce power and descend about 600-800 ft/min.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-4-2"
+      },
+      {
+       "action": "Start the timer at the FAF if the MAP is defined by time: TMR/REF softkey, START.",
+       "controls": [
+        "TMR/REF softkey"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-4-3"
+      },
+      {
+       "action": "Station passage (if the VOR is on the field): the TO/FROM flag flips; keep tracking the outbound course.",
+       "controls": [],
+       "when": "Over the VOR",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-4-4"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Level at the MDA (ALT captures at the ALT SEL value). Do not descend below the MDA without the required visual references (14 CFR 91.175).",
+       "controls": [
+        "ALT"
+       ],
+       "when": "At MDA",
+       "verify": "FMA: ALT (green) at the MDA.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-5-0"
+      },
+      {
+       "action": "Fly level to the missed approach point. If not visual at the MAP, go around.",
+       "controls": [],
+       "when": "MDA to MAP",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-5-1"
+      },
+      {
+       "action": "Disconnect the autopilot before leaving the MDA to land, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Visual at MDA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-5-2"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "vor-5-3"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "vor-6-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-6-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT). If the CDI is still on VOR1 and the missed approach is flown on GPS, press the CDI softkey until GPS.",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-6-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "vor-6-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-6-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-6-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are MDA. Any vertical guidance shown is advisory only (POH 2-19 item 4d).",
+    "If the chart title includes 'or GPS' you may fly it as a GPS approach instead; otherwise the final must be on VOR1."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the VOR",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "Set up VOR guidance",
+       "keys": [
+        "CDI softkey → VOR1",
+        "CRS knob → final course"
+       ],
+       "note": "CDI cycles GPS → VOR1/LOC1 → VOR2/LOC2 → GPS. Push CRS to center the needle."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "BEFORE FAF",
+       "do": [
+        "CDI → VOR1",
+        "CRS → final",
+        "APR"
+       ],
+       "check": "VOR1 green · VAPP"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "VS −700",
+        "Timer"
+       ],
+       "check": "ALTS white"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "ALT holds"
+       ],
+       "check": "To MAP. Visual? AP off, land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "CDI → GPS",
+        "AP",
+        "NAV · FLC"
+       ],
+       "check": "If missed is GPS"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the VOR",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "Set up VOR guidance",
+       "keys": [
+        "CDI softkey → VOR1",
+        "CRS knob → final course"
+       ],
+       "note": "CDI cycles GPS → VOR1/LOC1 → VOR2/LOC2 → GPS. Push CRS to center the needle."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "BEFORE FAF",
+       "do": [
+        "CDI → VOR1",
+        "CRS → final"
+       ],
+       "check": "VOR1 green"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "Down 700 fpm",
+        "Timer"
+       ],
+       "check": null
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "Level off"
+       ],
+       "check": "To MAP. Visual? Land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "CDI → GPS",
+        "Fly bars"
+       ],
+       "check": "If missed is GPS"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "vor-dme",
+   "title": "VOR/DME",
+   "subtitle": "VOR course, DME fixes | MDA",
+   "minimaType": "MDA",
+   "navSource": "VOR1",
+   "verticalGuidance": "None",
+   "keyTrap": "The system will not switch the CDI to VOR for you: press CDI until VOR1 and set the course yourself.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "vor-dme-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the MDA (round up to the next 10 ft if needed), then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Tune and identify",
+     "steps": [
+      {
+       "action": "Make the VOR frequency ACTIVE in NAV1. Loading the approach usually tunes it; if not, tune it with the NAV knob and press the NAV swap key.",
+       "controls": [
+        "NAV knob",
+        "NAV swap"
+       ],
+       "when": "Before the IAF or vectors to final",
+       "verify": "Correct frequency in NAV1 ACTIVE (left/top position).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-1-0"
+      },
+      {
+       "action": "Identify the station: select NAV1 on the audio panel and listen to the Morse code.",
+       "controls": [
+        "Audio panel NAV1"
+       ],
+       "when": "Before the IAF",
+       "verify": "Morse matches the chart identifier.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-1-1"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-2-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-2-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-2-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-2-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "vor-dme-2-4"
+      }
+     ]
+    },
+    {
+     "title": "Switch to VOR and arm",
+     "steps": [
+      {
+       "action": "DME fixes: N63KA's WAAS GPS may be used in place of DME for fixes that are in the loaded approach (AIM 1-1-17). Confirm each DME fix is a named waypoint in the flight plan; the GPS distance to it replaces the DME reading.",
+       "controls": [],
+       "when": "Brief",
+       "verify": "Every DME fix on the chart appears in the loaded approach.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-3-0"
+      },
+      {
+       "action": "Press the CDI softkey until VOR1. The system does NOT switch to VOR automatically for a VOR approach, and the final course must be flown on VOR1, not GPS.",
+       "controls": [
+        "CDI softkey"
+       ],
+       "when": "Before turning inbound, well before the FAF",
+       "verify": "HSI shows VOR1 in green with the TO/FROM flag.",
+       "mode": "both",
+       "source": "POH 2-19 items 4b-4c (approaches not approved for GPS need VOR data on the display)",
+       "authority": "TRAINING",
+       "id": "vor-dme-3-1"
+      },
+      {
+       "action": "Set the CRS knob to the final approach course (the system does not set it for VOR).",
+       "controls": [
+        "CRS knob"
+       ],
+       "when": "After switching to VOR1",
+       "verify": "Course pointer on the final course.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-3-2"
+      },
+      {
+       "action": "Cleared and established inbound or on an intercept heading: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Inbound",
+       "verify": "FMA: VAPP armed (white), then VAPP (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-3-3"
+      },
+      {
+       "action": "Center the green CDI; FD with APR gives lateral command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Inbound",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-3-4"
+      }
+     ]
+    },
+    {
+     "title": "Final approach (step-downs to MDA)",
+     "steps": [
+      {
+       "action": "Set the ALT SEL knob to the next step-down altitude, then the MDA (round up).",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "Before each step-down",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-4-0"
+      },
+      {
+       "action": "At the FAF (or the DME fix on the chart): press VS and set about 600-800 ft/min down with the NOSE UP/DN wheel.",
+       "controls": [
+        "VS",
+        "NOSE UP/DN wheel"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: VAPP and VS (green), ALTS armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-4-1"
+      },
+      {
+       "action": "Reduce power and descend about 600-800 ft/min.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-4-2"
+      },
+      {
+       "action": "Start the timer at the FAF if the MAP is defined by time: TMR/REF softkey, START.",
+       "controls": [
+        "TMR/REF softkey"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-4-3"
+      },
+      {
+       "action": "Station passage (if the VOR is on the field): the TO/FROM flag flips; keep tracking the outbound course.",
+       "controls": [],
+       "when": "Over the VOR",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-4-4"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Level at the MDA (ALT captures at the ALT SEL value). Do not descend below the MDA without the required visual references (14 CFR 91.175).",
+       "controls": [
+        "ALT"
+       ],
+       "when": "At MDA",
+       "verify": "FMA: ALT (green) at the MDA.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-5-0"
+      },
+      {
+       "action": "Fly level to the missed approach point. If not visual at the MAP, go around.",
+       "controls": [],
+       "when": "MDA to MAP",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-5-1"
+      },
+      {
+       "action": "Disconnect the autopilot before leaving the MDA to land, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Visual at MDA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-5-2"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "vor-dme-5-3"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "vor-dme-6-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-6-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT). If the CDI is still on VOR1 and the missed approach is flown on GPS, press the CDI softkey until GPS.",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-6-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "vor-dme-6-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-6-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "vor-dme-6-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are MDA. Any vertical guidance shown is advisory only (POH 2-19 item 4d).",
+    "If the chart title includes 'or GPS' you may fly it as a GPS approach instead; otherwise the final must be on VOR1.",
+    "If a required DME fix is not in the database, GPS cannot substitute for it; without a DME receiver the approach is not available."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the VOR",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "Set up VOR guidance",
+       "keys": [
+        "CDI softkey → VOR1",
+        "CRS knob → final course"
+       ],
+       "note": "CDI cycles GPS → VOR1/LOC1 → VOR2/LOC2 → GPS. Push CRS to center the needle."
+      },
+      {
+       "task": "DME fixes",
+       "keys": [
+        "FPL → check each DME fix is in the approach"
+       ],
+       "note": "GPS distance replaces DME only for fixes in the loaded approach."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "BEFORE FAF",
+       "do": [
+        "CDI → VOR1",
+        "CRS → final",
+        "APR"
+       ],
+       "check": "VOR1 green · VAPP"
+      },
+      {
+       "when": "FAF / DME FIX",
+       "do": [
+        "ALT SEL MDA",
+        "VS −700",
+        "Timer"
+       ],
+       "check": "ALTS white"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "ALT holds"
+       ],
+       "check": "To MAP. Visual? AP off, land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "CDI → GPS",
+        "AP",
+        "NAV · FLC"
+       ],
+       "check": "If missed is GPS"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "Tune NAV1 to the VOR",
+       "keys": [
+        "NAV knob → frequency",
+        "NAV ⇄ swap",
+        "Audio panel NAV1 → Morse ID"
+       ],
+       "note": "Push the small NAV knob to move the cyan tuning box between NAV1 and NAV2. Loading the approach often pre-tunes it."
+      },
+      {
+       "task": "Set up VOR guidance",
+       "keys": [
+        "CDI softkey → VOR1",
+        "CRS knob → final course"
+       ],
+       "note": "CDI cycles GPS → VOR1/LOC1 → VOR2/LOC2 → GPS. Push CRS to center the needle."
+      },
+      {
+       "task": "DME fixes",
+       "keys": [
+        "FPL → check each DME fix is in the approach"
+       ],
+       "note": "GPS distance replaces DME only for fixes in the loaded approach."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "BEFORE FAF",
+       "do": [
+        "CDI → VOR1",
+        "CRS → final"
+       ],
+       "check": "VOR1 green"
+      },
+      {
+       "when": "FAF / DME FIX",
+       "do": [
+        "ALT SEL MDA",
+        "Down 700 fpm",
+        "Timer"
+       ],
+       "check": null
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "Level off"
+       ],
+       "check": "To MAP. Visual? Land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "CDI → GPS",
+        "Fly bars"
+       ],
+       "check": "If missed is GPS"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lpv",
+   "title": "RNAV (GPS) - LPV",
+   "subtitle": "WAAS lateral + vertical | DA",
+   "minimaType": "DA",
+   "navSource": "GPS",
+   "verticalGuidance": "Glidepath (approved)",
+   "keyTrap": "LPV must show on the HSI before the FAF; otherwise use the lower minima the system shows.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "lpv-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the DA, then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-1-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-1-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-1-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-1-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "lpv-1-4"
+      }
+     ]
+    },
+    {
+     "title": "Before the FAF",
+     "steps": [
+      {
+       "action": "Check the approach annunciation on the HSI changes from TERM to LPV within 2 NM of the FAF. If it shows a lower level (for example LNAV), fly to those minimums.",
+       "controls": [],
+       "when": "2 NM before the FAF",
+       "verify": "HSI: LPV.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-2-0"
+      },
+      {
+       "action": "Cleared for the approach and on the final course or an intercept: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": "FMA: GPS (green) lateral; GP armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-2-1"
+      },
+      {
+       "action": "Fly the magenta CDI; FD with APR gives command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-2-2"
+      }
+     ]
+    },
+    {
+     "title": "Final approach",
+     "steps": [
+      {
+       "action": "Hold altitude in ALT until the glidepath: GP captures automatically and the autopilot starts down. Reduce power for approach speed.",
+       "controls": [
+        "ALT",
+        "Power lever"
+       ],
+       "when": "Glidepath intercept (near the FAF)",
+       "verify": "FMA: GPS and GP (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-0"
+      },
+      {
+       "action": "Set the ALT SEL knob to the missed approach altitude. The autopilot will not level at the selected altitude while on GP.",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "After GP capture",
+       "verify": null,
+       "mode": "autopilot",
+       "source": "POH TPOH 15-21 (GP mode does not capture a preselected altitude)",
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-1"
+      },
+      {
+       "action": "At the glidepath diamond: reduce power and follow the magenta glidepath (VDI) and CDI.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "Glidepath intercept",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-2"
+      },
+      {
+       "action": "Set the ALT SEL knob to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "After glidepath intercept",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-3"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Disconnect the autopilot no lower than the minimum use height in the GFC 700 AFM supplement, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Approaching DA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-4-0"
+      },
+      {
+       "action": "Continue only with the required visual references (14 CFR 91.175); otherwise go around immediately.",
+       "controls": [],
+       "when": "At DA",
+       "verify": "Altimeter at the minimums bug.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-4-1"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "lpv-4-2"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "lpv-5-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-5-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT).",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-5-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "lpv-5-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-5-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lpv-5-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are DA when LPV is annunciated."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LPV on HSI?",
+        "APR"
+       ],
+       "check": "GP white"
+      },
+      {
+       "when": "GP CAPTURE",
+       "do": [
+        "ALT SEL MAA",
+        "Power back"
+       ],
+       "check": "GP green"
+      },
+      {
+       "when": "DA",
+       "do": [
+        "AP DISC"
+       ],
+       "check": "Visual? Land. No? Missed."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LPV on HSI?"
+       ],
+       "check": "If lower, use its mins"
+      },
+      {
+       "when": "GLIDEPATH",
+       "do": [
+        "Power back",
+        "ALT SEL MAA"
+       ],
+       "check": "Follow diamond"
+      },
+      {
+       "when": "DA",
+       "do": [],
+       "check": "Visual? Land. No? Missed."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lnav-vnav",
+   "title": "RNAV (GPS) - LNAV/VNAV",
+   "subtitle": "Lateral + vertical | DA",
+   "minimaType": "DA",
+   "navSource": "GPS",
+   "verticalGuidance": "Glidepath (approved)",
+   "keyTrap": "L/VNAV needs WAAS (or Baro-VNAV within its temperature limits). If it downgrades to LNAV, use LNAV MDA.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "lnav-vnav-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the DA, then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-1-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-1-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-1-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-1-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "lnav-vnav-1-4"
+      }
+     ]
+    },
+    {
+     "title": "Before the FAF",
+     "steps": [
+      {
+       "action": "Check the approach annunciation on the HSI changes from TERM to L/VNAV within 2 NM of the FAF. If it shows a lower level (for example LNAV), fly to those minimums.",
+       "controls": [],
+       "when": "2 NM before the FAF",
+       "verify": "HSI: L/VNAV.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-2-0"
+      },
+      {
+       "action": "Cleared for the approach and on the final course or an intercept: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": "FMA: GPS (green) lateral; GP armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-2-1"
+      },
+      {
+       "action": "Fly the magenta CDI; FD with APR gives command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-2-2"
+      }
+     ]
+    },
+    {
+     "title": "Final approach",
+     "steps": [
+      {
+       "action": "Hold altitude in ALT until the glidepath: GP captures automatically and the autopilot starts down. Reduce power for approach speed.",
+       "controls": [
+        "ALT",
+        "Power lever"
+       ],
+       "when": "Glidepath intercept (near the FAF)",
+       "verify": "FMA: GPS and GP (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-0"
+      },
+      {
+       "action": "Set the ALT SEL knob to the missed approach altitude. The autopilot will not level at the selected altitude while on GP.",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "After GP capture",
+       "verify": null,
+       "mode": "autopilot",
+       "source": "POH TPOH 15-21 (GP mode does not capture a preselected altitude)",
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-1"
+      },
+      {
+       "action": "At the glidepath diamond: reduce power and follow the magenta glidepath (VDI) and CDI.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "Glidepath intercept",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-2"
+      },
+      {
+       "action": "Set the ALT SEL knob to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "After glidepath intercept",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-3-3"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Disconnect the autopilot no lower than the minimum use height in the GFC 700 AFM supplement, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Approaching DA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-4-0"
+      },
+      {
+       "action": "Continue only with the required visual references (14 CFR 91.175); otherwise go around immediately.",
+       "controls": [],
+       "when": "At DA",
+       "verify": "Altimeter at the minimums bug.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-4-1"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "lnav-vnav-4-2"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "lnav-vnav-5-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-5-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT).",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-5-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "lnav-vnav-5-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-5-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-vnav-5-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are DA when L/VNAV is annunciated.",
+    "Baro-VNAV: see TPOH 15-21 for temperature limits and downgrades."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "L/VNAV on HSI?",
+        "APR"
+       ],
+       "check": "GP white"
+      },
+      {
+       "when": "GP CAPTURE",
+       "do": [
+        "ALT SEL MAA",
+        "Power back"
+       ],
+       "check": "GP green"
+      },
+      {
+       "when": "DA",
+       "do": [
+        "AP DISC"
+       ],
+       "check": "Visual? Land. No? Missed."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "L/VNAV on HSI?"
+       ],
+       "check": "If lower, use its mins"
+      },
+      {
+       "when": "GLIDEPATH",
+       "do": [
+        "Power back",
+        "ALT SEL MAA"
+       ],
+       "check": "Follow diamond"
+      },
+      {
+       "when": "DA",
+       "do": [],
+       "check": "Visual? Land. No? Missed."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lnav",
+   "title": "RNAV (GPS) - LNAV",
+   "subtitle": "Lateral only | MDA",
+   "minimaType": "MDA",
+   "navSource": "GPS",
+   "verticalGuidance": "None",
+   "keyTrap": "No approved vertical guidance: protect every step-down and the MDA with ALT SEL.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "lnav-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the MDA (round up to the next 10 ft if needed), then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-1-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-1-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-1-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-1-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "lnav-1-4"
+      }
+     ]
+    },
+    {
+     "title": "Before the FAF",
+     "steps": [
+      {
+       "action": "Check the approach annunciation on the HSI changes from TERM to LNAV within 2 NM of the FAF. If it shows a lower level (for example LNAV), fly to those minimums.",
+       "controls": [],
+       "when": "2 NM before the FAF",
+       "verify": "HSI: LNAV.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-2-0"
+      },
+      {
+       "action": "Cleared for the approach and on the final course or an intercept: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-2-1"
+      },
+      {
+       "action": "Fly the magenta CDI; FD with APR gives command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-2-2"
+      }
+     ]
+    },
+    {
+     "title": "Final approach",
+     "steps": [
+      {
+       "action": "Set the ALT SEL knob to the next step-down altitude, then the MDA (round up).",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "Before each step-down",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-3-0"
+      },
+      {
+       "action": "Press VS and set about 600-800 ft/min down with the NOSE UP/DN wheel. ALT captures at the MDA.",
+       "controls": [
+        "VS",
+        "NOSE UP/DN wheel"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: GPS and VS (green), ALTS armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-3-1"
+      },
+      {
+       "action": "Set the ALT SEL knob to each step-down, then the MDA.",
+       "controls": [
+        "ALT SEL knob"
+       ],
+       "when": "Before each step-down",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-3-2"
+      },
+      {
+       "action": "Reduce power and descend about 600-800 ft/min; level at each step-down and at the MDA.",
+       "controls": [
+        "Power lever"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-3-3"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Level at the MDA (ALT captures at the ALT SEL value). Do not descend below the MDA without the required visual references (14 CFR 91.175).",
+       "controls": [
+        "ALT"
+       ],
+       "when": "At MDA",
+       "verify": "FMA: ALT (green) at the MDA.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-4-0"
+      },
+      {
+       "action": "Fly level to the missed approach point. If not visual at the MAP, go around.",
+       "controls": [],
+       "when": "MDA to MAP",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-4-1"
+      },
+      {
+       "action": "Disconnect the autopilot before leaving the MDA to land, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Visual at MDA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-4-2"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "lnav-4-3"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "lnav-5-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-5-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT).",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-5-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "lnav-5-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-5-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-5-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are MDA. Any vertical guidance is advisory only (POH 2-19 item 4d)."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LNAV on HSI?",
+        "APR"
+       ],
+       "check": "GPS green"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "VS −700"
+       ],
+       "check": "ALTS white"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "ALT holds"
+       ],
+       "check": "To MAP. Visual? AP off, land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LNAV on HSI?"
+       ],
+       "check": "If lower, use its mins"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "Down 700 fpm"
+       ],
+       "check": null
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "Level off"
+       ],
+       "check": "To MAP. Visual? Land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lnav-plus-v",
+   "title": "RNAV (GPS) - LNAV+V",
+   "subtitle": "LNAV minima + advisory +V | MDA",
+   "minimaType": "MDA",
+   "navSource": "GPS",
+   "verticalGuidance": "Advisory +V",
+   "keyTrap": "+V does not change the approach: it is still an MDA approach (POH 2-19 item 4d).",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the MDA (round up to the next 10 ft if needed), then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-1-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-1-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-1-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-1-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "lnav-plus-v-1-4"
+      }
+     ]
+    },
+    {
+     "title": "Before the FAF",
+     "steps": [
+      {
+       "action": "Check the approach annunciation on the HSI changes from TERM to LNAV+V within 2 NM of the FAF. If it shows a lower level (for example LNAV), fly to those minimums.",
+       "controls": [],
+       "when": "2 NM before the FAF",
+       "verify": "HSI: LNAV+V.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-2-0"
+      },
+      {
+       "action": "Cleared for the approach and on the final course or an intercept: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-2-1"
+      },
+      {
+       "action": "Fly the magenta CDI; FD with APR gives command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-2-2"
+      }
+     ]
+    },
+    {
+     "title": "Final approach",
+     "steps": [
+      {
+       "action": "Option A (VS, protects the MDA): set the ALT SEL knob to the MDA; at the FAF press VS and set about 600-800 ft/min down. ALT captures at the MDA.",
+       "controls": [
+        "ALT SEL knob",
+        "VS",
+        "NOSE UP/DN wheel"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: GPS and VS (green), ALTS armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-3-0"
+      },
+      {
+       "action": "Option B (coupled +V): APR can couple to the advisory glidepath (GP). GP will NOT level off at the MDA: be ready to press ALT or disconnect at the MDA.",
+       "controls": [
+        "APR",
+        "ALT"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: GPS and GP (green); watch the altimeter against the MDA.",
+       "mode": "autopilot",
+       "source": "POH 2-19 item 4d (vertical guidance advisory only)",
+       "authority": "TRAINING",
+       "id": "lp-3-1"
+      },
+      {
+       "action": "Use the +V glidepath as advisory only; set ALT SEL to the MDA and level at the MDA.",
+       "controls": [
+        "ALT SEL knob",
+        "Power lever"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-3-2"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Level at the MDA (ALT captures at the ALT SEL value). Do not descend below the MDA without the required visual references (14 CFR 91.175).",
+       "controls": [
+        "ALT"
+       ],
+       "when": "At MDA",
+       "verify": "FMA: ALT (green) at the MDA.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-4-0"
+      },
+      {
+       "action": "Fly level to the missed approach point. If not visual at the MAP, go around.",
+       "controls": [],
+       "when": "MDA to MAP",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-4-1"
+      },
+      {
+       "action": "Disconnect the autopilot before leaving the MDA to land, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Visual at MDA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-4-2"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "lnav-plus-v-4-3"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "lnav-plus-v-5-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-5-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT).",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-5-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-5-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-5-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lnav-plus-v-5-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are LNAV MDA. +V is advisory only."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LNAV+V on HSI?",
+        "APR"
+       ],
+       "check": "GPS green"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "VS −700"
+       ],
+       "check": "+V advisory only"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "ALT holds"
+       ],
+       "check": "To MAP. Visual? AP off, land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LNAV+V on HSI?"
+       ],
+       "check": "If lower, use its mins"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "Down 700 fpm"
+       ],
+       "check": "+V advisory only"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "Level off"
+       ],
+       "check": "To MAP. Visual? Land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "lp",
+   "title": "RNAV (GPS) - LP / LP+V",
+   "subtitle": "LP minima; +V advisory when displayed | MDA",
+   "minimaType": "MDA",
+   "navSource": "GPS",
+   "verticalGuidance": "Advisory +V",
+   "keyTrap": "LP is lateral only with an MDA; +V, when shown, is advisory.",
+   "phases": [
+    {
+     "title": "Brief and load",
+     "steps": [
+      {
+       "action": "Get the weather and choose the approach. Check NOTAMs for the approach and navaid.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-0-0"
+      },
+      {
+       "action": "Load the approach: press PROC, choose 'Select Approach', pick the airport and approach, then the transition (or VECTORS), and press ENT. Choose LOAD now; ACTIVATE when cleared or on vectors.",
+       "controls": [
+        "PROC",
+        "FMS knob",
+        "ENT"
+       ],
+       "when": "Before descent",
+       "verify": "Approach name and transition in the flight plan match the chart. Database must be current (POH 2-19 item 4).",
+       "mode": "both",
+       "source": "POH 2-19 (approaches must come from the current database)",
+       "authority": "TRAINING",
+       "id": "lp-0-1"
+      },
+      {
+       "action": "Brief the chart: final course, FAF and its altitude, minimums, missed approach point, missed approach procedure and altitude.",
+       "controls": [],
+       "when": "Before descent",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-0-2"
+      },
+      {
+       "action": "Set minimums: TMR/REF softkey, then Minimums: BARO, enter the MDA (round up to the next 10 ft if needed), then CLR to close.",
+       "controls": [
+        "TMR/REF softkey",
+        "FMS knob",
+        "CLR"
+       ],
+       "when": "Before descent",
+       "verify": "Minimums bug shows on the altimeter.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-0-3"
+      }
+     ]
+    },
+    {
+     "title": "Getting to the final course",
+     "steps": [
+      {
+       "action": "Full approach (via an IAF): fly the transition with the autopilot in NAV on GPS. Use ALT to hold, VS or FLC to descend; set the ALT SEL knob to each cleared altitude first.",
+       "controls": [
+        "AP",
+        "NAV",
+        "ALT SEL knob",
+        "VS",
+        "FLC",
+        "ALT"
+       ],
+       "when": "From the IAF",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-1-0"
+      },
+      {
+       "action": "Vectors: when ATC gives vectors to final, press PROC, 'Activate Vector-to-Final', ENT. Fly ATC headings in HDG mode and hold altitude in ALT.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG",
+        "HDG knob",
+        "ALT"
+       ],
+       "when": "On vectors",
+       "verify": "FMA: HDG and ALT (green).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-1-1"
+      },
+      {
+       "action": "Full approach: follow the magenta CDI through the transition; descend to each charted altitude.",
+       "controls": [
+        "CDI needle"
+       ],
+       "when": "From the IAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-1-2"
+      },
+      {
+       "action": "Vectors: PROC, 'Activate Vector-to-Final', ENT; fly ATC headings on the heading bug. Turn on the flight director (FD) for command bars if you want them.",
+       "controls": [
+        "PROC",
+        "ENT",
+        "HDG knob",
+        "FD"
+       ],
+       "when": "On vectors",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-1-3"
+      },
+      {
+       "action": "Slow down and configure: Fuel pump BOOST, mixture as required. Normal approach speeds: flaps UP 90-95 KIAS, flaps 50% 85-90 KIAS, flaps 100% 80-85 KIAS.",
+       "controls": [
+        "Fuel pump BOOST",
+        "Flaps"
+       ],
+       "when": "Before the FAF",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3 (Landing Approach speeds), POH 4-19 (Before Landing)",
+       "authority": "APPROVED",
+       "id": "lp-1-4"
+      }
+     ]
+    },
+    {
+     "title": "Before the FAF",
+     "steps": [
+      {
+       "action": "Check the approach annunciation on the HSI changes from TERM to LP (or LP+V) within 2 NM of the FAF. If it shows a lower level (for example LNAV), fly to those minimums.",
+       "controls": [],
+       "when": "2 NM before the FAF",
+       "verify": "HSI: LP (or LP+V).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-2-0"
+      },
+      {
+       "action": "Cleared for the approach and on the final course or an intercept: press APR.",
+       "controls": [
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": "FMA: GPS (green) lateral.",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-2-1"
+      },
+      {
+       "action": "Fly the magenta CDI; FD with APR gives command bars.",
+       "controls": [
+        "FD",
+        "APR"
+       ],
+       "when": "Cleared for the approach",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-2-2"
+      }
+     ]
+    },
+    {
+     "title": "Final approach",
+     "steps": [
+      {
+       "action": "Option A (VS, protects the MDA): set the ALT SEL knob to the MDA; at the FAF press VS and set about 600-800 ft/min down. ALT captures at the MDA.",
+       "controls": [
+        "ALT SEL knob",
+        "VS",
+        "NOSE UP/DN wheel"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: GPS and VS (green), ALTS armed (white).",
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-3-0"
+      },
+      {
+       "action": "Option B (coupled +V): APR can couple to the advisory glidepath (GP). GP will NOT level off at the MDA: be ready to press ALT or disconnect at the MDA.",
+       "controls": [
+        "APR",
+        "ALT"
+       ],
+       "when": "At the FAF",
+       "verify": "FMA: GPS and GP (green); watch the altimeter against the MDA.",
+       "mode": "autopilot",
+       "source": "POH 2-19 item 4d (vertical guidance advisory only)",
+       "authority": "TRAINING",
+       "id": "lp-3-1"
+      },
+      {
+       "action": "Use the +V glidepath as advisory only; set ALT SEL to the MDA and level at the MDA.",
+       "controls": [
+        "ALT SEL knob",
+        "Power lever"
+       ],
+       "when": "At the FAF",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-3-2"
+      }
+     ]
+    },
+    {
+     "title": "Minimums",
+     "steps": [
+      {
+       "action": "Level at the MDA (ALT captures at the ALT SEL value). Do not descend below the MDA without the required visual references (14 CFR 91.175).",
+       "controls": [
+        "ALT"
+       ],
+       "when": "At MDA",
+       "verify": "FMA: ALT (green) at the MDA.",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-4-0"
+      },
+      {
+       "action": "Fly level to the missed approach point. If not visual at the MAP, go around.",
+       "controls": [],
+       "when": "MDA to MAP",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-4-1"
+      },
+      {
+       "action": "Disconnect the autopilot before leaving the MDA to land, then hand-fly.",
+       "controls": [
+        "AP DISC"
+       ],
+       "when": "Visual at MDA",
+       "verify": null,
+       "mode": "autopilot",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-4-2"
+      },
+      {
+       "action": "Landing: flaps 100%, 80-85 KIAS.",
+       "controls": [
+        "Flaps"
+       ],
+       "when": "Landing assured",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-3",
+       "authority": "APPROVED",
+       "id": "lp-4-3"
+      }
+     ]
+    },
+    {
+     "title": "Missed approach",
+     "steps": [
+      {
+       "action": "Autopilot DISENGAGE, power lever FULL FORWARD, flaps 50%, 75-80 KIAS until clear of obstacles; then flaps UP and accelerate.",
+       "controls": [
+        "AP DISC",
+        "Power lever",
+        "Flaps"
+       ],
+       "when": "At DA / MAP, not visual",
+       "verify": null,
+       "mode": "both",
+       "source": "POH 4-21 (Balked Landing/Go-Around)",
+       "authority": "APPROVED",
+       "id": "lp-5-0"
+      },
+      {
+       "action": "Press the GO AROUND button on the power lever: the flight director shows go-around pitch and the missed approach sequences in the flight plan.",
+       "controls": [
+        "GO AROUND"
+       ],
+       "when": "Same time as power",
+       "verify": "FMA: GA (green). Flight plan sequences to the missed approach (no SUSP).",
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-5-1"
+      },
+      {
+       "action": "If SUSP shows at the MAP instead, press the SUSP softkey (or PROC, 'Activate Missed Approach', ENT).",
+       "controls": [
+        "SUSP softkey",
+        "PROC",
+        "CDI softkey"
+       ],
+       "when": "Climbing",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-5-2"
+      },
+      {
+       "action": "Once climbing with a rate that meets the procedure's altitudes: set ALT SEL to the missed approach altitude, press AP, then NAV (GPS) or HDG, and FLC or VS for the climb.",
+       "controls": [
+        "ALT SEL knob",
+        "AP",
+        "NAV",
+        "HDG",
+        "FLC"
+       ],
+       "when": "Positive climb",
+       "verify": "FMA: GPS or HDG lateral, FLC/VS with ALTS armed (white).",
+       "mode": "autopilot",
+       "source": "POH 2-20 item g (coupled missed approach allowed with GFC 700 software 0764.09 or later; N63KA has 0764.38)",
+       "authority": "TRAINING",
+       "id": "lp-5-3"
+      },
+      {
+       "action": "Hand-fly the missed approach on the CDI; FD bars give guidance if FD is on. Set ALT SEL to the missed approach altitude.",
+       "controls": [
+        "ALT SEL knob",
+        "FD"
+       ],
+       "when": "Positive climb",
+       "verify": null,
+       "mode": "manual",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-5-4"
+      },
+      {
+       "action": "Tell ATC 'missed approach' and follow the published missed or ATC instructions.",
+       "controls": [],
+       "when": "Workload allows",
+       "verify": null,
+       "mode": "both",
+       "source": null,
+       "authority": "TRAINING",
+       "id": "lp-5-5"
+      }
+     ]
+    }
+   ],
+   "notes": [
+    "Minima are LP MDA. LP is not LPV."
+   ],
+   "authority": "TRAINING",
+   "revision": "v5 (2026-10-06)",
+   "quick": {
+    "autopilot": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LP on HSI?",
+        "APR"
+       ],
+       "check": "GPS green"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "VS −700"
+       ],
+       "check": "+V advisory only"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "ALT holds"
+       ],
+       "check": "To MAP. Visual? AP off, land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "AP",
+        "NAV",
+        "FLC"
+       ],
+       "check": "ALT SEL at MAA"
+      }
+     ]
+    },
+    "manual": {
+     "brief": [
+      {
+       "task": "Load the approach",
+       "keys": [
+        "PROC",
+        "FMS → SELECT APPROACH",
+        "ENT",
+        "FMS → approach",
+        "ENT",
+        "FMS → transition / VECTORS",
+        "ENT",
+        "ENT = LOAD"
+       ],
+       "note": "Large FMS knob moves the cursor, small knob changes the choice. Pick ACTIVATE instead of LOAD if already cleared."
+      },
+      {
+       "task": "Set minimums",
+       "keys": [
+        "TMR/REF softkey",
+        "FMS → MINIMUMS",
+        "small FMS → BARO",
+        "FMS → set DA/MDA",
+        "ENT",
+        "TMR/REF (close)"
+       ],
+       "note": "Minimums bug appears on the altimeter."
+      },
+      {
+       "task": "When cleared (if only loaded)",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE APPROACH",
+        "ENT"
+       ],
+       "note": null
+      },
+      {
+       "task": "If vectored to final",
+       "keys": [
+        "PROC",
+        "FMS → ACTIVATE VECTOR-TO-FINAL",
+        "ENT"
+       ],
+       "note": "Fly ATC headings: HDG knob, then HDG on the autopilot."
+      },
+      {
+       "task": "Altitude preselect",
+       "keys": [
+        "ALT SEL knob → altitude"
+       ],
+       "note": "Push ALT SEL to sync to current altitude."
+      },
+      {
+       "task": "Configure",
+       "keys": [
+        "Fuel pump BOOST",
+        "Flaps 50%"
+       ],
+       "note": "85–90 KIAS (POH 4-3)."
+      }
+     ],
+     "fly": [
+      {
+       "when": "2 NM TO FAF",
+       "do": [
+        "LP on HSI?"
+       ],
+       "check": "If lower, use its mins"
+      },
+      {
+       "when": "FAF",
+       "do": [
+        "ALT SEL MDA",
+        "Down 700 fpm"
+       ],
+       "check": "+V advisory only"
+      },
+      {
+       "when": "MDA",
+       "do": [
+        "Level off"
+       ],
+       "check": "To MAP. Visual? Land."
+      },
+      {
+       "when": "MISSED",
+       "do": [
+        "Power full",
+        "GO AROUND",
+        "Flaps 50%"
+       ],
+       "check": "80 KT, climbing"
+      },
+      {
+       "when": "THEN",
+       "do": [
+        "Fly bars",
+        "ALT SEL MAA"
+       ],
+       "check": "Missed course"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "keyReference": [
+  {
+   "group": "Flight plan and procedures (PFD bezel or FMS keyboard)",
+   "items": [
+    {
+     "key": "PROC",
+     "does": "Procedures menu: Select Approach, Activate Approach, Activate Vector-to-Final, Activate Missed Approach"
+    },
+    {
+     "key": "FMS knob",
+     "does": "Large = move cursor between fields, small = change the value; push = show/hide cursor"
+    },
+    {
+     "key": "ENT",
+     "does": "Accept the highlighted choice"
+    },
+    {
+     "key": "CLR",
+     "does": "Cancel / back out; hold on the MFD for the default map"
+    },
+    {
+     "key": "FPL",
+     "does": "Flight plan page: check the loaded approach legs and fixes"
+    },
+    {
+     "key": "D→ (Direct-To)",
+     "does": "Direct to a fix (e.g. the IAF or FAF when ATC clears you)"
+    }
+   ]
+  },
+  {
+   "group": "PFD softkeys",
+   "items": [
+    {
+     "key": "CDI",
+     "does": "Navigation source: GPS → VOR1/LOC1 → VOR2/LOC2 → GPS"
+    },
+    {
+     "key": "TMR/REF",
+     "does": "Timer (start at FAF for timed approaches) and Minimums (BARO DA/MDA)"
+    },
+    {
+     "key": "SUSP",
+     "does": "Appears at the MAP: press to resume sequencing into the missed approach"
+    }
+   ]
+  },
+  {
+   "group": "Radios (PFD bezel)",
+   "items": [
+    {
+     "key": "NAV knob",
+     "does": "Tune the cyan standby frequency; push small knob to switch NAV1/NAV2"
+    },
+    {
+     "key": "NAV ⇄",
+     "does": "Swap standby to active"
+    },
+    {
+     "key": "NAV VOL / ID",
+     "does": "NAV audio volume; ID toggles Morse identifier audio"
+    }
+   ]
+  },
+  {
+   "group": "Bugs (FMS keyboard)",
+   "items": [
+    {
+     "key": "HDG knob",
+     "does": "Heading bug; push = sync to current heading"
+    },
+    {
+     "key": "CRS knob",
+     "does": "Course for VOR/LOC; push = center the CDI"
+    },
+    {
+     "key": "ALT SEL knob",
+     "does": "Selected altitude (where the autopilot levels); push = sync to current altitude"
+    }
+   ]
+  },
+  {
+   "group": "Autopilot (GMC 705 mode controller)",
+   "items": [
+    {
+     "key": "AP",
+     "does": "Engage/disengage the autopilot (turns on the flight director)"
+    },
+    {
+     "key": "FD",
+     "does": "Flight director command bars on/off"
+    },
+    {
+     "key": "HDG",
+     "does": "Follow the heading bug"
+    },
+    {
+     "key": "NAV",
+     "does": "Follow the CDI source (GPS, VOR, LOC) enroute"
+    },
+    {
+     "key": "APR",
+     "does": "Approach: arms LOC+GS, VAPP or GPS+GP depending on the approach"
+    },
+    {
+     "key": "ALT",
+     "does": "Hold current altitude"
+    },
+    {
+     "key": "VS",
+     "does": "Vertical speed; set the rate with the NOSE UP/DN wheel"
+    },
+    {
+     "key": "FLC",
+     "does": "Flight level change: climb/descend at a set airspeed"
+    },
+    {
+     "key": "VNV",
+     "does": "Vertical path to flight-plan altitudes (not for the final approach segment)"
+    },
+    {
+     "key": "NOSE UP/DN wheel",
+     "does": "Adjust the VS rate, FLC speed or pitch reference"
+    }
+   ]
+  },
+  {
+   "group": "Yoke and power lever",
+   "items": [
+    {
+     "key": "AP DISC",
+     "does": "Autopilot disconnect (on the yoke)"
+    },
+    {
+     "key": "GO AROUND",
+     "does": "Power lever button: go-around pitch on the flight director, sequences the missed approach"
+    }
+   ]
+  }
+ ],
+ "keyReferenceNote": "Names per the POH panel diagram (7-75/7-76). Detailed behavior per the GFC 700 AFM Supplement 13772-135 and Cockpit Reference Guide 190-00821 (not on file): verify."
+}

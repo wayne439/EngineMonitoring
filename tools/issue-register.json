@@ -1,0 +1,1050 @@
+{
+ "kinds": {
+  "limit.oilp-caution": {
+   "occurrences": {
+    "limit.oilp-caution|log_260708_085749_KGEU.csv|1783528439": {
+     "detail": "9 s from 09:33:59, extreme 27 psi (POH 2-8 / 3A-6)",
+     "log": "log_260708_085749_KGEU.csv",
+     "time": "2026-07-08T09:33:59-07:00"
+    },
+    "limit.oilp-caution|log_260809_111402_KAPV.csv|1786306079": {
+     "detail": "2 s from 13:07:59, extreme 27 psi (POH 2-8 / 3A-6)",
+     "log": "log_260809_111402_KAPV.csv",
+     "time": "2026-08-09T13:07:59-07:00"
+    },
+    "limit.oilp-caution|log_260827_134032_KFFZ.csv|1787864645": {
+     "detail": "5 s from 14:04:05, extreme 26 psi (POH 2-8 / 3A-6)",
+     "log": "log_260827_134032_KFFZ.csv",
+     "time": "2026-08-27T14:04:05-07:00"
+    }
+   },
+   "severity": "CAUTION",
+   "system": "Engine / In Flight",
+   "title": "Oil pressure 10-29 psi above 1,000 RPM in flight"
+  },
+  "limit.oilp-idle": {
+   "occurrences": {
+    "limit.oilp-idle|log_260318_103820_KPAN.csv|1773856898": {
+     "detail": "6 s from 11:01:38, extreme 29 psi (POH 2-8 / 3A-6)",
+     "log": "log_260318_103820_KPAN.csv",
+     "time": "2026-03-18T11:01:38-07:00"
+    },
+    "limit.oilp-idle|log_260328_092351_KAVQ.csv|1774715575": {
+     "detail": "10 s from 09:32:55, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260328_092351_KAVQ.csv",
+     "time": "2026-03-28T09:32:55-07:00"
+    },
+    "limit.oilp-idle|log_260331_104531_KRYN.csv|1774979920": {
+     "detail": "18 s from 10:58:40, extreme 29 psi (POH 2-8 / 3A-6)",
+     "log": "log_260331_104531_KRYN.csv",
+     "time": "2026-03-31T10:58:40-07:00"
+    },
+    "limit.oilp-idle|log_260405_141531_KSNA.csv|1775424814": {
+     "detail": "27 s from 14:33:34, extreme 29 psi (POH 2-8 / 3A-6)",
+     "log": "log_260405_141531_KSNA.csv",
+     "time": "2026-04-05T14:33:34-07:00"
+    },
+    "limit.oilp-idle|log_260430_135731_KPAN.csv|1777582630": {
+     "detail": "225 s from 13:57:10, extreme 26 psi (POH 2-8 / 3A-6)",
+     "log": "log_260430_135731_KPAN.csv",
+     "time": "2026-04-30T13:57:10-07:00"
+    },
+    "limit.oilp-idle|log_260516_120332_KFNL.csv|1778961717": {
+     "detail": "25 s from 13:01:57, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260516_120332_KFNL.csv",
+     "time": "2026-05-16T13:01:57-07:00"
+    },
+    "limit.oilp-idle|log_260616_122802_18AZ.csv|1781638761": {
+     "detail": "20 s from 12:39:21, extreme 29 psi (POH 2-8 / 3A-6)",
+     "log": "log_260616_122802_18AZ.csv",
+     "time": "2026-06-16T12:39:21-07:00"
+    },
+    "limit.oilp-idle|log_260617_061226_18AZ.csv|1781703756": {
+     "detail": "76 s from 06:42:36, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260617_061226_18AZ.csv",
+     "time": "2026-06-17T06:42:36-07:00"
+    },
+    "limit.oilp-idle|log_260630_102302_18AZ.csv|1782842783": {
+     "detail": "5 s from 11:06:23, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260630_102302_18AZ.csv",
+     "time": "2026-06-30T11:06:23-07:00"
+    },
+    "limit.oilp-idle|log_260708_085749_KGEU.csv|1783530937": {
+     "detail": "324 s from 10:15:37, extreme 24 psi (POH 2-8 / 3A-6)",
+     "log": "log_260708_085749_KGEU.csv",
+     "time": "2026-07-08T10:15:37-07:00"
+    },
+    "limit.oilp-idle|log_260708_103756_KGEU.csv|1783532339": {
+     "detail": "285 s from 10:38:59, extreme 22 psi (POH 2-8 / 3A-6)",
+     "log": "log_260708_103756_KGEU.csv",
+     "time": "2026-07-08T10:38:59-07:00"
+    },
+    "limit.oilp-idle|log_260719_102203_KHND.csv|1784487338": {
+     "detail": "18 s from 11:55:38, extreme 29 psi (POH 2-8 / 3A-6)",
+     "log": "log_260719_102203_KHND.csv",
+     "time": "2026-07-19T11:55:38-07:00"
+    },
+    "limit.oilp-idle|log_260727_071632_18AZ.csv|1785163282": {
+     "detail": "339 s from 07:41:22, extreme 25 psi (POH 2-8 / 3A-6)",
+     "log": "log_260727_071632_18AZ.csv",
+     "time": "2026-07-27T07:41:22-07:00"
+    },
+    "limit.oilp-idle|log_260728_115832_KPRC.csv|1785267174": {
+     "detail": "78 s from 12:32:54, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260728_115832_KPRC.csv",
+     "time": "2026-07-28T12:32:54-07:00"
+    },
+    "limit.oilp-idle|log_260807_115632_18AZ.csv|1786129777": {
+     "detail": "94 s from 12:09:37, extreme 25 psi (POH 2-8 / 3A-6)",
+     "log": "log_260807_115632_18AZ.csv",
+     "time": "2026-08-07T12:09:37-07:00"
+    },
+    "limit.oilp-idle|log_260807_140520_KAPV.csv|1786137019": {
+     "detail": "18 s from 14:10:19, extreme 26 psi (POH 2-8 / 3A-6)",
+     "log": "log_260807_140520_KAPV.csv",
+     "time": "2026-08-07T14:10:19-07:00"
+    },
+    "limit.oilp-idle|log_260809_111402_KAPV.csv|1786306174": {
+     "detail": "92 s from 13:09:34, extreme 27 psi (POH 2-8 / 3A-6)",
+     "log": "log_260809_111402_KAPV.csv",
+     "time": "2026-08-09T13:09:34-07:00"
+    },
+    "limit.oilp-idle|log_260814_112731_KGEU.csv|1786733594": {
+     "detail": "39 s from 11:53:14, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260814_112731_KGEU.csv",
+     "time": "2026-08-14T11:53:14-07:00"
+    },
+    "limit.oilp-idle|log_260818_065832_18AZ.csv|1787063468": {
+     "detail": "59 s from 07:31:08, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_260818_065832_18AZ.csv",
+     "time": "2026-08-18T07:31:08-07:00"
+    },
+    "limit.oilp-idle|log_260827_134032_KFFZ.csv|1787864848": {
+     "detail": "39 s from 14:07:28, extreme 23 psi (POH 2-8 / 3A-6)",
+     "log": "log_260827_134032_KFFZ.csv",
+     "time": "2026-08-27T14:07:28-07:00"
+    },
+    "limit.oilp-idle|log_260828_062602_18AZ.csv|1787924541": {
+     "detail": "29 s from 06:42:21, extreme 29 psi (POH 2-8 / 3A-6)",
+     "log": "log_260828_062602_18AZ.csv",
+     "time": "2026-08-28T06:42:21-07:00"
+    },
+    "limit.oilp-idle|log_260828_092332_P23.csv|1787937324": {
+     "detail": "26 s from 10:15:24, extreme 27 psi (POH 2-8 / 3A-6)",
+     "log": "log_260828_092332_P23.csv",
+     "time": "2026-08-28T10:15:24-07:00"
+    },
+    "limit.oilp-idle|log_261001_133831_KGEU.csv|1790887509": {
+     "detail": "18 s from 13:45:09, extreme 28 psi (POH 2-8 / 3A-6)",
+     "log": "log_261001_133831_KGEU.csv",
+     "time": "2026-10-01T13:45:09-07:00"
+    }
+   },
+   "severity": "WATCH",
+   "system": "Engine / In Flight",
+   "title": "Oil pressure 10-29 psi above 1,000 RPM on the ground (OIL PRESS caution)"
+  },
+  "limit.volt2-low": {
+   "occurrences": {
+    "limit.volt2-low|log_260129_134256_18AZ.csv|1769720663": {
+     "detail": "29 s from 14:04:23, extreme 24 V (POH 2-9)",
+     "log": "log_260129_134256_18AZ.csv",
+     "time": "2026-01-29T14:04:23-07:00"
+    }
+   },
+   "severity": "CAUTION",
+   "system": "Electrical / Bus",
+   "title": "Bus 2 voltage below 24.5 V in flight (M BUS 2 caution range)"
+  },
+  "start.extra-cranking": {
+   "occurrences": {
+    "start.extra-cranking|log_260112_095854_18AZ.csv|1768237168": {
+     "detail": "1 cranking attempt(s) without a start before 09:59:28, lowest 23.7 V cranking",
+     "log": "log_260112_095854_18AZ.csv",
+     "time": "2026-01-12T09:59:28-07:00"
+    },
+    "start.extra-cranking|log_260128_142255_18AZ.csv|1769635353": {
+     "detail": "1 cranking attempt(s) without a start before 14:22:33, lowest 23.3 V cranking",
+     "log": "log_260128_142255_18AZ.csv",
+     "time": "2026-01-28T14:22:33-07:00"
+    },
+    "start.extra-cranking|log_260130_084957_18AZ.csv|1769788899": {
+     "detail": "2 cranking attempt(s) without a start before 09:01:39, lowest 22.9 V cranking",
+     "log": "log_260130_084957_18AZ.csv",
+     "time": "2026-01-30T09:01:39-07:00"
+    },
+    "start.extra-cranking|log_260130_121820_KIWA.csv|1769800801": {
+     "detail": "3 cranking attempt(s) without a start before 12:20:01, lowest 23.4 V cranking",
+     "log": "log_260130_121820_KIWA.csv",
+     "time": "2026-01-30T12:20:01-07:00"
+    },
+    "start.extra-cranking|log_260204_112901_18AZ.csv|1770229748": {
+     "detail": "2 cranking attempt(s) without a start before 11:29:08, lowest 23.4 V cranking",
+     "log": "log_260204_112901_18AZ.csv",
+     "time": "2026-02-04T11:29:08-07:00"
+    },
+    "start.extra-cranking|log_260214_083821_18AZ.csv|1771083485": {
+     "detail": "1 cranking attempt(s) without a start before 08:38:05, lowest 22.5 V cranking",
+     "log": "log_260214_083821_18AZ.csv",
+     "time": "2026-02-14T08:38:05-07:00"
+    },
+    "start.extra-cranking|log_260216_102302_KHND.csv|1771262585": {
+     "detail": "2 cranking attempt(s) without a start before 10:23:05, lowest 22.9 V cranking",
+     "log": "log_260216_102302_KHND.csv",
+     "time": "2026-02-16T10:23:05-07:00"
+    },
+    "start.extra-cranking|log_260222_093702_KSEZ.csv|1771778260": {
+     "detail": "4 cranking attempt(s) without a start before 09:37:40, lowest 22.9 V cranking",
+     "log": "log_260222_093702_KSEZ.csv",
+     "time": "2026-02-22T09:37:40-07:00"
+    },
+    "start.extra-cranking|log_260324_072256_18AZ.csv|1774362202": {
+     "detail": "1 cranking attempt(s) without a start before 07:23:22, lowest 24.2 V cranking",
+     "log": "log_260324_072256_18AZ.csv",
+     "time": "2026-03-24T07:23:22-07:00"
+    },
+    "start.extra-cranking|log_260328_080950_18AZ.csv|1774710646": {
+     "detail": "1 cranking attempt(s) without a start before 08:10:46, lowest 23.8 V cranking",
+     "log": "log_260328_080950_18AZ.csv",
+     "time": "2026-03-28T08:10:46-07:00"
+    },
+    "start.extra-cranking|log_260328_091951_KAVQ.csv|1774714863": {
+     "detail": "5 cranking attempt(s) without a start before 09:21:03, lowest 23.3 V cranking",
+     "log": "log_260328_091951_KAVQ.csv",
+     "time": "2026-03-28T09:21:03-07:00"
+    },
+    "start.extra-cranking|log_260404_092920_KSBA.csv|1775320158": {
+     "detail": "1 cranking attempt(s) without a start before 09:29:18, lowest 23.0 V cranking",
+     "log": "log_260404_092920_KSBA.csv",
+     "time": "2026-04-04T09:29:18-07:00"
+    },
+    "start.extra-cranking|log_260517_051802_KFNL.csv|1779020348": {
+     "detail": "2 cranking attempt(s) without a start before 05:19:08, lowest 23.9 V cranking",
+     "log": "log_260517_051802_KFNL.csv",
+     "time": "2026-05-17T05:19:08-07:00"
+    },
+    "start.extra-cranking|log_260628_061332_18AZ.csv|1782652437": {
+     "detail": "1 cranking attempt(s) without a start before 06:13:57, lowest 23.0 V cranking",
+     "log": "log_260628_061332_18AZ.csv",
+     "time": "2026-06-28T06:13:57-07:00"
+    },
+    "start.extra-cranking|log_260916_071949_18AZ.csv|1789568430": {
+     "detail": "2 cranking attempt(s) without a start before 07:20:30, lowest 23.1 V cranking",
+     "log": "log_260916_071949_18AZ.csv",
+     "time": "2026-09-16T07:20:30-07:00"
+    },
+    "start.extra-cranking|log_260924_133801_18AZ.csv|1790282314": {
+     "detail": "1 cranking attempt(s) without a start before 13:38:34, lowest 23.0 V cranking",
+     "log": "log_260924_133801_18AZ.csv",
+     "time": "2026-09-24T13:38:34-07:00"
+    },
+    "start.extra-cranking|log_260924_133801_18AZ.csv|1790282547": {
+     "detail": "1 cranking attempt(s) without a start before 13:42:27, lowest 22.4 V cranking",
+     "log": "log_260924_133801_18AZ.csv",
+     "time": "2026-09-24T13:42:27-07:00"
+    }
+   },
+   "severity": "WATCH",
+   "system": "Engine / Start",
+   "title": "Extra cranking before the engine started"
+  },
+  "start.stopped": {
+   "occurrences": {
+    "start.stopped|log_260104_091648_18AZ.csv|1767543391": {
+     "detail": "Start at 09:16:31; RPM 30 s later 102, lowest 24.0 V cranking",
+     "log": "log_260104_091648_18AZ.csv",
+     "time": "2026-01-04T09:16:31-07:00"
+    },
+    "start.stopped|log_260104_091648_18AZ.csv|1767543449": {
+     "detail": "Start at 09:17:29; RPM 30 s later 0, lowest 23.9 V cranking",
+     "log": "log_260104_091648_18AZ.csv",
+     "time": "2026-01-04T09:17:29-07:00"
+    },
+    "start.stopped|log_260118_092801_18AZ.csv|1768753630": {
+     "detail": "Start at 09:27:10; RPM 30 s later 143, lowest 23.7 V cranking",
+     "log": "log_260118_092801_18AZ.csv",
+     "time": "2026-01-18T09:27:10-07:00"
+    },
+    "start.stopped|log_260118_092801_18AZ.csv|1768753703": {
+     "detail": "Start at 09:28:23; RPM 30 s later 0, lowest 22.9 V cranking",
+     "log": "log_260118_092801_18AZ.csv",
+     "time": "2026-01-18T09:28:23-07:00"
+    },
+    "start.stopped|log_260128_135918_18AZ.csv|1769634000": {
+     "detail": "Start at 14:00:00; RPM 30 s later 0, lowest 23.8 V cranking",
+     "log": "log_260128_135918_18AZ.csv",
+     "time": "2026-01-28T14:00:00-07:00"
+    },
+    "start.stopped|log_260128_135918_18AZ.csv|1769634023": {
+     "detail": "Start at 14:00:23; RPM 30 s later 283, lowest 23.8 V cranking",
+     "log": "log_260128_135918_18AZ.csv",
+     "time": "2026-01-28T14:00:23-07:00"
+    },
+    "start.stopped|log_260130_075233_KIWA.csv|1769785020": {
+     "detail": "Start at 07:57:00; RPM 30 s later 0, lowest 23.9 V cranking",
+     "log": "log_260130_075233_KIWA.csv",
+     "time": "2026-01-30T07:57:00-07:00"
+    },
+    "start.stopped|log_260130_075233_KIWA.csv|1769785038": {
+     "detail": "Start at 07:57:18; RPM 30 s later 0, lowest 23.7 V cranking",
+     "log": "log_260130_075233_KIWA.csv",
+     "time": "2026-01-30T07:57:18-07:00"
+    },
+    "start.stopped|log_260130_084957_18AZ.csv|1769788795": {
+     "detail": "Start at 08:59:55; RPM 30 s later 111, lowest 23.5 V cranking",
+     "log": "log_260130_084957_18AZ.csv",
+     "time": "2026-01-30T08:59:55-07:00"
+    },
+    "start.stopped|log_260214_083821_18AZ.csv|1771083451": {
+     "detail": "Start at 08:37:31; RPM 30 s later 0, lowest 23.9 V cranking",
+     "log": "log_260214_083821_18AZ.csv",
+     "time": "2026-02-14T08:37:31-07:00"
+    },
+    "start.stopped|log_260216_102302_KHND.csv|1771262550": {
+     "detail": "Start at 10:22:30; RPM 30 s later 6, lowest 22.3 V cranking",
+     "log": "log_260216_102302_KHND.csv",
+     "time": "2026-02-16T10:22:30-07:00"
+    },
+    "start.stopped|log_260303_074333_18AZ.csv|1772549007": {
+     "detail": "Start at 07:43:27; RPM 30 s later 0, lowest 24.1 V cranking",
+     "log": "log_260303_074333_18AZ.csv",
+     "time": "2026-03-03T07:43:27-07:00"
+    },
+    "start.stopped|log_260318_094556_18AZ.csv|1773852408": {
+     "detail": "Start at 09:46:48; RPM 30 s later 0, lowest 23.6 V cranking",
+     "log": "log_260318_094556_18AZ.csv",
+     "time": "2026-03-18T09:46:48-07:00"
+    },
+    "start.stopped|log_260324_072256_18AZ.csv|1774362171": {
+     "detail": "Start at 07:22:51; RPM 30 s later 0, lowest 23.1 V cranking",
+     "log": "log_260324_072256_18AZ.csv",
+     "time": "2026-03-24T07:22:51-07:00"
+    },
+    "start.stopped|log_260328_080950_18AZ.csv|1774710561": {
+     "detail": "Start at 08:09:21; RPM 30 s later 198, lowest 23.1 V cranking",
+     "log": "log_260328_080950_18AZ.csv",
+     "time": "2026-03-28T08:09:21-07:00"
+    },
+    "start.stopped|log_260328_080950_18AZ.csv|1774710574": {
+     "detail": "Start at 08:09:34; RPM 30 s later 0, lowest 23.1 V cranking",
+     "log": "log_260328_080950_18AZ.csv",
+     "time": "2026-03-28T08:09:34-07:00"
+    },
+    "start.stopped|log_260328_080950_18AZ.csv|1774710608": {
+     "detail": "Start at 08:10:08; RPM 30 s later 86, lowest 24.2 V cranking",
+     "log": "log_260328_080950_18AZ.csv",
+     "time": "2026-03-28T08:10:08-07:00"
+    },
+    "start.stopped|log_260410_102303_18AZ.csv|1775841802": {
+     "detail": "Start at 10:23:22; RPM 30 s later 0, lowest 24.0 V cranking",
+     "log": "log_260410_102303_18AZ.csv",
+     "time": "2026-04-10T10:23:22-07:00"
+    },
+    "start.stopped|log_260410_102303_18AZ.csv|1775841841": {
+     "detail": "Start at 10:24:01; RPM 30 s later 0, lowest 23.9 V cranking",
+     "log": "log_260410_102303_18AZ.csv",
+     "time": "2026-04-10T10:24:01-07:00"
+    },
+    "start.stopped|log_260517_051802_KFNL.csv|1779020317": {
+     "detail": "Start at 05:18:37; RPM 30 s later 0, lowest 24.1 V cranking",
+     "log": "log_260517_051802_KFNL.csv",
+     "time": "2026-05-17T05:18:37-07:00"
+    },
+    "start.stopped|log_260517_051802_KFNL.csv|1779020358": {
+     "detail": "Start at 05:19:18; RPM 30 s later 0, lowest 23.8 V cranking",
+     "log": "log_260517_051802_KFNL.csv",
+     "time": "2026-05-17T05:19:18-07:00"
+    },
+    "start.stopped|log_260628_061332_18AZ.csv|1782652400": {
+     "detail": "Start at 06:13:20; RPM 30 s later 0, lowest 24.1 V cranking",
+     "log": "log_260628_061332_18AZ.csv",
+     "time": "2026-06-28T06:13:20-07:00"
+    },
+    "start.stopped|log_260702_061626_KPRC.csv|1782998178": {
+     "detail": "Start at 06:16:18; RPM 30 s later 0, lowest 24.2 V cranking",
+     "log": "log_260702_061626_KPRC.csv",
+     "time": "2026-07-02T06:16:18-07:00"
+    },
+    "start.stopped|log_260715_063701_KPRC.csv|1784122617": {
+     "detail": "Start at 06:36:57; RPM 30 s later 0, lowest 24.2 V cranking",
+     "log": "log_260715_063701_KPRC.csv",
+     "time": "2026-07-15T06:36:57-07:00"
+    },
+    "start.stopped|log_260718_085219_18AZ.csv|1784389950": {
+     "detail": "Start at 08:52:30; RPM 30 s later 63, lowest 24.3 V cranking",
+     "log": "log_260718_085219_18AZ.csv",
+     "time": "2026-07-18T08:52:30-07:00"
+    },
+    "start.stopped|log_260718_085219_18AZ.csv|1784389995": {
+     "detail": "Start at 08:53:15; RPM 30 s later 232, lowest 24.2 V cranking",
+     "log": "log_260718_085219_18AZ.csv",
+     "time": "2026-07-18T08:53:15-07:00"
+    },
+    "start.stopped|log_260929_113231_18AZ.csv|1790101820": {
+     "detail": "Start at 11:30:20; RPM 30 s later 0, lowest 24.0 V cranking",
+     "log": "log_260929_113231_18AZ.csv",
+     "time": "2026-09-22T11:30:20-07:00"
+    },
+    "start.stopped|log_260930_084050_18AZ.csv|1790782831": {
+     "detail": "Start at 08:40:31; RPM 30 s later 0, lowest 24.2 V cranking",
+     "log": "log_260930_084050_18AZ.csv",
+     "time": "2026-09-30T08:40:31-07:00"
+    },
+    "start.stopped|log_261002_064701_18AZ.csv|1790948776": {
+     "detail": "Start at 06:46:16; RPM 30 s later 305, lowest 24.2 V cranking",
+     "log": "log_261002_064701_18AZ.csv",
+     "time": "2026-10-02T06:46:16-07:00"
+    }
+   },
+   "severity": "WATCH",
+   "system": "Engine / Start",
+   "title": "Engine caught, then stopped within 30 s"
+  },
+  "technique.barker-cht": {
+   "occurrences": {
+    "technique.barker-cht|log_251110_094601_18AZ.csv|1762794018": {
+     "detail": "31 s from 10:00:18, extreme 384 F (Barker flight profile 2023)",
+     "log": "log_251110_094601_18AZ.csv",
+     "time": "2025-11-10T10:00:18-07:00"
+    },
+    "technique.barker-cht|log_260129_134256_18AZ.csv|1769720222": {
+     "detail": "146 s from 13:57:02, extreme 401 F (Barker flight profile 2023)",
+     "log": "log_260129_134256_18AZ.csv",
+     "time": "2026-01-29T13:57:02-07:00"
+    },
+    "technique.barker-cht|log_260708_103756_KGEU.csv|1783533443": {
+     "detail": "126 s from 10:57:23, extreme 389 F (Barker flight profile 2023)",
+     "log": "log_260708_103756_KGEU.csv",
+     "time": "2026-07-08T10:57:23-07:00"
+    },
+    "technique.barker-cht|log_260728_101325_18AZ.csv|1785260504": {
+     "detail": "135 s from 10:41:44, extreme 395 F (Barker flight profile 2023)",
+     "log": "log_260728_101325_18AZ.csv",
+     "time": "2026-07-28T10:41:44-07:00"
+    },
+    "technique.barker-cht|log_260827_134032_KFFZ.csv|1787864393": {
+     "detail": "5 s from 13:59:53, extreme 376 F (Barker flight profile 2023)",
+     "log": "log_260827_134032_KFFZ.csv",
+     "time": "2026-08-27T13:59:53-07:00"
+    },
+    "technique.barker-cht|log_260828_062602_18AZ.csv|1787925584": {
+     "detail": "142 s from 06:59:44, extreme 405 F (Barker flight profile 2023)",
+     "log": "log_260828_062602_18AZ.csv",
+     "time": "2026-08-28T06:59:44-07:00"
+    },
+    "technique.barker-cht|log_260924_133801_18AZ.csv|1790285916": {
+     "detail": "12 s from 14:38:36, extreme 372 F (Barker flight profile 2023)",
+     "log": "log_260924_133801_18AZ.csv",
+     "time": "2026-09-24T14:38:36-07:00"
+    },
+    "technique.barker-cht|log_260930_084050_18AZ.csv|1790786237": {
+     "detail": "296 s from 09:37:17, extreme 405 F (Barker flight profile 2023)",
+     "log": "log_260930_084050_18AZ.csv",
+     "time": "2026-09-30T09:37:17-07:00"
+    },
+    "technique.barker-cht|log_261001_133831_KGEU.csv|1790888298": {
+     "detail": "112 s from 13:58:18, extreme 390 F (Barker flight profile 2023)",
+     "log": "log_261001_133831_KGEU.csv",
+     "time": "2026-10-01T13:58:18-07:00"
+    }
+   },
+   "severity": "INFO",
+   "system": "Engine / In Flight",
+   "title": "CHT above 370 F in climb (technique)"
+  },
+  "technique.barker-tit": {
+   "occurrences": {
+    "technique.barker-tit|log_251108_091420_18AZ.csv|1762619226": {
+     "detail": "2 s from 09:27:06, extreme 1392 F (Barker flight profile 2023)",
+     "log": "log_251108_091420_18AZ.csv",
+     "time": "2025-11-08T09:27:06-07:00"
+    },
+    "technique.barker-tit|log_251110_094601_18AZ.csv|1762793921": {
+     "detail": "95 s from 09:58:41, extreme 1654 F (Barker flight profile 2023)",
+     "log": "log_251110_094601_18AZ.csv",
+     "time": "2025-11-10T09:58:41-07:00"
+    },
+    "technique.barker-tit|log_260111_075302_18AZ.csv|1768146616": {
+     "detail": "10 s from 08:50:16, extreme 1476 F (Barker flight profile 2023)",
+     "log": "log_260111_075302_18AZ.csv",
+     "time": "2026-01-11T08:50:16-07:00"
+    },
+    "technique.barker-tit|log_260112_083556_18AZ.csv|1768233518": {
+     "detail": "63 s from 08:58:38, extreme 1511 F (Barker flight profile 2023)",
+     "log": "log_260112_083556_18AZ.csv",
+     "time": "2026-01-12T08:58:38-07:00"
+    },
+    "technique.barker-tit|log_260128_142255_18AZ.csv|1769637306": {
+     "detail": "76 s from 14:55:06, extreme 1569 F (Barker flight profile 2023)",
+     "log": "log_260128_142255_18AZ.csv",
+     "time": "2026-01-28T14:55:06-07:00"
+    },
+    "technique.barker-tit|log_260129_124633_KIWA.csv|1769716878": {
+     "detail": "9 s from 13:01:18, extreme 1511 F (Barker flight profile 2023)",
+     "log": "log_260129_124633_KIWA.csv",
+     "time": "2026-01-29T13:01:18-07:00"
+    },
+    "technique.barker-tit|log_260129_134256_18AZ.csv|1769720159": {
+     "detail": "252 s from 13:55:59, extreme 1619 F (Barker flight profile 2023)",
+     "log": "log_260129_134256_18AZ.csv",
+     "time": "2026-01-29T13:55:59-07:00"
+    },
+    "technique.barker-tit|log_260129_162056_18AZ.csv|1769729299": {
+     "detail": "3 s from 16:28:19, extreme 1397 F (Barker flight profile 2023)",
+     "log": "log_260129_162056_18AZ.csv",
+     "time": "2026-01-29T16:28:19-07:00"
+    },
+    "technique.barker-tit|log_260130_084957_18AZ.csv|1769792431": {
+     "detail": "130 s from 10:00:31, extreme 1667 F (Barker flight profile 2023)",
+     "log": "log_260130_084957_18AZ.csv",
+     "time": "2026-01-30T10:00:31-07:00"
+    },
+    "technique.barker-tit|log_260130_121820_KIWA.csv|1769801798": {
+     "detail": "10 s from 12:36:38, extreme 1551 F (Barker flight profile 2023)",
+     "log": "log_260130_121820_KIWA.csv",
+     "time": "2026-01-30T12:36:38-07:00"
+    },
+    "technique.barker-tit|log_260204_070101_18AZ.csv|1770214476": {
+     "detail": "6 s from 07:14:36, extreme 1523 F (Barker flight profile 2023)",
+     "log": "log_260204_070101_18AZ.csv",
+     "time": "2026-02-04T07:14:36-07:00"
+    },
+    "technique.barker-tit|log_260204_082433_KPAN.csv|1770219643": {
+     "detail": "90 s from 08:40:43, extreme 1636 F (Barker flight profile 2023)",
+     "log": "log_260204_082433_KPAN.csv",
+     "time": "2026-02-04T08:40:43-07:00"
+    },
+    "technique.barker-tit|log_260222_093702_KSEZ.csv|1771779031": {
+     "detail": "2 s from 09:50:31, extreme 1401 F (Barker flight profile 2023)",
+     "log": "log_260222_093702_KSEZ.csv",
+     "time": "2026-02-22T09:50:31-07:00"
+    },
+    "technique.barker-tit|log_260303_075231_18AZ.csv|1772550596": {
+     "detail": "66 s from 08:09:56, extreme 1696 F (Barker flight profile 2023)",
+     "log": "log_260303_075231_18AZ.csv",
+     "time": "2026-03-03T08:09:56-07:00"
+    },
+    "technique.barker-tit|log_260318_094556_18AZ.csv|1773854575": {
+     "detail": "9 s from 10:22:55, extreme 1540 F (Barker flight profile 2023)",
+     "log": "log_260318_094556_18AZ.csv",
+     "time": "2026-03-18T10:22:55-07:00"
+    },
+    "technique.barker-tit|log_260324_072256_18AZ.csv|1774363254": {
+     "detail": "19 s from 07:40:54, extreme 1584 F (Barker flight profile 2023)",
+     "log": "log_260324_072256_18AZ.csv",
+     "time": "2026-03-24T07:40:54-07:00"
+    },
+    "technique.barker-tit|log_260328_081922_18AZ.csv|1774712814": {
+     "detail": "99 s from 08:46:54, extreme 1568 F (Barker flight profile 2023)",
+     "log": "log_260328_081922_18AZ.csv",
+     "time": "2026-03-28T08:46:54-07:00"
+    },
+    "technique.barker-tit|log_260331_081403_18AZ.csv|1774971830": {
+     "detail": "98 s from 08:43:50, extreme 1565 F (Barker flight profile 2023)",
+     "log": "log_260331_081403_18AZ.csv",
+     "time": "2026-03-31T08:43:50-07:00"
+    },
+    "technique.barker-tit|log_260402_091226_18AZ.csv|1775151863": {
+     "detail": "403 s from 10:44:23, extreme 1608 F (Barker flight profile 2023)",
+     "log": "log_260402_091226_18AZ.csv",
+     "time": "2026-04-02T10:44:23-07:00"
+    },
+    "technique.barker-tit|log_260405_141531_KSNA.csv|1775430969": {
+     "detail": "7 s from 16:16:09, extreme 1490 F (Barker flight profile 2023)",
+     "log": "log_260405_141531_KSNA.csv",
+     "time": "2026-04-05T16:16:09-07:00"
+    },
+    "technique.barker-tit|log_260410_103714_18AZ.csv|1775844231": {
+     "detail": "236 s from 11:03:51, extreme 1619 F (Barker flight profile 2023)",
+     "log": "log_260410_103714_18AZ.csv",
+     "time": "2026-04-10T11:03:51-07:00"
+    },
+    "technique.barker-tit|log_260414_102226_18AZ.csv|1776188534": {
+     "detail": "41 s from 10:42:14, extreme 1561 F (Barker flight profile 2023)",
+     "log": "log_260414_102226_18AZ.csv",
+     "time": "2026-04-14T10:42:14-07:00"
+    },
+    "technique.barker-tit|log_260425_102425_KSEZ.csv|1777139137": {
+     "detail": "17 s from 10:45:37, extreme 1582 F (Barker flight profile 2023)",
+     "log": "log_260425_102425_KSEZ.csv",
+     "time": "2026-04-25T10:45:37-07:00"
+    },
+    "technique.barker-tit|log_260430_125920_18AZ.csv|1777580501": {
+     "detail": "29 s from 13:21:41, extreme 1599 F (Barker flight profile 2023)",
+     "log": "log_260430_125920_18AZ.csv",
+     "time": "2026-04-30T13:21:41-07:00"
+    },
+    "technique.barker-tit|log_260430_135731_KPAN.csv|1777583490": {
+     "detail": "27 s from 14:11:30, extreme 1597 F (Barker flight profile 2023)",
+     "log": "log_260430_135731_KPAN.csv",
+     "time": "2026-04-30T14:11:30-07:00"
+    },
+    "technique.barker-tit|log_260502_104157_18AZ.csv|1777746146": {
+     "detail": "11 s from 11:22:26, extreme 1540 F (Barker flight profile 2023)",
+     "log": "log_260502_104157_18AZ.csv",
+     "time": "2026-05-02T11:22:26-07:00"
+    },
+    "technique.barker-tit|log_260502_132050_KFLG.csv|1777754776": {
+     "detail": "34 s from 13:46:16, extreme 1590 F (Barker flight profile 2023)",
+     "log": "log_260502_132050_KFLG.csv",
+     "time": "2026-05-02T13:46:16-07:00"
+    },
+    "technique.barker-tit|log_260515_055420_18AZ.csv|1778855557": {
+     "detail": "3 s from 07:32:37, extreme 1571 F (Barker flight profile 2023)",
+     "log": "log_260515_055420_18AZ.csv",
+     "time": "2026-05-15T07:32:37-07:00"
+    },
+    "technique.barker-tit|log_260516_120332_KFNL.csv|1778962855": {
+     "detail": "2 s from 13:20:55, extreme 1499 F (Barker flight profile 2023)",
+     "log": "log_260516_120332_KFNL.csv",
+     "time": "2026-05-16T13:20:55-07:00"
+    },
+    "technique.barker-tit|log_260517_051802_KFNL.csv|1779022061": {
+     "detail": "270 s from 05:47:41, extreme 1585 F (Barker flight profile 2023)",
+     "log": "log_260517_051802_KFNL.csv",
+     "time": "2026-05-17T05:47:41-07:00"
+    },
+    "technique.barker-tit|log_260526_090250_18AZ.csv|1779812680": {
+     "detail": "37 s from 09:24:40, extreme 1525 F (Barker flight profile 2023)",
+     "log": "log_260526_090250_18AZ.csv",
+     "time": "2026-05-26T09:24:40-07:00"
+    },
+    "technique.barker-tit|log_260526_110725_KPRC.csv|1779820085": {
+     "detail": "3 s from 11:28:05, extreme 1506 F (Barker flight profile 2023)",
+     "log": "log_260526_110725_KPRC.csv",
+     "time": "2026-05-26T11:28:05-07:00"
+    },
+    "technique.barker-tit|log_260527_055403_18AZ.csv|1779888320": {
+     "detail": "11 s from 06:25:20, extreme 1478 F (Barker flight profile 2023)",
+     "log": "log_260527_055403_18AZ.csv",
+     "time": "2026-05-27T06:25:20-07:00"
+    },
+    "technique.barker-tit|log_260617_061226_18AZ.csv|1781703344": {
+     "detail": "5 s from 06:35:44, extreme 1517 F (Barker flight profile 2023)",
+     "log": "log_260617_061226_18AZ.csv",
+     "time": "2026-06-17T06:35:44-07:00"
+    },
+    "technique.barker-tit|log_260708_085749_KGEU.csv|1783527495": {
+     "detail": "42 s from 09:18:15, extreme 1555 F (Barker flight profile 2023)",
+     "log": "log_260708_085749_KGEU.csv",
+     "time": "2026-07-08T09:18:15-07:00"
+    },
+    "technique.barker-tit|log_260708_103756_KGEU.csv|1783533286": {
+     "detail": "238 s from 10:54:46, extreme 1601 F (Barker flight profile 2023)",
+     "log": "log_260708_103756_KGEU.csv",
+     "time": "2026-07-08T10:54:46-07:00"
+    },
+    "technique.barker-tit|log_260718_090331_18AZ.csv|1784393681": {
+     "detail": "24 s from 09:54:41, extreme 1565 F (Barker flight profile 2023)",
+     "log": "log_260718_090331_18AZ.csv",
+     "time": "2026-07-18T09:54:41-07:00"
+    },
+    "technique.barker-tit|log_260727_071632_18AZ.csv|1785164409": {
+     "detail": "12 s from 08:00:09, extreme 1526 F (Barker flight profile 2023)",
+     "log": "log_260727_071632_18AZ.csv",
+     "time": "2026-07-27T08:00:09-07:00"
+    },
+    "technique.barker-tit|log_260728_101325_18AZ.csv|1785260504": {
+     "detail": "135 s from 10:41:44, extreme 1606 F (Barker flight profile 2023)",
+     "log": "log_260728_101325_18AZ.csv",
+     "time": "2026-07-28T10:41:44-07:00"
+    },
+    "technique.barker-tit|log_260728_115832_KPRC.csv|1785265982": {
+     "detail": "27 s from 12:13:02, extreme 1569 F (Barker flight profile 2023)",
+     "log": "log_260728_115832_KPRC.csv",
+     "time": "2026-07-28T12:13:02-07:00"
+    },
+    "technique.barker-tit|log_260807_140520_KAPV.csv|1786140764": {
+     "detail": "13 s from 15:12:44, extreme 1454 F (Barker flight profile 2023)",
+     "log": "log_260807_140520_KAPV.csv",
+     "time": "2026-08-07T15:12:44-07:00"
+    },
+    "technique.barker-tit|log_260813_063232_18AZ.csv|1786628774": {
+     "detail": "10 s from 06:46:14, extreme 1520 F (Barker flight profile 2023)",
+     "log": "log_260813_063232_18AZ.csv",
+     "time": "2026-08-13T06:46:14-07:00"
+    },
+    "technique.barker-tit|log_260814_112731_KGEU.csv|1786733041": {
+     "detail": "32 s from 11:44:01, extreme 1511 F (Barker flight profile 2023)",
+     "log": "log_260814_112731_KGEU.csv",
+     "time": "2026-08-14T11:44:01-07:00"
+    },
+    "technique.barker-tit|log_260827_134032_KFFZ.csv|1787864180": {
+     "detail": "19 s from 13:56:20, extreme 1538 F (Barker flight profile 2023)",
+     "log": "log_260827_134032_KFFZ.csv",
+     "time": "2026-08-27T13:56:20-07:00"
+    },
+    "technique.barker-tit|log_260828_062602_18AZ.csv|1787925489": {
+     "detail": "237 s from 06:58:09, extreme 1579 F (Barker flight profile 2023)",
+     "log": "log_260828_062602_18AZ.csv",
+     "time": "2026-08-28T06:58:09-07:00"
+    },
+    "technique.barker-tit|log_260916_071949_18AZ.csv|1789569914": {
+     "detail": "72 s from 07:45:14, extreme 1570 F (Barker flight profile 2023)",
+     "log": "log_260916_071949_18AZ.csv",
+     "time": "2026-09-16T07:45:14-07:00"
+    },
+    "technique.barker-tit|log_260924_133801_18AZ.csv|1790283540": {
+     "detail": "322 s from 13:59:00, extreme 1552 F (Barker flight profile 2023)",
+     "log": "log_260924_133801_18AZ.csv",
+     "time": "2026-09-24T13:59:00-07:00"
+    },
+    "technique.barker-tit|log_260925_081032_18AZ.csv|1790350324": {
+     "detail": "395 s from 08:32:04, extreme 1585 F (Barker flight profile 2023)",
+     "log": "log_260925_081032_18AZ.csv",
+     "time": "2026-09-25T08:32:04-07:00"
+    },
+    "technique.barker-tit|log_260930_084050_18AZ.csv|1790783947": {
+     "detail": "721 s from 08:59:07, extreme 1616 F (Barker flight profile 2023)",
+     "log": "log_260930_084050_18AZ.csv",
+     "time": "2026-09-30T08:59:07-07:00"
+    },
+    "technique.barker-tit|log_261001_131002_18AZ.csv|1790886220": {
+     "detail": "6 s from 13:23:40, extreme 1480 F (Barker flight profile 2023)",
+     "log": "log_261001_131002_18AZ.csv",
+     "time": "2026-10-01T13:23:40-07:00"
+    },
+    "technique.barker-tit|log_261001_133831_KGEU.csv|1790888153": {
+     "detail": "268 s from 13:55:53, extreme 1549 F (Barker flight profile 2023)",
+     "log": "log_261001_133831_KGEU.csv",
+     "time": "2026-10-01T13:55:53-07:00"
+    },
+    "technique.barker-tit|log_261002_074351_18AZ.csv|1790955424": {
+     "detail": "121 s from 08:37:04, extreme 1549 F (Barker flight profile 2023)",
+     "log": "log_261002_074351_18AZ.csv",
+     "time": "2026-10-02T08:37:04-07:00"
+    }
+   },
+   "severity": "INFO",
+   "system": "Engine / In Flight",
+   "title": "TIT above 1,325 F in climb (technique)"
+  }
+ },
+ "logs": [
+  "log_251023_103126_18AZ.csv",
+  "log_251024_103534______.csv",
+  "log_251024_114851______.csv",
+  "log_251102_133734______.csv",
+  "log_251106_125754______.csv",
+  "log_251106_161910______.csv",
+  "log_251108_091420_18AZ.csv",
+  "log_251109_113242______.csv",
+  "log_251110_093011______.csv",
+  "log_251110_094601_18AZ.csv",
+  "log_251114_092256_KFFZ.csv",
+  "log_251120_122841______.csv",
+  "log_251120_135739______.csv",
+  "log_251120_144201______.csv",
+  "log_251120_150220______.csv",
+  "log_251120_152300______.csv",
+  "log_251230_112901_18AZ.csv",
+  "log_251230_113111______.csv",
+  "log_251230_113805______.csv",
+  "log_260102_113347______.csv",
+  "log_260102_122741______.csv",
+  "log_260103_140320_18AZ.csv",
+  "log_260103_141130_18AZ.csv",
+  "log_260104_091648_18AZ.csv",
+  "log_260104_103149_18AZ.csv",
+  "log_260104_112150_18AZ.csv",
+  "log_260104_114202_18AZ.csv",
+  "log_260104_134823______.csv",
+  "log_260104_134911_KSEZ.csv",
+  "log_260110_162459______.csv",
+  "log_260111_075302_18AZ.csv",
+  "log_260111_162712______.csv",
+  "log_260112_083556_18AZ.csv",
+  "log_260112_095854_18AZ.csv",
+  "log_260118_090811______.csv",
+  "log_260118_092801_18AZ.csv",
+  "log_260118_094626_18AZ.csv",
+  "log_260119_163010______.csv",
+  "log_260120_072604_18AZ.csv",
+  "log_260120_080802_KFFZ.csv",
+  "log_260120_090933_KFFZ.csv",
+  "log_260120_093325_KFFZ.csv",
+  "log_260120_101826_KFFZ.csv",
+  "log_260122_111415______.csv",
+  "log_260122_111754______.csv",
+  "log_260122_112538______.csv",
+  "log_260122_122831_18AZ.csv",
+  "log_260128_132108______.csv",
+  "log_260128_135918_18AZ.csv",
+  "log_260128_142255_18AZ.csv",
+  "log_260128_164226_18AZ.csv",
+  "log_260129_124131______.csv",
+  "log_260129_124633_KIWA.csv",
+  "log_260129_131808______.csv",
+  "log_260129_134256_18AZ.csv",
+  "log_260129_162056_18AZ.csv",
+  "log_260130_075233_KIWA.csv",
+  "log_260130_082902______.csv",
+  "log_260130_084957_18AZ.csv",
+  "log_260130_115727_KIWA.csv",
+  "log_260130_121820_KIWA.csv",
+  "log_260201_144159______.csv",
+  "log_260202_071145______.csv",
+  "log_260202_074533_18AZ.csv",
+  "log_260203_102313______.csv",
+  "log_260204_063459______.csv",
+  "log_260204_070101_18AZ.csv",
+  "log_260204_082244______.csv",
+  "log_260204_082433_KPAN.csv",
+  "log_260204_110055_18AZ.csv",
+  "log_260204_112901_18AZ.csv",
+  "log_260210_092030______.csv",
+  "log_260212_161857______.csv",
+  "log_260214_082526______.csv",
+  "log_260214_083821_18AZ.csv",
+  "log_260214_084856_18AZ.csv",
+  "log_260216_101657______.csv",
+  "log_260216_102302_KHND.csv",
+  "log_260222_074756_18AZ.csv",
+  "log_260222_075120______.csv",
+  "log_260222_075603_18AZ.csv",
+  "log_260222_093237______.csv",
+  "log_260222_093414______.csv",
+  "log_260222_093702_KSEZ.csv",
+  "log_260303_073636______.csv",
+  "log_260303_074333_18AZ.csv",
+  "log_260303_075231_18AZ.csv",
+  "log_260318_093741______.csv",
+  "log_260318_094556_18AZ.csv",
+  "log_260318_103820_KPAN.csv",
+  "log_260324_071149______.csv",
+  "log_260324_072256_18AZ.csv",
+  "log_260324_081454______.csv",
+  "log_260324_100734______.csv",
+  "log_260324_101125_KGEU.csv",
+  "log_260328_080243______.csv",
+  "log_260328_080950_18AZ.csv",
+  "log_260328_081922_18AZ.csv",
+  "log_260328_091951_KAVQ.csv",
+  "log_260328_092351_KAVQ.csv",
+  "log_260330_153752______.csv",
+  "log_260330_153936______.csv",
+  "log_260330_154202______.csv",
+  "log_260330_154857______.csv",
+  "log_260331_075550_18AZ.csv",
+  "log_260331_075955______.csv",
+  "log_260331_080249_18AZ.csv",
+  "log_260331_081403_18AZ.csv",
+  "log_260331_104531_KRYN.csv",
+  "log_260401_165417______.csv",
+  "log_260401_165831______.csv",
+  "log_260402_084701______.csv",
+  "log_260402_091226_18AZ.csv",
+  "log_260404_091938______.csv",
+  "log_260404_092920_KSBA.csv",
+  "log_260405_141033_KSNA.csv",
+  "log_260405_141531_KSNA.csv",
+  "log_260406_154447______.csv",
+  "log_260407_133445______.csv",
+  "log_260407_133545______.csv",
+  "log_260407_133637______.csv",
+  "log_260407_133816______.csv",
+  "log_260410_101723______.csv",
+  "log_260410_102303_18AZ.csv",
+  "log_260410_103714_18AZ.csv",
+  "log_260414_095139______.csv",
+  "log_260414_100832_18AZ.csv",
+  "log_260414_102226_18AZ.csv",
+  "log_260414_121053______.csv",
+  "log_260414_121356_KHII.csv",
+  "log_260423_084832_18AZ.csv",
+  "log_260425_081742______.csv",
+  "log_260425_082356_18AZ.csv",
+  "log_260425_083603_18AZ.csv",
+  "log_260425_102425_KSEZ.csv",
+  "log_260428_155945______.csv",
+  "log_260428_160620_18AZ.csv",
+  "log_260430_123638______.csv",
+  "log_260430_124432_18AZ.csv",
+  "log_260430_125920_18AZ.csv",
+  "log_260430_134621_KPAN.csv",
+  "log_260430_134901_KPAN.csv",
+  "log_260430_135731_KPAN.csv",
+  "log_260502_103429______.csv",
+  "log_260502_104157_18AZ.csv",
+  "log_260502_131619______.csv",
+  "log_260502_132050_KFLG.csv",
+  "log_260512_110348______.csv",
+  "log_260512_110731______.csv",
+  "log_260512_112002______.csv",
+  "log_260512_143933______.csv",
+  "log_260514_071902_18AZ.csv",
+  "log_260514_072933_18AZ.csv",
+  "log_260514_104752______.csv",
+  "log_260515_055024______.csv",
+  "log_260515_055420_18AZ.csv",
+  "log_260516_115920______.csv",
+  "log_260516_120332_KFNL.csv",
+  "log_260517_050320______.csv",
+  "log_260517_050612______.csv",
+  "log_260517_051802_KFNL.csv",
+  "log_260519_104406______.csv",
+  "log_260526_084801______.csv",
+  "log_260526_085231_18AZ.csv",
+  "log_260526_090250_18AZ.csv",
+  "log_260526_110440______.csv",
+  "log_260526_110725_KPRC.csv",
+  "log_260526_151906______.csv",
+  "log_260526_152302_18AZ.csv",
+  "log_260526_182533_18AZ.csv",
+  "log_260527_054441______.csv",
+  "log_260527_055102_18AZ.csv",
+  "log_260527_055403_18AZ.csv",
+  "log_260616_121550______.csv",
+  "log_260616_122020_18AZ.csv",
+  "log_260616_122802_18AZ.csv",
+  "log_260617_060508______.csv",
+  "log_260617_061226_18AZ.csv",
+  "log_260617_081931_KGEU.csv",
+  "log_260618_125825______.csv",
+  "log_260618_130201_KGEU.csv",
+  "log_260628_060934______.csv",
+  "log_260628_061332_18AZ.csv",
+  "log_260628_062756_18AZ.csv",
+  "log_260628_075702_KHII.csv",
+  "log_260628_090701_18AZ.csv",
+  "log_260629_093716______.csv",
+  "log_260629_094625______.csv",
+  "log_260629_094933______.csv",
+  "log_260630_101341______.csv",
+  "log_260630_102302_18AZ.csv",
+  "log_260702_060622______.csv",
+  "log_260702_061626_KPRC.csv",
+  "log_260708_070319______.csv",
+  "log_260708_071002_KPRC.csv",
+  "log_260708_085749_KGEU.csv",
+  "log_260708_103756_KGEU.csv",
+  "log_260715_062911______.csv",
+  "log_260715_063701_KPRC.csv",
+  "log_260715_091651______.csv",
+  "log_260715_092002_KFLG.csv",
+  "log_260716_151303______.csv",
+  "log_260716_152020_KPRC.csv",
+  "log_260716_161713______.csv",
+  "log_260716_162443_18AZ.csv",
+  "log_260716_162606______.csv",
+  "log_260716_163140______.csv",
+  "log_260718_085219_18AZ.csv",
+  "log_260718_090331_18AZ.csv",
+  "log_260719_101703_KHND.csv",
+  "log_260719_102203_KHND.csv",
+  "log_260720_113550______.csv",
+  "log_260720_113842______.csv",
+  "log_260720_113932______.csv",
+  "log_260721_083331______.csv",
+  "log_260721_083718______.csv",
+  "log_260721_085531______.csv",
+  "log_260721_085756______.csv",
+  "log_260727_065847______.csv",
+  "log_260727_070832_18AZ.csv",
+  "log_260727_071632_18AZ.csv",
+  "log_260728_094529______.csv",
+  "log_260728_094856_18AZ.csv",
+  "log_260728_101325_18AZ.csv",
+  "log_260728_115832_KPRC.csv",
+  "log_260806_094310______.csv",
+  "log_260806_152523______.csv",
+  "log_260807_111336______.csv",
+  "log_260807_111732_18AZ.csv",
+  "log_260807_112356_18AZ.csv",
+  "log_260807_115632_18AZ.csv",
+  "log_260807_140520_KAPV.csv",
+  "log_260807_153227______.csv",
+  "log_260807_154231_KPRB.csv",
+  "log_260809_083837______.csv",
+  "log_260809_091103_KPRB.csv",
+  "log_260809_093651_KPRB.csv",
+  "log_260809_111402_KAPV.csv",
+  "log_260809_180147______.csv",
+  "log_260810_084300______.csv",
+  "log_260811_124204______.csv",
+  "log_260813_061608______.csv",
+  "log_260813_062303_18AZ.csv",
+  "log_260813_063232_18AZ.csv",
+  "log_260813_074519_KGEU.csv",
+  "log_260813_081050_KGEU.csv",
+  "log_260813_132320_KGEU.csv",
+  "log_260813_133413______.csv",
+  "log_260813_153732_KGEU.csv",
+  "log_260814_111851______.csv",
+  "log_260814_112232_KGEU.csv",
+  "log_260814_112403______.csv",
+  "log_260814_112731_KGEU.csv",
+  "log_260818_064951______.csv",
+  "log_260818_065832_18AZ.csv",
+  "log_260818_081709______.csv",
+  "log_260819_103138______.csv",
+  "log_260819_104255______.csv",
+  "log_260819_105632_KFFZ.csv",
+  "log_260819_111700______.csv",
+  "log_260819_123405______.csv",
+  "log_260824_122033_KFFZ.csv",
+  "log_260825_125250_KFFZ.csv",
+  "log_260825_125628______.csv",
+  "log_260825_125932_KFFZ.csv",
+  "log_260825_130250_KFFZ.csv",
+  "log_260825_143928______.csv",
+  "log_260826_082132_KFFZ.csv",
+  "log_260826_085831_KFFZ.csv",
+  "log_260826_092414______.csv",
+  "log_260826_103232_KFFZ.csv",
+  "log_260826_124132_KFFZ.csv",
+  "log_260827_133636______.csv",
+  "log_260827_134032_KFFZ.csv",
+  "log_260828_054632______.csv",
+  "log_260828_055402_18AZ.csv",
+  "log_260828_062602_18AZ.csv",
+  "log_260828_091917______.csv",
+  "log_260828_092332_P23.csv",
+  "log_260831_120721_18AZ.csv",
+  "log_260915_145432______.csv",
+  "log_260915_150046______.csv",
+  "log_260915_150705______.csv",
+  "log_260915_150822______.csv",
+  "log_260915_152610______.csv",
+  "log_260915_152844______.csv",
+  "log_260915_153218______.csv",
+  "log_260915_153650______.csv",
+  "log_260916_070450_18AZ.csv",
+  "log_260916_070914______.csv",
+  "log_260916_071949_18AZ.csv",
+  "log_260919_165949______.csv",
+  "log_260922_080332______.csv",
+  "log_260922_080709______.csv",
+  "log_260922_081530______.csv",
+  "log_260922_082028______.csv",
+  "log_260922_082341______.csv",
+  "log_260922_084717______.csv",
+  "log_260922_084915______.csv",
+  "log_260922_085414______.csv",
+  "log_260923_153252______.csv",
+  "log_260924_131514______.csv",
+  "log_260924_133102_18AZ.csv",
+  "log_260924_133227______.csv",
+  "log_260924_133328______.csv",
+  "log_260924_133801_18AZ.csv",
+  "log_260924_190144______.csv",
+  "log_260925_065919______.csv",
+  "log_260925_080417______.csv",
+  "log_260925_081032_18AZ.csv",
+  "log_260925_141512______.csv",
+  "log_260929_113231_18AZ.csv",
+  "log_260929_114902_18AZ.csv",
+  "log_260929_115202_18AZ.csv",
+  "log_260929_152804______.csv",
+  "log_260930_075942______.csv",
+  "log_260930_080133______.csv",
+  "log_260930_084050_18AZ.csv",
+  "log_261001_125617______.csv",
+  "log_261001_131002_18AZ.csv",
+  "log_261001_133831_KGEU.csv",
+  "log_261002_064701_18AZ.csv",
+  "log_261002_065432_18AZ.csv",
+  "log_261002_074351_18AZ.csv"
+ ],
+ "updated": "2026-10-06T19:44:34+00:00"
+}
