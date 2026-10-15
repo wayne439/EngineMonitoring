@@ -1,5 +1,16 @@
 # AI Engine Monitoring changelog
 
+## 0.5.0 (2026-10-15)
+- Getting data in without fuss:
+  - One-tap SD card import (DIAGNOSTICS > Flight Logs > Import new flights from SD card): choose the data_log folder once, then each tap adds only new flights and skips ones already imported.
+  - Open In / share sheet: engine log files shared from Files, Mail, AirDrop, Cirrus IQ or Garmin Pilot open in the app. Garmin CSV logs are analyzed right away; JPI and other formats are saved to the subscriber's cloud inbox until support arrives.
+  - Cloud inbox (`inbox_uploads` table + `<user>/inbox/` files) ready for flyGarmin / PlaneSync, AirSync, email-in and web uploads; included in account deletion; RLS tests extended (ALL RLS TESTS PASSED).
+- Registration asks for avionics / engine monitor and wireless data link (GDL 60, Flight Stream 510, Flight Stream 210, Cirrus IQ, AirSync, none) and shows the best way to get that aircraft's data in. The same advice is in Aircraft Profile.
+- Flight Stream 210 is flagged as not carrying engine data; Flight Stream 510 only for G1000 NXi and TXi (per Garmin).
+- More avionics choices: Perspective+, G1000 NXi, TXi, GI 275, Avidyne Entegra.
+- Tests: data path advice, older profile decoding, SD folder de-duplication.
+- Version 0.5.0 (6).
+
 ## 0.4.0 (2026-10-15)
 - New landing page shown when the app opens: Register for AI Engine Monitoring, Log in to AI Engine Monitoring, Sign in with Apple, and Explore without an account; plus What it does, Why pilots use it, and About us.
 - Registration: name, email, password; aircraft chosen from a drop-down (common single-engine piston models with Garmin glass, or Other) plus tail number, which fills the Aircraft Profile; a data checklist (required / recommended / optional) of what to gather; advisory acknowledgement.

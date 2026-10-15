@@ -26,7 +26,7 @@ enum AircraftKnowledge {
         let induction = p.isTurbocharged ? "turbocharged/turbonormalized" : "normally aspirated"
         out.append(Fact(label: "Engine", value: "\(p.engineModel.isEmpty ? "Not entered" : p.engineModel), \(p.cylinders) cylinders, \(induction)", source: "Aircraft profile"))
         if !p.propeller.isEmpty { out.append(Fact(label: "Propeller", value: p.propeller, source: "Aircraft profile")) }
-        out.append(Fact(label: "Engine monitor", value: p.monitor.rawValue, source: "Aircraft profile"))
+        out.append(Fact(label: "Engine monitor", value: p.monitor.label, source: "Aircraft profile"))
         if !p.homeAirport.isEmpty { out.append(Fact(label: "Home airport", value: p.homeAirport, source: "Aircraft profile")) }
         out.append(Fact(label: "Oil changes", value: "Every \(Int(p.oilChangeIntervalHours)) hours", source: "Aircraft profile"))
         out.append(Fact(label: "Limits", value: p.limitsConfirmedByOwner ? "Confirmed by owner (\(p.limits.limitsSource))" : "Template values - confirm against your POH/AFM",
@@ -115,6 +115,6 @@ enum AircraftKnowledge {
     static func copaQuestion(about topic: String, details: String) -> String {
         let p = profile
         let induction = p.isTurbocharged ? "turbocharged/turbonormalized" : "normally aspirated"
-        return "\(p.year > 0 ? "\(p.year) " : "")\(p.make) \(p.model), \(p.engineModel) (\(induction)), \(p.monitor.rawValue). \(topic). \(details) What should I check, and which documents apply?"
+        return "\(p.year > 0 ? "\(p.year) " : "")\(p.make) \(p.model), \(p.engineModel) (\(induction)), \(p.monitor.label). \(topic). \(details) What should I check, and which documents apply?"
     }
 }

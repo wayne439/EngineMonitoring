@@ -433,6 +433,44 @@ final class CloudStore: ObservableObject {
         }
     }
 
+    // MARK: Inbox
+
+    /// Saves a file the app cannot analyze yet (JPI, EI, other) to the subscriber's cloud inbox, so it can be
+    /// processed when support arrives. Returns a message for the pilot.
+    func uploadToInbox(fileURL: URL, source: String = "share") async -> String {
+        guard isConfigured else { return "This file type can't be analyzed yet. Cloud storage isn't set up in this build, so it wasn't saved." }
+        guard isSignedIn else { return "This file type can't be analyzed yet. Sign in (ACCOUNT) and share it again to save it to your account for when support arrives." }
+        isBusy = true
+        defer { isBusy = false }
+        let scoped = fileURL.startAccessingSecurityScopedResource()
+        defer { if scoped { fileURL.stopAccessingSecurityScopedResource() } }
+        do {
+            let (api, s) = try await token()
+            let data = try Data(contentsOf: fileURL)
+            let name = fileURL.lastPathComponent
+            let stamp = Int(Date().timeIntervalSince1970)
+            let path = "\(s.userID.lowercased())/inbox/\(stamp)-\(FlightLogLibrary.storedFilename(for: name))"
+            try await api.uploadFile(path: path, data: data, contentType: "application/octet-stream", token: s.accessToken)
+            let ext = fileURL.pathExtension.lowercased()
+            let row: [String: Any] = [
+                "aircraft_id": aircraftID.uuidString.lowercased(),
+                "source": source,
+                "original_filename": name,
+                "storage_path": path,
+                "size_bytes": data.count,
+                "format": ext == "jpi" ? "jpi" : (ext == "csv" ? "garmin-csv" : "unknown"),
+                "status": "unsupported",
+            ]
+            // The aircraft row must exist before the inbox row can point at it.
+            try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: AircraftProfileSnapshot.shared.profile)],
+                                 onConflict: "id", token: s.accessToken)
+            try await api.upsert(table: "inbox_uploads", rows: [row], onConflict: "id", token: s.accessToken)
+            return "\(name) was saved to your account. It will be analyzed when support for this file type arrives."
+        } catch {
+            return "\(fileURL.lastPathComponent) could not be saved: \(error.localizedDescription)"
+        }
+    }
+
     /// The aircraft saved in the cloud for this account (to restore a profile on a new device).
     func cloudProfile() async -> AircraftProfile? {
         do {
@@ -461,7 +499,9 @@ final class CloudStore: ObservableObject {
             let (api, s) = try await token()
             let rows = try await api.select(table: "flight_logs", query: [URLQueryItem(name: "select", value: "storage_path")],
                                             token: s.accessToken)
-            let paths = rows.compactMap { $0["storage_path"] as? String }
+            let inbox = try await api.select(table: "inbox_uploads", query: [URLQueryItem(name: "select", value: "storage_path")],
+                                             token: s.accessToken)
+            let paths = (rows + inbox).compactMap { $0["storage_path"] as? String }
             for start in stride(from: 0, to: paths.count, by: 100) {
                 try await api.deleteFiles(paths: Array(paths[start..<min(start + 100, paths.count)]), token: s.accessToken)
             }

@@ -3,16 +3,33 @@ import Foundation
 /// Engine monitors the app knows about. Only the Garmin CSV formats are imported today.
 enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     case garminPerspective = "Cirrus Perspective (Garmin)"
+    case garminPerspectivePlus = "Cirrus Perspective+ (G6 / G7)"
+    // Raw value kept from 0.2 so saved profiles still decode.
     case garminG1000 = "Garmin G1000 / G1000 NXi"
+    case garminG1000NXi = "Garmin G1000 NXi"
+    case garminTXi = "Garmin G500 / G600 TXi"
+    case garminGI275 = "Garmin GI 275 EIS"
     case garminG3X = "Garmin G3X Touch"
+    case avidyne = "Avidyne Entegra"
     case jpiEDM = "J.P. Instruments EDM"
     case eiMVP = "Electronics International MVP / CGR"
     case other = "Other"
 
     var id: String { rawValue }
 
-    /// True when the importer can read this monitor's log files in this version.
-    var isSupported: Bool { self == .garminPerspective || self == .garminG1000 }
+    /// Shown in pickers; the original combined entry reads as plain G1000 (NXi has its own entry).
+    var label: String { self == .garminG1000 ? "Garmin G1000" : rawValue }
+
+    /// True when the importer can read this monitor's log files in this version (Garmin CSV data logs).
+    var isSupported: Bool {
+        switch self {
+        case .garminPerspective, .garminPerspectivePlus, .garminG1000, .garminG1000NXi: return true
+        default: return false
+        }
+    }
+
+    /// Garmin avionics whose engine data the Flight Stream 510 can carry (per Garmin: G1000 NXi and TXi).
+    var flightStream510CarriesEngineData: Bool { self == .garminG1000NXi || self == .garminTXi }
 }
 
 /// Engine limits and pilot references for one aircraft. Values come from the owner's POH/AFM;
@@ -58,6 +75,8 @@ struct AircraftProfile: Codable, Equatable, Sendable {
     /// True once the owner has checked every limit against their own POH/AFM.
     var limitsConfirmedByOwner: Bool
     var updatedAt: Date
+    /// How engine data can leave the airplane (nil = not answered yet).
+    var dataLink: DataLink? = nil
 
     var displayName: String {
         let name = [year > 0 ? String(year) : "", make, model].filter { !$0.isEmpty }.joined(separator: " ")

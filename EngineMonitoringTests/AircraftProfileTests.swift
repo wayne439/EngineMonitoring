@@ -53,4 +53,49 @@ final class AircraftProfileTests: XCTestCase {
         XCTAssertFalse(EngineMonitorType.jpiEDM.isSupported)
         XCTAssertTrue(EngineMonitorType.garminPerspective.isSupported)
     }
+
+    // MARK: - Data path advice
+
+    func testFlightStream210NeverCarriesEngineData() {
+        let a = DataPathAdvice.advise(monitor: .garminG1000NXi, link: .flightStream210, make: "Cessna")
+        XCTAssertFalse(a.automatic)
+        XCTAssertTrue(a.title.contains("Flight Stream 210"))
+    }
+
+    func testFlightStream510DependsOnAvionics() {
+        XCTAssertTrue(DataPathAdvice.advise(monitor: .garminG1000NXi, link: .flightStream510, make: "Cessna").automatic)
+        XCTAssertTrue(DataPathAdvice.advise(monitor: .garminTXi, link: .flightStream510, make: "Beechcraft").automatic)
+        XCTAssertFalse(DataPathAdvice.advise(monitor: .garminPerspective, link: .flightStream510, make: "Cirrus").automatic)
+    }
+
+    func testNoLinkMeansDataCardAndCirrusHint() {
+        let a = DataPathAdvice.advise(monitor: .garminPerspective, link: nil, make: "Cirrus")
+        XCTAssertFalse(a.automatic)
+        XCTAssertTrue(a.steps.joined().contains("Cirrus IQ"))
+        XCTAssertTrue(DataPathAdvice.advise(monitor: .jpiEDM, link: .gdl60, make: "Mooney").title.contains("Export"))
+    }
+
+    func testOlderProfileWithoutDataLinkStillDecodes() throws {
+        var p = AircraftProfile.sr22TurboTemplate
+        p.dataLink = .gdl60
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: EventPersistence.encoder.encode(p)) as? [String: Any])
+        json.removeValue(forKey: "dataLink")
+        let decoded = try EventPersistence.decoder.decode(AircraftProfile.self, from: JSONSerialization.data(withJSONObject: json))
+        XCTAssertNil(decoded.dataLink)
+    }
+
+    // MARK: - SD card folder import
+
+    @MainActor
+    func testNewLogFilesSkipsAlreadyImportedAndNonCSV() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let sub = dir.appendingPathComponent("data_log")
+        try FileManager.default.createDirectory(at: sub, withIntermediateDirectories: true)
+        for name in ["log_1.csv", "log_2.csv", "notes.txt"] { try Data("x".utf8).write(to: sub.appendingPathComponent(name)) }
+        let existing = FlightLogEntry(filename: "log_1.csv", originalFilename: "log_1.csv", start: Date(), end: Date(),
+                                      sampleCount: 1, airframeName: nil, systemID: nil, importedAt: Date())
+        let found = try XCTUnwrap(FlightLogStore.newLogFiles(in: dir, existing: [existing]))
+        XCTAssertEqual(found.map(\.lastPathComponent), ["log_2.csv"])
+        XCTAssertNil(FlightLogStore.newLogFiles(in: dir.appendingPathComponent("missing"), existing: []))
+    }
 }

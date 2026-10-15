@@ -1,7 +1,7 @@
 -- Row-level security tests for schema.sql. Run after supabase_stub.sql and schema.sql.
 -- Every check raises an exception on failure; the script ends with "ALL RLS TESTS PASSED".
 \set ON_ERROR_STOP on
-grant select, insert, update, delete on public.aircraft, public.flight_logs to authenticated;
+grant select, insert, update, delete on public.aircraft, public.flight_logs, public.inbox_uploads to authenticated;
 
 insert into auth.users values ('00000000-0000-0000-0000-00000000000a', 'a@example.com'),
                               ('00000000-0000-0000-0000-00000000000b', 'b@example.com');
@@ -15,6 +15,8 @@ insert into public.flight_logs (aircraft_id, filename, original_filename, starte
 values ('11111111-1111-1111-1111-111111111111', 'log1.csv', 'log1.csv', now() - interval '2 hours', now(),
         '00000000-0000-0000-0000-00000000000a/11111111-1111-1111-1111-111111111111/log1.csv', '{"flight":1}');
 insert into storage.objects (bucket_id, name) values ('engine-logs', '00000000-0000-0000-0000-00000000000a/11111111-1111-1111-1111-111111111111/log1.csv');
+insert into public.inbox_uploads (aircraft_id, source, original_filename, storage_path, format, status)
+values ('11111111-1111-1111-1111-111111111111', 'share', 'flight.jpi', '00000000-0000-0000-0000-00000000000a/inbox/flight.jpi', 'jpi', 'unsupported');
 
 -- owner_id was filled from the signed-in user.
 do $$ begin
@@ -36,6 +38,7 @@ do $$ begin
     if (select count(*) from public.aircraft) <> 0 then raise exception 'B can see A''s aircraft'; end if;
     if (select count(*) from public.flight_logs) <> 0 then raise exception 'B can see A''s logs'; end if;
     if (select count(*) from storage.objects) <> 0 then raise exception 'B can see A''s files'; end if;
+    if (select count(*) from public.inbox_uploads) <> 0 then raise exception 'B can see A''s inbox'; end if;
 end $$;
 
 -- B cannot attach a log to A's aircraft, nor pose as A.
@@ -50,6 +53,17 @@ do $$ begin
         insert into public.aircraft (owner_id, tail_number) values ('00000000-0000-0000-0000-00000000000a', 'N666');
         raise exception 'B created an aircraft owned by A';
     exception when insufficient_privilege then null;
+    end;
+    begin
+        insert into public.inbox_uploads (aircraft_id, original_filename, storage_path)
+        values ('11111111-1111-1111-1111-111111111111', 'evil.jpi', 'x');
+        raise exception 'B attached an inbox file to A''s aircraft';
+    exception when insufficient_privilege then null;
+    end;
+    begin
+        insert into public.inbox_uploads (original_filename, storage_path, status) values ('a.csv', 'x', 'bogus');
+        raise exception 'status check did not fire';
+    exception when check_violation then null;
     end;
 end $$;
 
@@ -80,6 +94,7 @@ do $$ begin
     if exists (select 1 from auth.users where id = '00000000-0000-0000-0000-00000000000a') then raise exception 'user A not deleted'; end if;
     if (select count(*) from public.aircraft) <> 0 then raise exception 'aircraft not cascaded'; end if;
     if (select count(*) from public.flight_logs) <> 0 then raise exception 'logs not cascaded'; end if;
+    if (select count(*) from public.inbox_uploads) <> 0 then raise exception 'inbox not cascaded'; end if;
     if not exists (select 1 from auth.users where id = '00000000-0000-0000-0000-00000000000b') then raise exception 'user B was deleted'; end if;
 end $$;
 

@@ -6,13 +6,39 @@ import UIKit
 /// without an account), then the app.
 struct RootView: View {
     @EnvironmentObject private var cloud: CloudStore
+    @EnvironmentObject private var flightLogs: FlightLogStore
     @AppStorage("EM.exploreWithoutAccount") private var exploring = false
+    @State private var incomingMessage: String?
 
     var body: some View {
-        if cloud.isSignedIn || exploring {
-            ContentView()
+        Group {
+            if cloud.isSignedIn || exploring {
+                ContentView()
+            } else {
+                LandingView(exploring: $exploring)
+            }
+        }
+        // Files shared to the app (Files, Mail, AirDrop, Cirrus IQ, Garmin Pilot): "Open in AI Engine Monitoring".
+        .onOpenURL { url in
+            Task { await receive(url) }
+        }
+        .alert("Engine data", isPresented: Binding(get: { incomingMessage != nil }, set: { if !$0 { incomingMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(incomingMessage ?? "")
+        }
+    }
+
+    /// Garmin CSV logs are analyzed right away; other formats go to the cloud inbox until they are supported.
+    private func receive(_ url: URL) async {
+        guard url.isFileURL else { return }
+        if url.pathExtension.lowercased() == "csv" {
+            flightLogs.lastError = nil
+            await flightLogs.importFiles([url])
+            incomingMessage = flightLogs.lastError ?? flightLogs.importSummary ?? "\(url.lastPathComponent) was imported."
+            flightLogs.lastError = nil
         } else {
-            LandingView(exploring: $exploring)
+            incomingMessage = await cloud.uploadToInbox(fileURL: url, source: "share")
         }
     }
 }
@@ -129,6 +155,8 @@ struct RegisterView: View {
     @EnvironmentObject private var aircraft: AircraftProfileStore
     @State private var aircraftID = ""
     @State private var tailNumber = ""
+    @State private var monitor: EngineMonitorType = .garminG1000
+    @State private var link: DataLink = .notSure
     @State private var name = ""
     @State private var email = ""
     @State private var password = ""
@@ -181,7 +209,7 @@ struct RegisterView: View {
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
                 if let selected, selected.id != AircraftModelOption.other.id {
-                    Text("\(selected.cylinders) cylinders, \(selected.turbo ? "turbocharged" : "normally aspirated"), \(selected.monitor.rawValue). You can change any of this in Aircraft Profile.")
+                    Text("\(selected.cylinders) cylinders, \(selected.turbo ? "turbocharged" : "normally aspirated"). You can change any of this in Aircraft Profile.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -190,8 +218,23 @@ struct RegisterView: View {
             } footer: {
                 Text("Single-engine piston aircraft for now. Twins and turbines are coming.")
             }
-            DataChecklistSection(turbo: selected?.turbo ?? false, monitor: selected?.monitor ?? .garminG1000,
-                                 header: "3. Data to have ready")
+            Section {
+                Picker("Avionics / engine monitor", selection: $monitor) {
+                    ForEach(EngineMonitorType.allCases) { Text($0.label).tag($0) }
+                }
+                .pickerStyle(.menu)
+                Picker("Wireless data link", selection: $link) {
+                    ForEach(DataLink.allCases) { Text($0.rawValue).tag($0) }
+                }
+                .pickerStyle(.menu)
+                DataPathAdviceView(advice: DataPathAdvice.advise(monitor: monitor, link: link, make: selected?.make ?? ""))
+            } header: {
+                Text("3. Avionics and how your data gets to us")
+            } footer: {
+                Text("Not sure? Check the avionics name on the startup screen, or ask your avionics shop. You can change this later in Aircraft Profile.")
+            }
+            DataChecklistSection(turbo: selected?.turbo ?? false, monitor: monitor,
+                                 header: "4. Data to have ready")
             Section {
                 Toggle("I understand AI Engine Monitoring is advisory only and does not replace my POH/AFM, engine monitor or A&P.", isOn: $agreed)
                     .font(.footnote)
@@ -201,7 +244,10 @@ struct RegisterView: View {
                     Task {
                         done = await cloud.register(email: email.trimmingCharacters(in: .whitespaces), password: password, fullName: name)
                         if done, let selected {
-                            aircraft.profile = selected.applied(to: aircraft.profile, tailNumber: tailNumber)
+                            var p = selected.applied(to: aircraft.profile, tailNumber: tailNumber)
+                            p.monitor = monitor
+                            p.dataLink = link
+                            aircraft.profile = p
                         }
                     }
                 } label: {
@@ -224,6 +270,10 @@ struct RegisterView: View {
         }
         .navigationTitle("Register")
         .onAppear { cloud.clearMessages() }
+        // Choosing an aircraft suggests its usual avionics; the pilot can still change it.
+        .onChange(of: aircraftID) {
+            if let selected, selected.id != AircraftModelOption.other.id { monitor = selected.monitor }
+        }
     }
 }
 
@@ -276,6 +326,28 @@ struct LoginView: View {
         }
         .navigationTitle("Log In")
         .onAppear { cloud.clearMessages() }
+    }
+}
+
+// MARK: - Data path advice
+
+/// "Best way to get your data in" box for the chosen avionics and data link.
+struct DataPathAdviceView: View {
+    let advice: DataPathAdvice
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label(advice.title, systemImage: advice.automatic ? "antenna.radiowaves.left.and.right" : "sdcard")
+                .font(.subheadline.bold())
+                .foregroundStyle(advice.automatic ? Color.green : Color.accentColor)
+            ForEach(Array(advice.steps.enumerated()), id: \.offset) { index, step in
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text("\(index + 1).").font(.footnote.bold()).foregroundStyle(.secondary)
+                    Text(step).font(.footnote)
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
 }
 
