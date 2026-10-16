@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.6.5 (2026-10-16)
+- Upload website is live at https://velvety-brigadeiros-12bd22.netlify.app. Documents and uploads now shows "Upload on our website", and "Email me an upload link" signs pilots straight in to it.
+- Version 0.6.5 (12).
+
 ## 0.6.4 (2026-10-16)
 - Documents and uploads is now a checklist of every document we need, each with its own Upload button, a Required / Recommended / Optional badge, and a received count with a green check. The header shows "X of Y required done". Files land in the right category automatically, matching the upload website's slots.
 - Tail and serial number row links to Aircraft Profile (typed, not uploaded).
