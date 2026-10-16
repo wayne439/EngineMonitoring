@@ -1,5 +1,10 @@
 # Engine Pulse changelog
 
+## 0.7.0 (2026-10-16)
+- New HOME screen, where the app now opens: a hero card with the tail number, a live pulse line colored by engine health, and an Engine Pulse score gauge (100 = nothing open; unreviewed warnings, cautions, watch items and overdue maintenance take points off).
+- Tiles for flights analyzed, engine hours logged, open items and oil change status; the last flight with cruise CHT, oil temperature, oil pressure and fuel flow; a cruise CHT and oil temperature trend chart; what needs attention; a getting-set-up checklist; and quick actions (import flights, upload documents, AD check, ask).
+- Version 0.7.0 (17).
+
 ## 0.6.9 (2026-10-16)
 - Focused on engine monitoring: FLY and PROCEDURES are removed from the menu (and the procedures link in ASK). The app opens on DIAGNOSTICS. Your POH is still read for the aircraft profile limits, ASK search and issue guidance.
 - Version 0.6.9 (16).
