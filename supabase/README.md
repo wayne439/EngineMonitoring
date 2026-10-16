@@ -1,4 +1,4 @@
-# AI Engine Monitoring cloud backend (Supabase)
+# Engine Pulse cloud backend (Supabase)
 
 Each subscriber signs in with Apple. Their aircraft profile, engine logs and flight summaries are stored in a Postgres database and a private file bucket, and row-level security lets each subscriber see only their own data.
 
@@ -23,8 +23,8 @@ While those two Info.plist values are blank, the app runs in local-only mode and
 ## Email templates (codes instead of links)
 The app confirms accounts and resets passwords with a **6-digit code** the pilot types in, so no web page is needed.
 1. Go to **Authentication → Emails → Templates**.
-2. **Confirm signup:** set the subject to `Your AI Engine Monitoring code` and replace the message body with `email-templates/confirm-signup.html`.
-3. **Reset Password:** set the subject to `Reset your AI Engine Monitoring password` and replace the body with `email-templates/reset-password.html`.
+2. **Confirm signup:** set the subject to `Your Engine Pulse code` and replace the message body with `email-templates/confirm-signup.html`.
+3. **Reset Password:** set the subject to `Reset your Engine Pulse password` and replace the body with `email-templates/reset-password.html`.
 4. Click **Save** on each.
 
 Leave the **Magic Link** template as a link: the app's "Email me an upload link" uses it to sign pilots in to the upload website with one click. Under **Authentication → URL Configuration**, add the website address to **Redirect URLs**.

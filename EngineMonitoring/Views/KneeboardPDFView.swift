@@ -26,7 +26,7 @@ enum KneeboardPDF {
         }
         let data = NSMutableData()
         UIGraphicsBeginPDFContextToData(data, page, [kCGPDFContextTitle as String: "Kneeboard cards",
-                                                     kCGPDFContextAuthor as String: "AI Engine Monitoring"])
+                                                     kCGPDFContextAuthor as String: "Engine Pulse"])
         renderer.prepare(forDrawingPages: NSRange(location: 0, length: renderer.numberOfPages))
         for i in 0..<renderer.numberOfPages {
             UIGraphicsBeginPDFPage()

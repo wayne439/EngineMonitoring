@@ -35,7 +35,7 @@ struct RootView: View {
                     }
             }
         }
-        // Files shared to the app (Files, Mail, AirDrop, Cirrus IQ, Garmin Pilot): "Open in AI Engine Monitoring".
+        // Files shared to the app (Files, Mail, AirDrop, Cirrus IQ, Garmin Pilot): "Open in Engine Pulse".
         .onOpenURL { url in
             Task { await receive(url) }
         }
@@ -86,11 +86,11 @@ struct LandingView: View {
                         Benefit("lock.shield", "Your data stays yours", "Your aircraft and logs are private to your account and can be deleted at any time.")
                     }
                     InfoCard(title: "About us", systemImage: "person.2") {
-                        Text("AI Engine Monitoring is built by Fueled Consulting LLC in Cave Creek, Arizona. It started as the tool we built to watch the engine on our own airplane after every flight, and we are now opening it to every owner whose avionics record engine data.")
+                        Text("Engine Pulse is built by Fueled Consulting LLC in Cave Creek, Arizona. It started as the tool we built to watch the engine on our own airplane after every flight, and we are now opening it to every owner whose avionics record engine data.")
                         Text("We are pilots and owners first. Questions or ideas: support@fueledconsulting.com")
                             .foregroundStyle(.secondary)
                     }
-                    Text("Advisory only. AI Engine Monitoring is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")
+                    Text("Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -114,7 +114,7 @@ struct LandingView: View {
                 .frame(width: 140, height: 140)
                 .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
                 .shadow(radius: 8, y: 4)
-            Text("AI Engine Monitoring")
+            Text("Engine Pulse")
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
             Text("AI early warning from your engine data")
@@ -130,7 +130,7 @@ struct LandingView: View {
             NavigationLink {
                 RegisterView()
             } label: {
-                Text("Register for AI Engine Monitoring")
+                Text("Register for Engine Pulse")
                     .font(.headline)
                     .frame(maxWidth: .infinity, minHeight: 30)
             }
@@ -140,7 +140,7 @@ struct LandingView: View {
             NavigationLink {
                 LoginView()
             } label: {
-                Text("Log in to AI Engine Monitoring")
+                Text("Log in to Engine Pulse")
                     .font(.headline)
                     .frame(maxWidth: .infinity, minHeight: 30)
             }
@@ -253,7 +253,7 @@ struct RegisterView: View {
             DataChecklistSection(turbo: selected?.turbo ?? false, monitor: monitor,
                                  header: "4. Data to have ready")
             Section {
-                Toggle("I understand AI Engine Monitoring is advisory only and does not replace my POH/AFM, engine monitor or A&P.", isOn: $agreed)
+                Toggle("I understand Engine Pulse is advisory only and does not replace my POH/AFM, engine monitor or A&P.", isOn: $agreed)
                     .font(.footnote)
             }
             Section {
