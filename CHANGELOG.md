@@ -1,5 +1,9 @@
 # AI Engine Monitoring changelog
 
+## 0.6.1 (2026-10-16)
+- Connected to the live Supabase project (dzihbnffnzixutfrdpai, West US): Register, Log in, Sign in with Apple, cloud sync, documents and the upload website now work. Anon (public) key only; row-level security protects data.
+- Version 0.6.1 (8).
+
 ## 0.6.0 (2026-10-15)
 - Register button now says why it is grey (accounts not switched on yet, or which field is missing).
 - Upload website (`web/`): pilots sign in with the same account, see the data checklist, and drop logs and documents (POH limits, logbook entries, engine times, turbo, oil analysis, squawks). Tested in a headless browser against a stand-in backend.
