@@ -28,8 +28,8 @@ enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Garmin avionics whose engine data the Flight Stream 510 can carry (per Garmin: G1000 NXi and TXi).
-    var flightStream510CarriesEngineData: Bool { self == .garminG1000NXi || self == .garminTXi }
+    /// Garmin avionics whose engine data the Flight Stream 510 can carry (per Garmin: G1000 NXi, TXi and GI 275 EIS; Perspective+ not listed).
+    var flightStream510CarriesEngineData: Bool { self == .garminG1000NXi || self == .garminTXi || self == .garminGI275 }
 }
 
 /// Engine limits and pilot references for one aircraft. Values come from the owner's POH/AFM;
