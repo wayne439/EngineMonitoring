@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 /// Engine monitors the app knows about. Only the Garmin CSV formats are imported today.
 enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
@@ -77,6 +78,67 @@ struct AircraftProfile: Codable, Equatable, Sendable {
     var updatedAt: Date
     /// How engine data can leave the airplane (nil = not answered yet).
     var dataLink: DataLink? = nil
+    /// When the required details were locked (nil = still editable). Changes after that go through support.
+    var lockedAt: Date? = nil
+    /// Where each value read from the POH came from, e.g. ["rpmMax": "POH 2-6"].
+    var pohSources: [String: String]? = nil
+    /// The POH file the values were read from, so a new POH revision updates them once.
+    var pohAppliedFrom: String? = nil
+
+    var isLocked: Bool { lockedAt != nil }
+
+    /// Required details still missing before the profile can be locked.
+    var missingRequired: [String] {
+        var out: [String] = []
+        func blank(_ s: String) -> Bool { s.trimmingCharacters(in: .whitespaces).isEmpty }
+        if blank(tailNumber) { out.append("Tail number") }
+        if blank(make) { out.append("Make") }
+        if blank(model) { out.append("Model") }
+        if blank(serialNumber) { out.append("Serial number") }
+        if blank(engineModel) { out.append("Engine model") }
+        if limits.rpmMax <= 0 { out.append("Max RPM") }
+        if limits.oilTempMax <= 0 { out.append("Oil temperature max") }
+        if limits.oilPressureMax <= 0 { out.append("Oil pressure max") }
+        if limits.chtWarning <= 0 { out.append("CHT max") }
+        return out
+    }
+
+    /// Fills the limits and engine details found in the owner's POH. Values found replace typed ones
+    /// (the POH is the authority); values not found keep what is there. Returns how many were filled.
+    @discardableResult
+    mutating func apply(_ found: POHLimitExtractor.Found, from document: POHIndex.DocumentInfo) -> Int {
+        var sources = pohSources ?? [:]
+        var count = 0
+        func set(_ key: String, _ v: POHLimitExtractor.Value?, _ assign: (Double) -> Void) {
+            guard let v else { return }
+            assign(v.number)
+            sources[key] = "POH \(v.page)"
+            count += 1
+        }
+        if let e = found.engineModel {
+            engineModel = e.text
+            sources["engineModel"] = "POH \(e.page)"
+            count += 1
+            if let c = found.cylinders { cylinders = c }
+            if let t = found.turbocharged, t { isTurbocharged = true }
+        }
+        set("rpmMax", found.rpmMax) { limits.rpmMax = $0 }
+        set("rpmOverspeed", found.rpmOverspeed) { limits.rpmOverspeed = $0 }
+        if found.rpmOverspeed == nil, let m = found.rpmMax, limits.rpmOverspeed < m.number { limits.rpmOverspeed = m.number + 30 }
+        set("oilTempMax", found.oilTempMax) { limits.oilTempMax = $0 }
+        set("oilPressureMin", found.oilPressureMin) { limits.oilPressureMin = $0 }
+        set("oilPressureMax", found.oilPressureMax) { limits.oilPressureMax = $0 }
+        set("oilPressureCautionBelow", found.oilPressureCautionBelow) { limits.oilPressureCautionBelow = $0 }
+        set("chtWarning", found.chtWarning) { limits.chtWarning = $0 }
+        set("chtCaution", found.chtCaution) { limits.chtCaution = $0 }
+        if found.chtCaution == nil, let w = found.chtWarning, limits.chtCaution >= w.number { limits.chtCaution = w.number - 40 }
+        if count > 0 {
+            limits.limitsSource = "Your POH (\(document.partNumber), \(document.revision))"
+        }
+        pohSources = sources
+        pohAppliedFrom = document.filename
+        return count
+    }
 
     var displayName: String {
         let name = [year > 0 ? String(year) : "", make, model].filter { !$0.isEmpty }.joined(separator: " ")
@@ -231,9 +293,44 @@ final class AircraftProfileStore: ObservableObject {
         profile = AircraftProfileSnapshot.shared.profile
     }
 
-    /// True until the owner has entered a tail number and confirmed the limits.
-    var needsSetup: Bool {
-        profile.tailNumber.trimmingCharacters(in: .whitespaces).isEmpty || !profile.limitsConfirmedByOwner
+    /// True until the required details are filled in and locked.
+    var needsSetup: Bool { !profile.isLocked }
+
+    /// Reads limits from a newly loaded POH. Locks the profile once nothing required is missing.
+    func applyPOH(_ index: POHIndex) {
+        guard profile.pohAppliedFrom != index.document.filename else { return }
+        let found = POHLimitExtractor.extract(from: index)
+        var p = profile
+        let filled = p.apply(found, from: index.document)
+        if filled > 0, p.missingRequired.isEmpty {
+            p.limitsConfirmedByOwner = true
+            if p.lockedAt == nil { p.lockedAt = Date() }
+        }
+        p.updatedAt = Date()
+        profile = p
+    }
+
+    /// Locks the required details (owner checked them). No-op while anything required is missing.
+    func lock() {
+        guard profile.missingRequired.isEmpty else { return }
+        profile.limitsConfirmedByOwner = true
+        profile.lockedAt = Date()
+        profile.updatedAt = Date()
+    }
+
+    /// The code support gives an owner to unlock their profile for a correction.
+    static func unlockCode(tail: String) -> String {
+        let digest = SHA256.hash(data: Data((tail.uppercased().trimmingCharacters(in: .whitespaces) + "|engine-pulse-unlock").utf8))
+        return digest.prefix(3).map { String(format: "%02X", $0) }.joined()
+    }
+
+    /// Unlocks for one round of edits when the support code matches.
+    func unlock(code: String) -> Bool {
+        guard code.trimmingCharacters(in: .whitespaces).uppercased() == Self.unlockCode(tail: profile.tailNumber) else { return false }
+        profile.lockedAt = nil
+        profile.pohSources = nil
+        profile.updatedAt = Date()
+        return true
     }
 
     /// Stamps the edit time; call when the owner leaves the profile screen.

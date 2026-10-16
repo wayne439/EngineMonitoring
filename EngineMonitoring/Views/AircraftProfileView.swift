@@ -4,24 +4,40 @@ import SwiftUI
 /// engine layout from here. The onboarding questionnaire (next version) fills the same fields.
 struct AircraftProfileView: View {
     @EnvironmentObject private var store: AircraftProfileStore
+    @EnvironmentObject private var poh: POHRepository
+    @State private var showUnlock = false
+    @State private var unlockCode = ""
+    @State private var unlockMessage: String?
+
+    private var locked: Bool { store.profile.isLocked }
 
     var body: some View {
         Form {
+            statusSection
+
             Section {
-                TextField("Tail number (e.g. N12345)", text: $store.profile.tailNumber)
-                    .textInputAutocapitalization(.characters)
-                    .autocorrectionDisabled()
-                TextField("Make (e.g. Cirrus, Beechcraft, Mooney)", text: $store.profile.make)
-                TextField("Model (e.g. SR22 Turbo, A36, M20R)", text: $store.profile.model)
-                HStack {
-                    Text("Year")
-                    Spacer()
-                    TextField("Year", value: $store.profile.year, format: .number.grouping(.never))
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(maxWidth: 110)
+                if locked {
+                    LockedRow(label: "Tail number", value: store.profile.tailNumber)
+                    LockedRow(label: "Make", value: store.profile.make)
+                    LockedRow(label: "Model", value: store.profile.model)
+                    LockedRow(label: "Year", value: store.profile.year > 0 ? String(store.profile.year) : "Not entered")
+                    LockedRow(label: "Serial number", value: store.profile.serialNumber)
+                } else {
+                    TextField("Tail number (e.g. N12345)", text: $store.profile.tailNumber)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
+                    TextField("Make (e.g. Cirrus, Beechcraft, Mooney)", text: $store.profile.make)
+                    TextField("Model (e.g. SR22 Turbo, A36, M20R)", text: $store.profile.model)
+                    HStack {
+                        Text("Year")
+                        Spacer()
+                        TextField("Year", value: $store.profile.year, format: .number.grouping(.never))
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                            .frame(maxWidth: 110)
+                    }
+                    TextField("Serial number (from the data plate or registration)", text: $store.profile.serialNumber)
                 }
-                TextField("Serial number", text: $store.profile.serialNumber)
                 TextField("Home airport (e.g. KSDL)", text: $store.profile.homeAirport)
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
@@ -31,9 +47,15 @@ struct AircraftProfileView: View {
             }
 
             Section {
-                TextField("Engine model (e.g. Continental IO-550-N)", text: $store.profile.engineModel)
-                Stepper("Cylinders: \(store.profile.cylinders)", value: $store.profile.cylinders, in: 4...8, step: 2)
-                Toggle("Turbocharged or turbonormalized", isOn: $store.profile.isTurbocharged)
+                if locked {
+                    LockedRow(label: "Engine", value: store.profile.engineModel, source: source("engineModel"))
+                    LockedRow(label: "Cylinders", value: String(store.profile.cylinders))
+                    LockedRow(label: "Turbocharged", value: store.profile.isTurbocharged ? "Yes" : "No")
+                } else {
+                    TextField("Engine model (e.g. Continental IO-550-N)", text: $store.profile.engineModel)
+                    Stepper("Cylinders: \(store.profile.cylinders)", value: $store.profile.cylinders, in: 4...8, step: 2)
+                    Toggle("Turbocharged or turbonormalized", isOn: $store.profile.isTurbocharged)
+                }
                 if store.profile.isTurbocharged {
                     Stepper("TIT probes: \(store.profile.titProbes)", value: $store.profile.titProbes, in: 1...2)
                 }
@@ -58,22 +80,21 @@ struct AircraftProfileView: View {
             }
 
             Section {
-                NumberRow(label: "Max RPM (10 s)", unit: "RPM", value: $store.profile.limits.rpmMax)
-                NumberRow(label: "Overspeed RPM (5 s)", unit: "RPM", value: $store.profile.limits.rpmOverspeed)
-                NumberRow(label: "CHT caution above", unit: "°F", value: $store.profile.limits.chtCaution)
-                NumberRow(label: "CHT warning above", unit: "°F", value: $store.profile.limits.chtWarning)
-                NumberRow(label: "Oil temperature max", unit: "°F", value: $store.profile.limits.oilTempMax)
-                NumberRow(label: "Oil pressure min", unit: "psi", value: $store.profile.limits.oilPressureMin)
-                NumberRow(label: "Oil pressure caution below", unit: "psi", value: $store.profile.limits.oilPressureCautionBelow)
-                NumberRow(label: "Oil pressure max", unit: "psi", value: $store.profile.limits.oilPressureMax)
-                NumberRow(label: "Bus voltage low", unit: "V", value: $store.profile.limits.busVoltsLow)
-                NumberRow(label: "Bus voltage high", unit: "V", value: $store.profile.limits.busVoltsHigh)
-                TextField("Where these came from (e.g. POH Section 2)", text: $store.profile.limits.limitsSource)
-                Toggle("I checked every value against my POH/AFM", isOn: $store.profile.limitsConfirmedByOwner)
+                limitRow("Max RPM (10 s)", "RPM", \.rpmMax, key: "rpmMax")
+                limitRow("Overspeed RPM (5 s)", "RPM", \.rpmOverspeed, key: "rpmOverspeed")
+                limitRow("CHT caution above", "°F", \.chtCaution, key: "chtCaution")
+                limitRow("CHT max (warning above)", "°F", \.chtWarning, key: "chtWarning")
+                limitRow("Oil temperature max", "°F", \.oilTempMax, key: "oilTempMax")
+                limitRow("Oil pressure min", "psi", \.oilPressureMin, key: "oilPressureMin")
+                limitRow("Oil pressure caution below", "psi", \.oilPressureCautionBelow, key: "oilPressureCautionBelow")
+                limitRow("Oil pressure max", "psi", \.oilPressureMax, key: "oilPressureMax")
+                limitRow("Bus voltage low", "V", \.busVoltsLow, key: "busVoltsLow")
+                limitRow("Bus voltage high", "V", \.busVoltsHigh, key: "busVoltsHigh")
+                LabeledContent("Source", value: store.profile.limits.limitsSource)
             } header: {
                 Text("Limits")
             } footer: {
-                Text("Enter the limits from your own POH/AFM and approved supplements. Until you confirm them, the app marks them as template values. The app is advisory only: your POH/AFM, your engine monitor and your A&P remain the authority.")
+                Text("Read from your POH Section 2 where it can be found (the page is shown under each value). Anything not found comes from the model template until you enter it. Advisory only: your POH/AFM, your engine monitor and your A&P remain the authority.")
             }
 
             Section {
@@ -93,17 +114,105 @@ struct AircraftProfileView: View {
             } header: {
                 Text("Maintenance")
             }
-
-            Section {
-                Button("Reset to the SR22 Turbo template", role: .destructive) {
-                    store.profile = AircraftProfile.sr22TurboTemplate
-                }
-            } footer: {
-                Text("Clears everything above and starts again from the template values.")
-            }
         }
         .navigationTitle("Aircraft Profile")
         .onDisappear { store.touch() }
+        .task {
+            if let index = poh.index { store.applyPOH(index) }
+        }
+        .alert("Unlock with support code", isPresented: $showUnlock) {
+            TextField("6-character code", text: $unlockCode)
+                .textInputAutocapitalization(.characters)
+            Button("Unlock") {
+                unlockMessage = store.unlock(code: unlockCode) ? "Unlocked. Make your correction, then lock again." : "That code doesn't match this aircraft."
+                unlockCode = ""
+            }
+            Button("Cancel", role: .cancel) { unlockCode = "" }
+        } message: {
+            Text("Email support@fueledconsulting.com with your tail number and the correction. We'll send a code that unlocks the profile once.")
+        }
+    }
+
+    @ViewBuilder
+    private var statusSection: some View {
+        Section {
+            if locked {
+                Label("Locked. Required details come from your POH and registration and can't be changed here.", systemImage: "lock.fill")
+                    .foregroundStyle(.green)
+                if let date = store.profile.lockedAt {
+                    Text("Locked \(date.formatted(date: .abbreviated, time: .shortened)).").font(.caption).foregroundStyle(.secondary)
+                }
+                Link(destination: URL(string: "mailto:support@fueledconsulting.com?subject=Engine%20Pulse%20profile%20change%20\(store.profile.tailNumber.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")") ?? URL(string: "mailto:support@fueledconsulting.com")!) {
+                    Label("Request a change", systemImage: "envelope")
+                }
+                Button {
+                    showUnlock = true
+                } label: {
+                    Label("I have a support code", systemImage: "key")
+                }
+            } else {
+                let missing = store.profile.missingRequired
+                if poh.index == nil {
+                    Label("Upload your POH (AIRCRAFT > Documents and uploads). The engine model and limits are read from it automatically.", systemImage: "doc.text.magnifyingglass")
+                        .foregroundStyle(.orange)
+                } else if poh.isBuilding {
+                    Label("Reading your POH…", systemImage: "hourglass")
+                }
+                if missing.isEmpty {
+                    Button {
+                        store.lock()
+                    } label: {
+                        Label("Everything matches my POH: lock the profile", systemImage: "lock")
+                            .font(.headline)
+                    }
+                } else {
+                    Label("Still needed: \(missing.joined(separator: ", "))", systemImage: "exclamationmark.circle")
+                        .foregroundStyle(.orange)
+                }
+            }
+            if let unlockMessage { Text(unlockMessage).font(.footnote) }
+        } header: {
+            Text("Status")
+        } footer: {
+            if !locked {
+                Text("Once locked, the tail number, serial number, engine and limits can only be changed through support, so every flight is checked against the same approved numbers.")
+            }
+        }
+    }
+
+    private func source(_ key: String) -> String? { store.profile.pohSources?[key] }
+
+    @ViewBuilder
+    private func limitRow(_ label: String, _ unit: String, _ path: WritableKeyPath<EngineLimitSettings, Double>, key: String) -> some View {
+        let value = store.profile.limits[keyPath: path]
+        if locked || source(key) != nil {
+            LockedRow(label: label, value: "\(value.formatted(.number)) \(unit)",
+                      source: source(key) ?? (locked ? "Locked" : nil))
+        } else {
+            NumberRow(label: label, unit: unit, value: Binding(
+                get: { store.profile.limits[keyPath: path] },
+                set: { store.profile.limits[keyPath: path] = $0 }))
+        }
+    }
+}
+
+/// A value that can't be edited here, with where it came from.
+private struct LockedRow: View {
+    let label: String
+    let value: String
+    var source: String?
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(label)
+            Spacer()
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(value.isEmpty ? "Not entered" : value).foregroundStyle(.secondary)
+                if let source {
+                    Label(source, systemImage: "lock.fill").font(.caption2).foregroundStyle(.tint)
+                }
+            }
+        }
     }
 }
 

@@ -333,3 +333,96 @@ enum POHBuilder {
         return ns.substring(with: m.range(at: group))
     }
 }
+
+/// Reads engine limits and the engine model from POH Section 2 (Limitations) text.
+/// Each value keeps the printed page it came from so the owner can check it.
+enum POHLimitExtractor {
+    struct Value: Equatable, Sendable {
+        let number: Double
+        let page: String
+    }
+
+    struct Text: Equatable, Sendable {
+        let text: String
+        let page: String
+    }
+
+    struct Found: Equatable, Sendable {
+        var engineModel: Text?
+        var cylinders: Int?
+        var turbocharged: Bool?
+        var rpmMax: Value?
+        var rpmOverspeed: Value?
+        var oilTempMax: Value?
+        var oilPressureMin: Value?
+        var oilPressureMax: Value?
+        var oilPressureCautionBelow: Value?
+        var chtWarning: Value?
+        var chtCaution: Value?
+
+        var count: Int {
+            [rpmMax, rpmOverspeed, oilTempMax, oilPressureMin, oilPressureMax, oilPressureCautionBelow, chtWarning, chtCaution]
+                .compactMap { $0 }.count + (engineModel == nil ? 0 : 1)
+        }
+    }
+
+    /// Dot leaders and colons between a label and its value ("Maximum RPM ....... 2700 RPM").
+    static let lead = #"[\s.…:]*"#
+
+    static func extract(from index: POHIndex) -> Found {
+        let limitPages = index.pages.filter { $0.section.hasPrefix("Section 2 ") }
+        let pages = limitPages.isEmpty ? index.pages : limitPages
+        var f = Found()
+
+        if let (m, page) = match(#"\b(Teledyne Continental|Continental|Lycoming|Rotax|Franklin)\b.{0,120}?\b([A-Z]{1,5}-\d{3}(?:-[A-Z0-9]{1,4})?)\b"#, in: pages) {
+            let maker = m[1].contains("Continental") ? "Continental" : m[1]
+            let model = m[2]
+            f.engineModel = Text(text: "\(maker) \(model)", page: page)
+            if let digits = model.split(separator: "-").dropFirst().first, let cc = Int(digits) {
+                f.cylinders = cc >= 700 ? 8 : (cc >= 470 ? 6 : 4)
+            }
+            let prefix = model.split(separator: "-").first.map(String.init) ?? ""
+            f.turbocharged = prefix.hasPrefix("T") || prefix.contains("TS") || prefix.hasPrefix("LT")
+        }
+
+        f.rpmMax = number(#"Maximum RPM"# + lead + #"(\d,?\d{3})\s*RPM"#, in: pages)
+            ?? number(#"(?:Maximum (?:Engine )?Speed|Red ?line)"# + lead + #"(\d,?\d{3})\s*RPM"#, in: pages)
+            ?? number(#"hp\s*@\s*(\d,?\d{3})\s*RPM"#, in: pages)
+        f.rpmOverspeed = number(#"RPM\s+(?:is\s+)?greater than\s+(\d,?\d{3})\s+for more than 5 seconds"#, in: pages)
+        f.oilTempMax = number(#"(?<!Minimum )Oil Temperature"# + lead + #"(\d{3})\s*°?\s*F?\s*(?:\(\d+\s*°?\s*C\)\s*)?maximum"#, in: pages)
+            ?? number(#"Maximum Oil Temperature"# + lead + #"(\d{3})"#, in: pages)
+        f.oilPressureMin = number(#"Oil Pressure.{0,40}?Minimum"# + lead + #"(\d{1,3})\s*psi"#, in: pages)
+        f.oilPressureMax = number(#"Oil Pressure.{0,120}?Maximum"# + lead + #"(\d{2,3})\s*psi"#, in: pages)
+        f.oilPressureCautionBelow = number(#"Oil Pressure\s*\([^)]*\)\s*0\s*[–-]\s*\d+\D{0,20}?\d+\s*[–-]\s*(\d+)"#, in: pages)
+
+        if let (m, page) = match(#"Cylinder Head Temp\w*.{0,100}?(\d{3})\s*[–-]\s*(\d{3})\s*(?:\w+\s*)?>\s*(\d{3})"#, in: pages),
+           let caution = Double(m[1]), let warning = Double(m[3]) {
+            f.chtCaution = Value(number: caution, page: page)
+            f.chtWarning = Value(number: warning, page: page)
+        } else {
+            f.chtWarning = number(#"Cylinder Head Temp\w*"# + lead + #"(\d{3})\s*°?\s*F?\s*(?:\(\d+\s*°?\s*C\)\s*)?max"#, in: pages)
+        }
+        return f
+    }
+
+    /// First page whose text matches; returns the capture groups (0 = whole match) and the page label.
+    static func match(_ pattern: String, in pages: [POHIndex.Page]) -> ([String], String)? {
+        guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { return nil }
+        for page in pages {
+            let ns = page.text as NSString
+            guard let m = re.firstMatch(in: page.text, range: NSRange(location: 0, length: ns.length)) else { continue }
+            let groups = (0..<m.numberOfRanges).map { i -> String in
+                let r = m.range(at: i)
+                return r.location == NSNotFound ? "" : ns.substring(with: r)
+            }
+            return (groups, page.label)
+        }
+        return nil
+    }
+
+    static func number(_ pattern: String, in pages: [POHIndex.Page]) -> Value? {
+        guard let (m, page) = match(pattern, in: pages), m.count > 1,
+              let v = Double(m[1].replacingOccurrences(of: ",", with: "")) else { return nil }
+        return Value(number: v, page: page)
+    }
+}

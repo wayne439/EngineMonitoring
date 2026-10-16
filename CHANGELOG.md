@@ -1,5 +1,11 @@
 # Engine Pulse changelog
 
+## 0.6.8 (2026-10-16)
+- Aircraft Profile fills itself from the POH: engine model, cylinders, turbo, max RPM, overspeed, oil temperature max, oil pressure min / max / caution, CHT caution and max are read from Section 2, each showing its POH page.
+- Required details lock once complete (automatically when the POH supplies them, or with "Everything matches my POH: lock the profile"). Locked values can't be edited; "Request a change" emails support, and a support code unlocks once.
+- New AIRCRAFT > Airworthiness directives check: searches FAA ADs in the Federal Register for the model, engine family and propeller, with links, newest first, and "Mark reviewed with A&P". Links to the FAA DRS and Cirrus service bulletins.
+- Version 0.6.8 (15).
+
 ## 0.6.7 (2026-10-16)
 - Registration advice: Flight Stream 510 engine-data transfer now includes the GI 275 EIS (per Garmin), and says Perspective / Perspective+ are not on Garmin's list.
 - Version 0.6.7 (14).

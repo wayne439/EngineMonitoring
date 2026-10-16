@@ -19,7 +19,7 @@ struct AircraftView: View {
                         Label("Set up your aircraft profile", systemImage: "exclamationmark.circle.fill")
                             .foregroundStyle(.orange)
                     } else {
-                        Label("Edit aircraft profile", systemImage: "pencil")
+                        Label("Aircraft profile (locked)", systemImage: "lock.fill")
                     }
                 }
                 NavigationLink {
@@ -31,6 +31,11 @@ struct AircraftView: View {
                     DocumentsView()
                 } label: {
                     Label("Documents and uploads", systemImage: "tray.and.arrow.up")
+                }
+                NavigationLink {
+                    ADCheckView()
+                } label: {
+                    Label("Airworthiness directives check", systemImage: "checkmark.seal")
                 }
                 ForEach(AircraftKnowledge.facts) { fact in
                     VStack(alignment: .leading, spacing: 2) {

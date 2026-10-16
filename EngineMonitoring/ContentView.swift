@@ -82,6 +82,10 @@ struct ContentView: View {
         .onChange(of: cloud.inboxItems) {
             Task { await poh.syncFromUploads(cloud: cloud) }
         }
+        // Engine model and limits come from the POH as soon as it has been read, then the profile locks.
+        .task(id: poh.index?.document.filename) {
+            if let index = poh.index { aircraft.applyPOH(index) }
+        }
         // Profile edits are uploaded when the owner leaves the profile screen (it stamps updatedAt).
         .onChange(of: aircraft.profile.updatedAt) {
             Task { await cloud.sync(profile: aircraft.profile, logs: flightLogs) }

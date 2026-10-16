@@ -222,7 +222,7 @@ struct DocumentRequirement: Identifiable, Hashable, Sendable {
                   detail: "A photo or PDF of Section 2 (Limitations): RPM, CHT, oil temperature and pressure, bus voltage.",
                   level: .required, acceptsLogs: false),
             .init(id: "logbook", title: "Last annual and last oil change",
-                  detail: "Photos or scans of the logbook entries (date and tach / total time).",
+                  detail: "Photos or scans of the logbook entries (date and tach / total time), plus your AD compliance record if you have one.",
                   level: .required, acceptsLogs: false),
             .init(id: "engine-time", title: "Engine model, total time and time since overhaul",
                   detail: "Engine logbook page or data plate photo.", level: .recommended, acceptsLogs: false),
