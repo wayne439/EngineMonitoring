@@ -1,5 +1,10 @@
 # Engine Pulse changelog
 
+## 0.7.6 (2026-10-16)
+- HOME early-warning dashboard: counts of open warnings, cautions, watch items and trends, then a row per key trend (any flagged trend first, the hottest cylinder's CHT, oil temperature and pressure, CHT and EGT spread, TIT gap, bus voltages) with a sparkline over its normal band, the latest value, the direction (orange when moving the bad way) and Normal / WATCH / ACT SOON. Each row opens its trend; "All trends and early warnings" opens the full view.
+- Before the early-warning baseline exists (about 25 flights), the panel shows raw cruise values per flight instead.
+- Version 0.7.6 (23).
+
 ## 0.7.5 (2026-10-16)
 - The HOME gauge is now Engine HEALTH, scored from the last 10 flights themselves: each flight starts at 100 (warning -20, caution -8, watch -3), newer flights count more, and early-warning trends take 6 (15 if ACT SOON). Items waiting for review no longer lower it; they stay on the Open items tile.
 - Status colour: green Healthy (85-100), yellow Watch (70-84), red Needs attention (below 70, a warning in the last 3 flights, or an ACT SOON trend). The pulse line and badge follow it.

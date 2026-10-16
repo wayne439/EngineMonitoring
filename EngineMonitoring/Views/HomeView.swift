@@ -37,6 +37,7 @@ struct HomeView: View {
 
     /// Engine health from the recent flights themselves (not from what is waiting for review).
     @State private var engineHealth = EngineHealth(score: nil, status: .noData, flights: [], deductions: [], slopePerFlight: nil)
+    @State private var earlyWarning: EarlyWarningReport?
 
     var body: some View {
         ScrollView {
@@ -44,6 +45,7 @@ struct HomeView: View {
                 hero
                 statTiles
                 if let last = flights.first { lastFlightCard(last) }
+                if !flights.isEmpty { EarlyWarningCard(report: earlyWarning, flights: flights, attention: attention) }
                 if flights.count >= 2 { trendCard }
                 attentionCard
                 setupCard
@@ -61,7 +63,9 @@ struct HomeView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Home")
         .task(id: logs.summaries.count) {
-            engineHealth = EngineHealth.compute(Array(logs.summaries.values))
+            let all = Array(logs.summaries.values)
+            engineHealth = EngineHealth.compute(all)
+            earlyWarning = EarlyWarning.analyze(all)
         }
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -787,5 +791,227 @@ struct HealthBreakdownView: View {
             }
         }
         .navigationTitle("Engine Health")
+    }
+}
+
+
+// MARK: - Early warning dashboard
+
+/// HOME's early-warning panel: open warnings by severity, then one row per key trend with a sparkline,
+/// its normal band, the latest value, the direction and its status.
+private struct EarlyWarningCard: View {
+    let report: EarlyWarningReport?
+    let flights: [FlightSummary]          // newest first
+    let attention: [IssueGroup]
+
+    static let keyMetrics = ["oilt", "oilp", "chtspread", "egtspread", "titgap", "volt1", "volt2"]
+
+    private var rows: [TrendAnalysis] {
+        guard let report else { return [] }
+        let flagged = report.findings.sorted { ($0.level == .actSoon ? 0 : 1) < ($1.level == .actSoon ? 0 : 1) }
+        var out = flagged
+        // Hottest cylinder's CHT, then the key engine metrics.
+        if let hottest = report.analyses.filter({ $0.metric.id.hasPrefix("cht") && $0.metric.cylinder != nil })
+            .max(by: { $0.recentValue < $1.recentValue }) {
+            out.append(hottest)
+        }
+        out += Self.keyMetrics.compactMap { report.analysis($0) }
+        var seen = Set<String>()
+        return Array(out.filter { seen.insert($0.id).inserted }.prefix(7))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Early warning", systemImage: "waveform.badge.exclamationmark").font(.headline)
+                Spacer()
+                LevelChip(level: report?.level, hasData: !(report?.analyses.isEmpty ?? true))
+            }
+            HStack(spacing: 8) {
+                CountChip(label: "Warnings", count: attention.filter { $0.severity == .warning }.count, color: .red)
+                CountChip(label: "Cautions", count: attention.filter { $0.severity == .caution }.count, color: .orange)
+                CountChip(label: "Watch", count: attention.filter { $0.severity == .watch }.count, color: .yellow)
+                CountChip(label: "Trends", count: report?.findings.count ?? 0, color: .purple)
+            }
+            if rows.isEmpty {
+                fallback
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(rows) { a in
+                        NavigationLink { TrendDetailView(metricID: a.metric.id) } label: { TrendRow(analysis: a) }
+                            .buttonStyle(.plain)
+                        if a.id != rows.last?.id { Divider() }
+                    }
+                }
+            }
+            NavigationLink { EarlyWarningView() } label: {
+                HStack {
+                    Text("All trends and early warnings").font(.subheadline.bold())
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.caption.bold())
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(18)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    /// Before there are enough flights for the early-warning baseline: raw cruise values per flight.
+    @ViewBuilder
+    private var fallback: some View {
+        let recent = Array(flights.prefix(15).reversed())
+        let series: [RawSeries] = [
+            RawSeries(name: "Hottest CHT", unit: "°F", values: recent.compactMap { $0.engineTrend?.cht.compactMap { $0 }.max() }),
+            RawSeries(name: "Oil temperature", unit: "°F", values: recent.compactMap { $0.engineTrend?.oilTemp }),
+            RawSeries(name: "Oil pressure", unit: "psi", values: recent.compactMap { $0.engineTrend?.oilPressure }),
+            RawSeries(name: "CHT spread", unit: "°F", values: recent.compactMap { $0.engineTrend?.chtSpread }),
+        ]
+        VStack(spacing: 10) {
+            ForEach(series.filter { $0.values.count >= 2 }) { item in
+                HStack(spacing: 12) {
+                    Text(item.name).font(.subheadline).frame(width: 130, alignment: .leading)
+                    Sparkline(values: item.values, band: nil, color: .cyan).frame(height: 28)
+                    Text("\(Int(item.values.last ?? 0)) \(item.unit)").font(.subheadline.monospacedDigit().bold())
+                        .frame(width: 72, alignment: .trailing)
+                }
+            }
+            Text("Early-warning analysis starts once there are about 25 flights with steady cruise (\(flights.count) so far). Until then these are your raw cruise values.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
+    }
+}
+
+private struct RawSeries: Identifiable {
+    let name: String
+    let unit: String
+    let values: [Double]
+    var id: String { name }
+}
+
+private struct TrendRow: View {
+    let analysis: TrendAnalysis
+
+    private var label: String {
+        analysis.metric.label.replacingOccurrences(of: " in cruise", with: "")
+            .replacingOccurrences(of: "Gap between TIT 1 and TIT 2", with: "TIT 1 vs 2 gap")
+    }
+
+    /// Direction of the recent trend, coloured by whether it's moving the bad way.
+    private var direction: (icon: String, color: Color) {
+        let bad = analysis.slopePerHour * analysis.metric.badDirection
+        let span = max(analysis.normalHigh - analysis.normalLow, 0.001)
+        if abs(analysis.slopePerHour) * 10 < span * 0.1 { return ("arrow.right", .secondary) }
+        let up = analysis.slopePerHour > 0
+        return (up ? "arrow.up.right" : "arrow.down.right", bad > 0 ? .orange : .green)
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label).font(.subheadline).lineLimit(1)
+                Text("Normal \(fmt(analysis.normalLow))-\(fmt(analysis.normalHigh)) \(analysis.metric.unit)")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+            .frame(width: 150, alignment: .leading)
+            Sparkline(values: analysis.points.suffix(15).map(\.adjusted), band: analysis.normalLow...analysis.normalHigh,
+                      color: analysis.level == nil ? .cyan : (analysis.level == .actSoon ? .red : .orange))
+                .frame(height: 30)
+            Image(systemName: direction.icon).font(.caption.bold()).foregroundStyle(direction.color)
+            Text("\(fmt(analysis.recentValue)) \(analysis.metric.unit)")
+                .font(.subheadline.monospacedDigit().bold())
+                .frame(width: 74, alignment: .trailing)
+            LevelChip(level: analysis.level, hasData: true, compact: true)
+        }
+        .padding(.vertical, 8)
+        .contentShape(Rectangle())
+    }
+
+    private func fmt(_ v: Double) -> String {
+        analysis.metric.unit == "V" ? String(format: "%.1f", v) : String(Int(v.rounded()))
+    }
+}
+
+/// A tiny line chart with the normal band shaded.
+private struct Sparkline: View {
+    let values: [Double]
+    let band: ClosedRange<Double>?
+    let color: Color
+
+    var body: some View {
+        GeometryReader { geo in
+            let lo = min(values.min() ?? 0, band?.lowerBound ?? .infinity)
+            let hi = max(values.max() ?? 1, band?.upperBound ?? -.infinity)
+            let range = max(hi - lo, 0.001)
+            let y: (Double) -> CGFloat = { geo.size.height * (1 - CGFloat(($0 - lo) / range)) }
+            ZStack {
+                if let band {
+                    Rectangle()
+                        .fill(Color.green.opacity(0.12))
+                        .frame(height: max(1, y(band.lowerBound) - y(band.upperBound)))
+                        .position(x: geo.size.width / 2, y: (y(band.lowerBound) + y(band.upperBound)) / 2)
+                }
+                Path { p in
+                    for (i, v) in values.enumerated() {
+                        let pt = CGPoint(x: values.count < 2 ? 0 : geo.size.width * CGFloat(i) / CGFloat(values.count - 1), y: y(v))
+                        if i == 0 { p.move(to: pt) } else { p.addLine(to: pt) }
+                    }
+                }
+                .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                if let last = values.last {
+                    Circle().fill(color).frame(width: 6, height: 6)
+                        .position(x: geo.size.width, y: y(last))
+                }
+            }
+        }
+    }
+}
+
+private struct LevelChip: View {
+    let level: TrendAnalysis.Level?
+    let hasData: Bool
+    var compact = false
+
+    private var text: String {
+        guard hasData else { return "Building baseline" }
+        switch level {
+        case .actSoon: return "ACT SOON"
+        case .earlyWarning: return compact ? "WATCH" : "EARLY WARNING"
+        case nil: return "Normal"
+        }
+    }
+
+    private var color: Color {
+        guard hasData else { return .secondary }
+        switch level {
+        case .actSoon: return .red
+        case .earlyWarning: return .orange
+        case nil: return .green
+        }
+    }
+
+    var body: some View {
+        Text(text)
+            .font(.caption2.bold())
+            .padding(.horizontal, 7).padding(.vertical, 3)
+            .background(color.opacity(0.18), in: Capsule())
+            .foregroundStyle(color)
+            .fixedSize()
+    }
+}
+
+private struct CountChip: View {
+    let label: String
+    let count: Int
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text("\(count)").font(.subheadline.bold().monospacedDigit())
+            Text(label).font(.caption)
+        }
+        .padding(.horizontal, 10).padding(.vertical, 5)
+        .background((count > 0 ? color : Color.secondary).opacity(0.15), in: Capsule())
+        .foregroundStyle(count > 0 ? color : Color.secondary)
     }
 }
