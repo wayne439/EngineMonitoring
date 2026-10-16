@@ -1,5 +1,11 @@
 # Engine Pulse changelog
 
+## 0.6.6 (2026-10-16)
+- PROCEDURES and ASK now use the pilot's own POH. POH / AFM PDFs uploaded in the app or on the website are read on the iPad: page labels (3-17), sections, and the Section 3 / 3A emergency and abnormal checklists (from the PDF bookmarks, or from the checklist headings).
+- Other manuals uploaded (for example a Garmin Perspective pilot's guide) are searchable in ASK alongside the POH, each result naming its manual and opening its page.
+- PROCEDURES shows progress while a POH is read, "Load my POH from my uploads", and "Choose a POH PDF from Files".
+- Version 0.6.6 (13).
+
 ## 0.6.5 (2026-10-16)
 - Upload website is live at https://velvety-brigadeiros-12bd22.netlify.app. Documents and uploads now shows "Upload on our website", and "Email me an upload link" signs pilots straight in to it.
 - Version 0.6.5 (12).

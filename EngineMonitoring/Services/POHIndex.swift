@@ -1,9 +1,9 @@
 import Foundation
 
-/// Offline text index of the the aircraft POH, generated from POH.pdf (one entry per PDF page).
+/// Offline text index of the aircraft POH or a manual, generated from POH.pdf (one entry per PDF page).
 /// Text is machine-extracted: always verify against the printed POH page before acting.
 struct POHIndex: Codable, Sendable {
-    struct DocumentInfo: Codable, Sendable {
+    struct DocumentInfo: Codable, Sendable, Hashable {
         let title: String
         let partNumber: String
         let revision: String
@@ -109,7 +109,8 @@ struct POHIndex: Codable, Sendable {
 /// Keyword search over POH pages. Every query word must appear on the page.
 enum POHSearch {
     struct Hit: Identifiable, Hashable, Sendable {
-        var id: Int { page.pdfPage }
+        var id: String { "\(document.filename)#\(page.pdfPage)" }
+        let document: POHIndex.DocumentInfo
         let page: POHIndex.Page
         let score: Int
         let snippet: String
@@ -163,7 +164,7 @@ enum POHSearch {
             if procedurePages.contains(page.pdfPage) { score += 10 }
             if page.section.hasPrefix("Section 3") { score += 8 }
             if page.text.contains("Intentionally Left Blank"), page.text.count < 200 { continue }
-            hits.append(Hit(page: page, score: score, snippet: snippet(page.text, lower: lower, at: firstMatch)))
+            hits.append(Hit(document: index.document, page: page, score: score, snippet: snippet(page.text, lower: lower, at: firstMatch)))
         }
         return Array(hits.sorted { $0.score != $1.score ? $0.score > $1.score : $0.page.pdfPage < $1.page.pdfPage }.prefix(limit))
     }
