@@ -200,3 +200,46 @@ struct DataPathAdvice: Equatable, Sendable {
         }
     }
 }
+
+// MARK: - Documents to upload
+
+/// One document a pilot uploads, each with its own upload slot (the same list and categories as the upload
+/// website, so a file always lands in the right place).
+struct DocumentRequirement: Identifiable, Hashable, Sendable {
+    let id: String          // inbox_uploads.category
+    let title: String
+    let detail: String
+    let level: DataChecklist.Level
+    /// File types the picker offers for this item.
+    let acceptsLogs: Bool
+
+    static func list(turbo: Bool) -> [DocumentRequirement] {
+        var items: [DocumentRequirement] = [
+            .init(id: "logs", title: "Engine monitor log files",
+                  detail: "The CSV files from your avionics data card (data_log folder). The last 20 or more flights give the best baseline.",
+                  level: .required, acceptsLogs: true),
+            .init(id: "poh-limits", title: "Engine limits from your POH/AFM",
+                  detail: "A photo or PDF of Section 2 (Limitations): RPM, CHT, oil temperature and pressure, bus voltage.",
+                  level: .required, acceptsLogs: false),
+            .init(id: "logbook", title: "Last annual and last oil change",
+                  detail: "Photos or scans of the logbook entries (date and tach / total time).",
+                  level: .required, acceptsLogs: false),
+            .init(id: "engine-time", title: "Engine model, total time and time since overhaul",
+                  detail: "Engine logbook page or data plate photo.", level: .recommended, acceptsLogs: false),
+        ]
+        if turbo {
+            items.append(.init(id: "turbo", title: "Turbo limits and supplement",
+                               detail: "TIT and manifold-pressure limits from your POH or turbo supplement.",
+                               level: .recommended, acceptsLogs: false))
+        }
+        items += [
+            .init(id: "oil-analysis", title: "Oil analysis reports", detail: "Your lab reports, if you use oil analysis.",
+                  level: .optional, acceptsLogs: false),
+            .init(id: "squawks", title: "Open squawks and recent engine work",
+                  detail: "Anything your A&P is watching, or work since the last annual.", level: .optional, acceptsLogs: false),
+            .init(id: "other", title: "Anything else", detail: "Other records you want kept with the aircraft.",
+                  level: .optional, acceptsLogs: false),
+        ]
+        return items
+    }
+}

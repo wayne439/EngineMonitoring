@@ -11,7 +11,7 @@ Engine analysis: valve watch, probe check, early warning, trend charts, report c
 - Name: Engine Pulse (App Store and home screen); repo, bundle ID and module keep the EngineMonitoring name
 - Bundle ID: com.fueledconsulting.EngineMonitoring (tests: com.fueledconsulting.EngineMonitoringTests)
 - Team: D64ZNA8J2P, automatic signing (Xcode Cloud manages distribution signing)
-- Version 0.6.3 (10)
+- Version 0.6.4 (11)
 
 ## Roadmap (see Multi-Aircraft-App-Plan.pdf)
 1. v0.1.0 - starting code base, renamed. DONE

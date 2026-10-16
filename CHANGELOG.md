@@ -1,5 +1,10 @@
 # Engine Pulse changelog
 
+## 0.6.4 (2026-10-16)
+- Documents and uploads is now a checklist of every document we need, each with its own Upload button, a Required / Recommended / Optional badge, and a received count with a green check. The header shows "X of Y required done". Files land in the right category automatically, matching the upload website's slots.
+- Tail and serial number row links to Aircraft Profile (typed, not uploaded).
+- Version 0.6.4 (11).
+
 ## 0.6.3 (2026-10-16)
 - App renamed **Engine Pulse** everywhere: home-screen name, title, landing page, registration, account, reports and PDFs, the upload website, email templates and docs. App binary EnginePulse.app; bundle ID, module and repo unchanged.
 - App icon and logo wordmark now read ENGINE PULSE.

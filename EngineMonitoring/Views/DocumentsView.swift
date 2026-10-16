@@ -51,30 +51,43 @@ struct DocumentsView: View {
                 Text("Upload your documents")
             }
 
-            Section {
-                Picker("This file is", selection: $category) {
-                    ForEach(InboxItem.categories, id: \.id) { Text($0.title).tag($0.id) }
-                }
-                Button {
-                    picking = true
-                } label: {
-                    Label("Choose files from this iPad", systemImage: "square.and.arrow.up")
-                }
-                .disabled(!cloud.isSignedIn || cloud.isBusy)
-                if !cloud.isSignedIn {
-                    Text("Sign in first (ACCOUNT) so your files are kept in your account.")
-                        .font(.footnote)
+            if !cloud.isSignedIn {
+                Section {
+                    Label("Sign in first (ACCOUNT) so your files are kept in your account.", systemImage: "person.crop.circle.badge.exclamationmark")
                         .foregroundStyle(.orange)
+                }
+            }
+
+            Section {
+                HStack {
+                    Image(systemName: aircraftDetailsDone ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(aircraftDetailsDone ? Color.green : Color.secondary)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 6) {
+                            Text("Tail number and serial number").font(.subheadline.bold())
+                            LevelBadge(level: .required)
+                        }
+                        Text(aircraftDetailsDone ? "\(aircraft.profile.tailNumber) · S/N \(aircraft.profile.serialNumber)" : "Typed in, no upload needed.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    NavigationLink("Edit") { AircraftProfileView() }
+                        .fixedSize()
+                }
+                ForEach(DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged)) { item in
+                    RequiredDocumentRow(item: item, count: count(for: item)) {
+                        category = item.id
+                        picking = true
+                    }
+                    .disabled(!cloud.isSignedIn || cloud.isBusy)
                 }
                 if let message { Text(message).font(.footnote) }
             } header: {
-                Text("Upload from this iPad")
+                Text("What we need: \(requiredDone) of \(requiredTotal) required done")
             } footer: {
-                Text("Engine log CSV files become flights right away. PDFs and photos (POH limits page, logbook entries, oil analysis) are kept with your aircraft.")
+                Text("Tap Upload next to each item so every file lands in the right place. Engine log CSV files become flights right away; PDFs and photos are kept with your aircraft.")
             }
-
-            DataChecklistSection(turbo: aircraft.profile.isTurbocharged, monitor: aircraft.profile.monitor,
-                                 header: "What we need")
 
             Section {
                 if cloud.inboxItems.isEmpty {
@@ -134,6 +147,26 @@ struct DocumentsView: View {
         .quickLookPreview($preview)
     }
 
+    private var aircraftDetailsDone: Bool {
+        !aircraft.profile.tailNumber.trimmingCharacters(in: .whitespaces).isEmpty
+            && !aircraft.profile.serialNumber.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    /// Files received for an item (engine logs also count flights already imported on this iPad).
+    private func count(for item: DocumentRequirement) -> Int {
+        let uploaded = cloud.inboxItems.filter { $0.category == item.id && $0.status != "failed" }.count
+        return item.id == "logs" ? max(uploaded, logs.entries.count) : uploaded
+    }
+
+    private var requiredTotal: Int {
+        DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged).filter { $0.level == .required }.count + 1
+    }
+
+    private var requiredDone: Int {
+        DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged)
+            .filter { $0.level == .required && count(for: $0) > 0 }.count + (aircraftDetailsDone ? 1 : 0)
+    }
+
     static func detail(for item: InboxItem) -> String {
         var parts = [item.categoryTitle, statusText(item.status)]
         if let date = item.receivedAt { parts.append(date.formatted(date: .abbreviated, time: .shortened)) }
@@ -149,5 +182,50 @@ struct DocumentsView: View {
         case "failed": return "could not be read"
         default: return status
         }
+    }
+}
+
+/// One document with its status and its own Upload button.
+private struct RequiredDocumentRow: View {
+    let item: DocumentRequirement
+    let count: Int
+    let upload: () -> Void
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: count > 0 ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(count > 0 ? Color.green : Color.secondary)
+                .font(.title3)
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(item.title).font(.subheadline.bold())
+                    LevelBadge(level: item.level)
+                }
+                Text(item.detail).font(.caption).foregroundStyle(.secondary)
+                Text(count == 0 ? "Not uploaded yet" : "\(count) \(item.id == "logs" ? "flight" : "file")\(count == 1 ? "" : "s") received")
+                    .font(.caption.bold())
+                    .foregroundStyle(count > 0 ? Color.green : (item.level == .required ? Color.orange : Color.secondary))
+            }
+            Spacer(minLength: 8)
+            Button(action: upload) {
+                Label("Upload", systemImage: "square.and.arrow.up")
+                    .labelStyle(.titleAndIcon)
+                    .font(.subheadline)
+            }
+            .buttonStyle(.bordered)
+            .fixedSize()
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+struct LevelBadge: View {
+    let level: DataChecklist.Level
+
+    var body: some View {
+        Text(level.rawValue.uppercased())
+            .font(.caption2.bold())
+            .padding(.horizontal, 6).padding(.vertical, 2)
+            .background(level == .required ? Color.orange.opacity(0.2) : Color.secondary.opacity(0.15), in: Capsule())
     }
 }
