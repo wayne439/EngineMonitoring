@@ -20,6 +20,17 @@ Each subscriber signs in with Apple. Their aircraft profile, engine logs and fli
 
 While those two Info.plist values are blank, the app runs in local-only mode and the ACCOUNT screen says so.
 
+## Email templates (codes instead of links)
+The app confirms accounts and resets passwords with a **6-digit code** the pilot types in, so no web page is needed.
+1. Go to **Authentication → Emails → Templates**.
+2. **Confirm signup:** set the subject to `Your AI Engine Monitoring code` and replace the message body with `email-templates/confirm-signup.html`.
+3. **Reset Password:** set the subject to `Reset your AI Engine Monitoring password` and replace the body with `email-templates/reset-password.html`.
+4. Click **Save** on each.
+
+Leave the **Magic Link** template as a link: the app's "Email me an upload link" uses it to sign pilots in to the upload website with one click. Under **Authentication → URL Configuration**, add the website address to **Redirect URLs**.
+
+Supabase's built-in email sender is only for testing: it sends a few emails per hour. Before inviting beta testers, add your own sender under **Authentication → Emails → SMTP Settings**, for example Resend or Postmark with a fueledconsulting.com address.
+
 ## What is stored
 
 | Where | What |

@@ -80,6 +80,29 @@ struct CloudAPI: Sendable {
         _ = try await send("POST", "auth/v1/recover", query: [], json: ["email": email], token: nil)
     }
 
+    /// Checks the 6-digit code from a confirmation ("email") or password-reset ("recovery") email; returns a session.
+    func verifyCode(email: String, code: String, type: String) async throws -> CloudSession {
+        let body: [String: Any] = ["type": type, "email": email, "token": code]
+        let data = try await send("POST", "auth/v1/verify", query: [], json: body, token: nil)
+        return try Self.session(from: data)
+    }
+
+    /// Emails a one-click sign-in link for an existing account that opens `redirect` (the upload website) signed in.
+    func sendSignInLink(email: String, redirect: URL) async throws {
+        _ = try await send("POST", "auth/v1/otp", query: [URLQueryItem(name: "redirect_to", value: redirect.absoluteString)],
+                           json: ["email": email, "create_user": false], token: nil)
+    }
+
+    /// Sends the signup confirmation email again.
+    func resendConfirmation(email: String) async throws {
+        _ = try await send("POST", "auth/v1/resend", query: [], json: ["type": "signup", "email": email], token: nil)
+    }
+
+    /// Sets a new password for the signed-in user (after a password-reset code).
+    func updatePassword(_ password: String, token: String) async throws {
+        _ = try await send("PUT", "auth/v1/user", query: [], json: ["password": password], token: token)
+    }
+
     func refresh(_ session: CloudSession) async throws -> CloudSession {
         let body: [String: Any] = ["refresh_token": session.refreshToken]
         let data = try await send("POST", "auth/v1/token", query: [URLQueryItem(name: "grant_type", value: "refresh_token")], json: body, token: nil)
@@ -339,6 +362,8 @@ final class CloudStore: ObservableObject {
     @Published var lastError: String?
     @Published private(set) var uploadedLogs: Set<String>
     @Published private(set) var lastSync: Date?
+    /// Email waiting for its confirmation code (set after registering, or when log in says "not confirmed").
+    @Published var pendingConfirmationEmail: String?
     /// Documents and files in the cloud inbox (everything except logs already turned into flights).
     @Published private(set) var inboxItems: [InboxItem] = []
 
@@ -395,7 +420,8 @@ final class CloudStore: ObservableObject {
                 setSession(s)
                 status = "Account created. You're signed in."
             } else {
-                status = "Account created. Check \(email) for a confirmation link, then log in."
+                pendingConfirmationEmail = email
+                status = "Account created. We emailed a 6-digit code to \(email). Enter it below."
             }
             lastError = nil
             return true
@@ -415,7 +441,78 @@ final class CloudStore: ObservableObject {
             lastError = nil
             return true
         } catch {
-            lastError = "Log in failed: \(error.localizedDescription)"
+            let text = error.localizedDescription
+            if text.lowercased().contains("not confirmed") {
+                pendingConfirmationEmail = email
+                lastError = "Your email isn't confirmed yet. Enter the 6-digit code from your email, or tap Resend code."
+            } else {
+                lastError = "Log in failed: \(text)"
+            }
+            return false
+        }
+    }
+
+    /// Emails the signed-in pilot a link that opens the upload website already signed in, for uploading from a computer.
+    func emailUploadLink() async -> String {
+        guard let api, let session else { return "Sign in first." }
+        guard let portal = WebPortal.url else { return "The upload website isn't live yet. It's coming soon; for now upload from this iPad." }
+        guard let email = session.email, !email.isEmpty else {
+            return "Your account has no email address we can send to. Open \(portal.absoluteString) on your computer instead."
+        }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            try await api.sendSignInLink(email: email, redirect: portal)
+            return "Sent. Open the email from AI Engine Monitoring on your computer and click the link: the upload page opens already signed in."
+        } catch {
+            return "Could not send the link: \(error.localizedDescription)"
+        }
+    }
+
+    /// Confirms a new account with the code from the email; signs the pilot in.
+    func confirmEmail(code: String) async -> Bool {
+        guard let api, let email = pendingConfirmationEmail else { return false }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            setSession(try await api.verifyCode(email: email, code: code, type: "email"))
+            pendingConfirmationEmail = nil
+            status = "Email confirmed. You're signed in."
+            lastError = nil
+            return true
+        } catch {
+            lastError = "That code didn't work: \(error.localizedDescription). Check the newest email, or tap Resend code."
+            return false
+        }
+    }
+
+    func resendConfirmation() async {
+        guard let api, let email = pendingConfirmationEmail else { return }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            try await api.resendConfirmation(email: email)
+            status = "A new code is on its way to \(email)."
+            lastError = nil
+        } catch {
+            lastError = "Could not resend: \(error.localizedDescription)"
+        }
+    }
+
+    /// Sets a new password using the code from a password-reset email, then signs in.
+    func resetPassword(email: String, code: String, newPassword: String) async -> Bool {
+        guard let api else { return false }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let s = try await api.verifyCode(email: email, code: code, type: "recovery")
+            try await api.updatePassword(newPassword, token: s.accessToken)
+            setSession(s)
+            status = "Password changed. You're signed in."
+            lastError = nil
+            return true
+        } catch {
+            lastError = "Could not change the password: \(error.localizedDescription)"
             return false
         }
     }
@@ -426,7 +523,7 @@ final class CloudStore: ObservableObject {
         defer { isBusy = false }
         do {
             try await api.resetPassword(email: email)
-            status = "If an account exists for \(email), a reset link is on its way."
+            status = "If an account exists for \(email), we emailed a 6-digit code. Enter it below with a new password."
             lastError = nil
         } catch {
             lastError = "Could not send the reset email: \(error.localizedDescription)"

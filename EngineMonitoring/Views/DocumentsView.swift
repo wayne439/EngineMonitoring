@@ -26,6 +26,16 @@ struct DocumentsView: View {
     var body: some View {
         Form {
             Section {
+                Button {
+                    Task { message = await cloud.emailUploadLink() }
+                } label: {
+                    Label("Email me an upload link", systemImage: "envelope")
+                        .font(.headline)
+                }
+                .disabled(!cloud.isSignedIn || cloud.isBusy)
+                Text("Your files are usually on a computer. We'll email you a link: click it on your computer and the upload page opens already signed in. Then drag your files in.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 if let url = WebPortal.url {
                     Link(destination: url) {
                         Label("Upload on our website", systemImage: "globe")

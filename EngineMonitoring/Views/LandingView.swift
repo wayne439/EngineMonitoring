@@ -285,10 +285,8 @@ struct RegisterView: View {
                 }
             }
             MessagesSection()
-            if done && !cloud.isSignedIn {
-                Section {
-                    NavigationLink("Go to log in") { LoginView() }
-                }
+            if done && !cloud.isSignedIn && cloud.pendingConfirmationEmail != nil {
+                ConfirmCodeSection()
             }
         }
         .navigationTitle("Register")
@@ -306,6 +304,9 @@ struct LoginView: View {
     @EnvironmentObject private var cloud: CloudStore
     @State private var email = ""
     @State private var password = ""
+    @State private var resetRequested = false
+    @State private var resetCode = ""
+    @State private var newPassword = ""
 
     var body: some View {
         Form {
@@ -333,9 +334,38 @@ struct LoginView: View {
                 }
                 .disabled(email.isEmpty || password.isEmpty || cloud.isBusy || !cloud.isConfigured)
                 Button("Forgot password?") {
-                    Task { await cloud.resetPassword(email: email.trimmingCharacters(in: .whitespaces)) }
+                    Task {
+                        await cloud.resetPassword(email: email.trimmingCharacters(in: .whitespaces))
+                        resetRequested = cloud.lastError == nil
+                    }
                 }
                 .disabled(!email.contains("@") || cloud.isBusy || !cloud.isConfigured)
+            } footer: {
+                if !email.contains("@") { Text("Enter your email above to reset your password.") }
+            }
+            if cloud.pendingConfirmationEmail != nil {
+                ConfirmCodeSection()
+            }
+            if resetRequested {
+                Section {
+                    TextField("6-digit code from the email", text: $resetCode)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                    SecureField("New password (8+ characters)", text: $newPassword)
+                        .textContentType(.newPassword)
+                    Button("Set new password and log in") {
+                        Task {
+                            if await cloud.resetPassword(email: email.trimmingCharacters(in: .whitespaces),
+                                                         code: resetCode.trimmingCharacters(in: .whitespaces),
+                                                         newPassword: newPassword) {
+                                resetRequested = false
+                            }
+                        }
+                    }
+                    .disabled(resetCode.count < 6 || newPassword.count < 8 || cloud.isBusy)
+                } header: {
+                    Text("Reset your password")
+                }
             }
             if cloud.isConfigured {
                 Section {
@@ -349,6 +379,39 @@ struct LoginView: View {
         }
         .navigationTitle("Log In")
         .onAppear { cloud.clearMessages() }
+    }
+}
+
+// MARK: - Email confirmation code
+
+/// Type the 6-digit code from the confirmation email (no web page needed), or resend it.
+struct ConfirmCodeSection: View {
+    @EnvironmentObject private var cloud: CloudStore
+    @State private var code = ""
+
+    var body: some View {
+        Section {
+            TextField("6-digit code", text: $code)
+                .keyboardType(.numberPad)
+                .textContentType(.oneTimeCode)
+                .font(.title3.monospacedDigit())
+            Button {
+                Task { _ = await cloud.confirmEmail(code: code.trimmingCharacters(in: .whitespaces)) }
+            } label: {
+                HStack {
+                    Spacer()
+                    if cloud.isBusy { ProgressView() } else { Text("Confirm and sign in").bold() }
+                    Spacer()
+                }
+            }
+            .disabled(code.trimmingCharacters(in: .whitespaces).count < 6 || cloud.isBusy)
+            Button("Resend code") { Task { await cloud.resendConfirmation() } }
+                .disabled(cloud.isBusy)
+        } header: {
+            Text("Confirm your email")
+        } footer: {
+            Text("We sent the code to \(cloud.pendingConfirmationEmail ?? "your email"). Check spam if you don't see it.")
+        }
     }
 }
 
