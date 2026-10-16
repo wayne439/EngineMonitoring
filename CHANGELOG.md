@@ -1,5 +1,12 @@
 # Engine Pulse changelog
 
+## 0.7.7 (2026-10-16)
+- Everything syncs between devices, not just flights: maintenance items and service history, issue reviews and notes, and event markers are saved to the account (one app-state file) and pulled on every device when the app opens, comes to the front, or a few seconds after a change. Each part is last-change-wins.
+- Aircraft profile (FIKI, serial, home airport, limits): the first time an account is restored on a device, the account's profile wins over values the device filled in from the POH; after that the newer one wins.
+- Every device now uses the account's first aircraft, so a device that uploaded before restoring no longer ends up with its own separate copy.
+- Records saved before this version are dated by their files, so they win over an empty device.
+- Version 0.7.7 (24).
+
 ## 0.7.6 (2026-10-16)
 - HOME early-warning dashboard: counts of open warnings, cautions, watch items and trends, then a row per key trend (any flagged trend first, the hottest cylinder's CHT, oil temperature and pressure, CHT and EGT spread, TIT gap, bus voltages) with a sparkline over its normal band, the latest value, the direction (orange when moving the bad way) and Normal / WATCH / ACT SOON. Each row opens its trend; "All trends and early warnings" opens the full view.
 - Before the early-warning baseline exists (about 25 flights), the panel shows raw cruise values per flight instead.

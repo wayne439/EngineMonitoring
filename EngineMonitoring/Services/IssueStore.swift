@@ -86,16 +86,25 @@ final class IssueStore: ObservableObject {
     @Published private(set) var groups: [IssueGroup] = []
     @Published private(set) var isBuilding = false
     @Published var lastError: String?
+    /// When the pilot last reviewed anything (drives sync between devices).
+    @Published private(set) var modifiedAt: Date = .distantPast
+    private static let modifiedKey = "EM.sync.issues.modified"
 
     private let fileURL: URL
     private var lastSummaries: [FlightSummary] = []
 
     init(baseDirectory: URL = EventPersistence.defaultDirectory()) {
         fileURL = baseDirectory.appendingPathComponent("Issues", isDirectory: true).appendingPathComponent("status.json")
+        modifiedAt = UserDefaults.standard.object(forKey: Self.modifiedKey) as? Date ?? .distantPast
         if let data = try? Data(contentsOf: fileURL) {
             do { records = try EventPersistence.decoder.decode([String: IssueStatusRecord].self, from: data) } catch {
                 lastError = "Issue notes could not be read: \(error.localizedDescription)"
             }
+        }
+        if modifiedAt == .distantPast, !records.isEmpty {
+            let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path)
+            modifiedAt = attrs?[.modificationDate] as? Date ?? Date()
+            UserDefaults.standard.set(modifiedAt, forKey: Self.modifiedKey)
         }
     }
 
@@ -133,7 +142,20 @@ final class IssueStore: ObservableObject {
 
     func reviewLogMarkdown() -> String { IssueHistory.reviewLogMarkdown(groups) }
 
-    private func save() {
+    /// Replaces the review notes with the copy from another device (newer than this one's).
+    func replaceFromCloud(records: [String: IssueStatusRecord], modified: Date) async {
+        self.records = records
+        save(bump: false)
+        modifiedAt = modified
+        UserDefaults.standard.set(modified, forKey: Self.modifiedKey)
+        await refresh(summaries: lastSummaries)
+    }
+
+    private func save(bump: Bool = true) {
+        if bump {
+            modifiedAt = Date()
+            UserDefaults.standard.set(modifiedAt, forKey: Self.modifiedKey)
+        }
         do {
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             try EventPersistence.encoder.encode(records).write(to: fileURL, options: [.atomic])

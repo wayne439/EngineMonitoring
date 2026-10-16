@@ -8,6 +8,7 @@ struct ContentView: View {
     @EnvironmentObject private var aircraft: AircraftProfileStore
     @EnvironmentObject private var cloud: CloudStore
     @EnvironmentObject private var poh: POHRepository
+    @EnvironmentObject private var diagnosticEvents: DiagnosticEventStore
     @Environment(\.scenePhase) private var scenePhase
 
     enum SectionItem: String, CaseIterable, Identifiable {
@@ -74,10 +75,23 @@ struct ContentView: View {
         // After signing in (here or on another device): bring back the aircraft and flights, then new uploads.
         .task(id: cloud.session?.userID) {
             await cloud.restore(aircraft: aircraft, logs: flightLogs)
+            await cloud.syncAppState(maintenance: maintenance, issues: issues, events: diagnosticEvents)
             await cloud.pullInbox(logs: flightLogs)
         }
+        // Maintenance, issue reviews and event markers follow the pilot to every device (a few seconds after a change).
+        .task(id: [maintenance.modifiedAt, issues.modifiedAt, diagnosticEvents.modifiedAt]) {
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            await cloud.syncAppState(maintenance: maintenance, issues: issues, events: diagnosticEvents)
+        }
         .onChange(of: scenePhase) {
-            if scenePhase == .active { Task { await cloud.pullInbox(logs: flightLogs) } }
+            if scenePhase == .active {
+                Task {
+                    await cloud.restore(aircraft: aircraft, logs: flightLogs)
+                    await cloud.syncAppState(maintenance: maintenance, issues: issues, events: diagnosticEvents)
+                    await cloud.pullInbox(logs: flightLogs)
+                }
+            }
         }
         // POH and manual PDFs from the uploads are read on this iPad (PROCEDURES, ASK).
         .onChange(of: cloud.inboxItems) {

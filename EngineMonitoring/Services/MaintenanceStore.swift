@@ -6,6 +6,9 @@ final class MaintenanceStore: ObservableObject {
     @Published private(set) var items: [MaintenanceItem] = []
     @Published private(set) var entries: [MaintenanceEntry] = []
     @Published var lastError: String?
+    /// When the pilot last changed anything here (drives sync between devices).
+    @Published private(set) var modifiedAt: Date = .distantPast
+    private static let modifiedKey = "EM.sync.maintenance.modified"
 
     private let directory: URL
     private var itemsURL: URL { directory.appendingPathComponent("items.json") }
@@ -15,7 +18,14 @@ final class MaintenanceStore: ObservableObject {
 
     init(baseDirectory: URL = EventPersistence.defaultDirectory()) {
         directory = baseDirectory.appendingPathComponent("Maintenance", isDirectory: true)
+        modifiedAt = UserDefaults.standard.object(forKey: Self.modifiedKey) as? Date ?? .distantPast
         load()
+        // Records saved before sync existed: date them by the file so they win over an empty device.
+        if modifiedAt == .distantPast, !entries.isEmpty || items.contains(where: { !$0.builtIn || $0.userEdited == true }) {
+            let attrs = try? FileManager.default.attributesOfItem(atPath: entriesURL.path)
+            modifiedAt = attrs?[.modificationDate] as? Date ?? Date()
+            UserDefaults.standard.set(modifiedAt, forKey: Self.modifiedKey)
+        }
     }
 
     private func load() {
@@ -46,7 +56,7 @@ final class MaintenanceStore: ObservableObject {
         if !FileManager.default.fileExists(atPath: seededURL.path) {
             let seeds = MaintenanceSchedule.baselineEntries().filter { seed in !entries.contains { $0.itemID == seed.itemID && $0.by != "Logbook" } }
             entries += seeds.filter { seed in !entries.contains { $0.itemID == seed.itemID && $0.date == seed.date } }
-            save()
+            save(bump: false)
             try? Data().write(to: seededURL)
         }
     }
@@ -105,7 +115,21 @@ final class MaintenanceStore: ObservableObject {
         return lines.joined(separator: "\n") + "\n"
     }
 
-    private func save() {
+    /// Replaces everything with the copy from another device (newer than this one's).
+    func replaceFromCloud(items: [MaintenanceItem], entries: [MaintenanceEntry], modified: Date) {
+        self.items = items
+        self.entries = entries
+        save(bump: false)
+        modifiedAt = modified
+        UserDefaults.standard.set(modified, forKey: Self.modifiedKey)
+        onChange?()
+    }
+
+    private func save(bump: Bool = true) {
+        if bump {
+            modifiedAt = Date()
+            UserDefaults.standard.set(modifiedAt, forKey: Self.modifiedKey)
+        }
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             try EventPersistence.encoder.encode(items).write(to: itemsURL, options: [.atomic])
