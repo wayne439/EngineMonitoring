@@ -35,27 +35,8 @@ struct HomeView: View {
             .sorted { $0.status.state < $1.status.state }
     }
 
-    /// 100 = nothing open. Unreviewed warnings, cautions, watch items and overdue maintenance take points off.
-    private var score: Int {
-        var s = 100
-        for g in attention {
-            switch g.severity {
-            case .warning: s -= 25
-            case .caution: s -= 10
-            case .watch: s -= 4
-            case .info: break
-            }
-        }
-        s -= maintenanceDue.filter { $0.status.state == .overdue || $0.status.state == .failed }.count * 10
-        return max(0, min(100, s))
-    }
-
-    private var health: (label: String, color: Color, icon: String) {
-        if flights.isEmpty { return ("Waiting for your first flight", .cyan, "waveform.path.ecg") }
-        if attention.contains(where: { $0.severity == .warning }) { return ("Needs attention", .red, "exclamationmark.octagon.fill") }
-        if score < 85 { return ("Keep an eye on it", .orange, "eye.fill") }
-        return ("Running healthy", .green, "checkmark.seal.fill")
-    }
+    /// Engine health from the recent flights themselves (not from what is waiting for review).
+    @State private var engineHealth = EngineHealth(score: nil, status: .noData, flights: [], deductions: [], slopePerFlight: nil)
 
     var body: some View {
         ScrollView {
@@ -79,6 +60,9 @@ struct HomeView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Home")
+        .task(id: logs.summaries.count) {
+            engineHealth = EngineHealth.compute(Array(logs.summaries.values))
+        }
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -88,7 +72,7 @@ struct HomeView: View {
         ZStack(alignment: .topLeading) {
             LinearGradient(colors: [Color(red: 0.04, green: 0.11, blue: 0.23), Color(red: 0.07, green: 0.19, blue: 0.37)],
                            startPoint: .topLeading, endPoint: .bottomTrailing)
-            PulseLine(color: health.color)
+            PulseLine(color: engineHealth.status.color)
                 .frame(height: 90)
                 .padding(.top, 120)
                 .opacity(0.9)
@@ -105,29 +89,39 @@ struct HomeView: View {
                         .filter { !$0.isEmpty }.joined(separator: " "))
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.75))
-                    NavigationLink { IssueHistoryView() } label: {
+                    NavigationLink { HealthBreakdownView(health: engineHealth) } label: {
                         HStack(spacing: 6) {
-                            Label(health.label, systemImage: health.icon)
+                            Label(engineHealth.status.label, systemImage: engineHealth.status.icon)
+                            if let t = engineHealth.trendText {
+                                Text("· " + t).font(.subheadline.weight(.semibold))
+                            }
                             Image(systemName: "chevron.right").font(.caption.bold())
                         }
                         .font(.headline)
                         .padding(.horizontal, 12).padding(.vertical, 6)
-                        .background(health.color.opacity(0.22), in: Capsule())
-                        .foregroundStyle(health.color)
+                        .background(engineHealth.status.color.opacity(0.22), in: Capsule())
+                        .foregroundStyle(engineHealth.status.color)
                     }
                     .buttonStyle(TileButtonStyle())
                     .padding(.top, 4)
                 }
                 Spacer(minLength: 0)
-                NavigationLink { IssueHistoryView() } label: {
-                    ScoreGauge(score: flights.isEmpty ? nil : score, color: health.color)
-                        .frame(width: 132, height: 132)
+                NavigationLink { HealthBreakdownView(health: engineHealth) } label: {
+                    VStack(spacing: 6) {
+                        ScoreGauge(score: engineHealth.score, color: engineHealth.status.color)
+                            .frame(width: 132, height: 132)
+                        if let arrow = engineHealth.trendArrow {
+                            Label(engineHealth.trendShort ?? "", systemImage: arrow)
+                                .font(.caption.bold())
+                                .foregroundStyle(.white.opacity(0.85))
+                        }
+                    }
                 }
                 .buttonStyle(TileButtonStyle())
             }
             .padding(24)
         }
-        .frame(height: 230)
+        .frame(height: 250)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: .black.opacity(0.15), radius: 12, y: 6)
     }
@@ -431,13 +425,13 @@ private struct ScoreGauge: View {
                     .font(.system(size: 40, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
                     .contentTransition(.numericText())
-                Text("PULSE").font(.caption2.weight(.bold)).tracking(2).foregroundStyle(color)
+                Text("HEALTH").font(.caption2.weight(.bold)).tracking(2).foregroundStyle(color)
             }
         }
         .onAppear { withAnimation(.easeOut(duration: 1.2)) { shown = Double(score ?? 0) } }
         .onChange(of: score) { withAnimation(.easeOut(duration: 0.8)) { shown = Double(score ?? 0) } }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(score.map { "Engine pulse score \($0) of 100" } ?? "No score yet")
+        .accessibilityLabel(score.map { "Engine health \($0) of 100" } ?? "No score yet")
     }
 }
 
@@ -548,5 +542,250 @@ private struct ActionTileLabel: View {
         .padding(16)
         .background(LinearGradient(colors: [tint, tint.opacity(0.7)], startPoint: .topLeading, endPoint: .bottomTrailing),
                     in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+}
+
+
+// MARK: - Engine health
+
+/// Engine health from the last 10 flights: limits and cautions found in each flight (newer flights count
+/// more) and any early-warning trend. Items waiting for review don't count; that's the "Open items" tile.
+struct EngineHealth {
+    enum Status {
+        case healthy, watch, attention, noData
+        var label: String {
+            switch self {
+            case .healthy: "Healthy"
+            case .watch: "Watch"
+            case .attention: "Needs attention"
+            case .noData: "Waiting for your first flight"
+            }
+        }
+        var color: Color {
+            switch self {
+            case .healthy: .green
+            case .watch: .yellow
+            case .attention: .red
+            case .noData: .cyan
+            }
+        }
+        var icon: String {
+            switch self {
+            case .healthy: "checkmark.seal.fill"
+            case .watch: "eye.fill"
+            case .attention: "exclamationmark.octagon.fill"
+            case .noData: "waveform.path.ecg"
+            }
+        }
+    }
+
+    struct Deduction: Identifiable {
+        let id = UUID()
+        let points: Double
+        let title: String
+        let detail: String
+        let severity: IssueSeverity
+    }
+
+    struct FlightScore: Identifiable {
+        let id = UUID()
+        let date: Date
+        let score: Double
+    }
+
+    let score: Int?
+    let status: Status
+    let flights: [FlightScore]          // oldest first
+    let deductions: [Deduction]
+    /// Change in flight score per flight across the recent flights (least-squares slope).
+    let slopePerFlight: Double?
+
+    static let window = 10
+    static func weight(_ s: IssueSeverity) -> Double {
+        switch s {
+        case .warning: 20
+        case .caution: 8
+        case .watch: 3
+        case .info: 0
+        }
+    }
+
+    static func compute(_ summaries: [FlightSummary]) -> EngineHealth {
+        let recent = Array(summaries.sorted { $0.start > $1.start }.prefix(window))   // newest first
+        guard !recent.isEmpty else {
+            return EngineHealth(score: nil, status: .noData, flights: [], deductions: [], slopePerFlight: nil)
+        }
+        // Newest flight weighs most (10, 9, 8 ...).
+        let weights = recent.indices.map { Double(window - $0) }
+        let totalWeight = weights.reduce(0, +)
+        var perFlight: [FlightScore] = []
+        var byKind: [String: (points: Double, flights: Int, title: String, severity: IssueSeverity)] = [:]
+        for (i, f) in recent.enumerated() {
+            var seen: [String: FlightIssue] = [:]
+            for issue in f.issues where issue.origin != .records && issue.severity != .info {
+                if let old = seen[issue.kind], old.severity <= issue.severity { continue }
+                seen[issue.kind] = issue
+            }
+            let penalty = min(100, seen.values.reduce(0) { $0 + weight($1.severity) })
+            perFlight.append(FlightScore(date: f.start, score: 100 - penalty))
+            let scale = penalty > 0 ? min(1, 100 / max(penalty, 1)) : 1
+            for issue in seen.values {
+                let pts = weights[i] * weight(issue.severity) * scale / totalWeight
+                var e = byKind[issue.kind] ?? (0, 0, issue.title, issue.severity)
+                e.points += pts
+                e.flights += 1
+                if i == 0 || e.title.isEmpty { e.title = issue.title }
+                e.severity = min(e.severity, issue.severity)
+                byKind[issue.kind] = e
+            }
+        }
+        var deductions = byKind.values.map {
+            Deduction(points: $0.points, title: $0.title,
+                      detail: "\($0.severity.rawValue) · \($0.flights) of the last \(recent.count) flight\(recent.count == 1 ? "" : "s")",
+                      severity: $0.severity)
+        }
+        var score = perFlight.enumerated().reduce(0.0) { $0 + weights[$1.offset] * $1.element.score } / totalWeight
+
+        // Slow changes across flights (early warning) also count.
+        let report = EarlyWarning.analyze(summaries)
+        var trendPenalty = 0.0
+        for a in report.findings {
+            let pts: Double = a.level == .actSoon ? 15 : 6
+            trendPenalty += pts
+            deductions.append(Deduction(points: pts, title: "\(a.metric.label) trend",
+                                        detail: "\(a.level?.rawValue ?? "") · changing across recent flights",
+                                        severity: a.level == .actSoon ? .warning : .watch))
+        }
+        score -= min(30, trendPenalty)
+        let final = Int(max(0, min(100, score)).rounded())
+
+        let newest3HaveWarning = recent.prefix(3).contains { $0.issues.contains { $0.severity == .warning && $0.origin != .records } }
+        let status: Status
+        if final < 70 || newest3HaveWarning || report.level == .actSoon { status = .attention }
+        else if final < 85 { status = .watch }
+        else { status = .healthy }
+
+        let chronological = Array(perFlight.reversed())
+        return EngineHealth(score: final, status: status, flights: chronological,
+                            deductions: deductions.filter { $0.points >= 0.5 }.sorted { $0.points > $1.points },
+                            slopePerFlight: slope(chronological.map(\.score)))
+    }
+
+    static func slope(_ ys: [Double]) -> Double? {
+        guard ys.count >= 3 else { return nil }
+        let n = Double(ys.count)
+        let xs = ys.indices.map(Double.init)
+        let mx = xs.reduce(0, +) / n, my = ys.reduce(0, +) / n
+        let num = zip(xs, ys).reduce(0) { $0 + ($1.0 - mx) * ($1.1 - my) }
+        let den = xs.reduce(0) { $0 + ($1 - mx) * ($1 - mx) }
+        return den == 0 ? nil : num / den
+    }
+
+    /// Points gained or lost across the recent flights, from the slope.
+    var trendChange: Double? {
+        guard let s = slopePerFlight else { return nil }
+        return s * Double(max(flights.count - 1, 1))
+    }
+
+    var trendArrow: String? {
+        guard let c = trendChange else { return nil }
+        if c >= 5 { return "arrow.up.right" }
+        if c <= -5 { return "arrow.down.right" }
+        return "arrow.right"
+    }
+
+    var trendShort: String? {
+        guard let c = trendChange else { return nil }
+        if abs(c) < 5 { return "Steady" }
+        return c > 0 ? "Improving" : "Declining"
+    }
+
+    var trendText: String? {
+        guard let c = trendChange, let short = trendShort else { return nil }
+        return abs(c) < 5 ? short : "\(short) \(c > 0 ? "+" : "")\(Int(c.rounded()))"
+    }
+}
+
+/// Tap on the health gauge: the score, the trend across recent flights, and exactly what took points off.
+struct HealthBreakdownView: View {
+    let health: EngineHealth
+
+    var body: some View {
+        List {
+            Section {
+                HStack(spacing: 16) {
+                    Text(health.score.map(String.init) ?? "--")
+                        .font(.system(size: 54, weight: .heavy, design: .rounded))
+                        .foregroundStyle(health.status.color)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Label(health.status.label, systemImage: health.status.icon)
+                            .font(.title3.bold())
+                            .foregroundStyle(health.status.color)
+                        if let t = health.trendText, let arrow = health.trendArrow {
+                            Label("\(t) over the last \(health.flights.count) flights", systemImage: arrow)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .padding(.vertical, 6)
+            } footer: {
+                Text("Green 85-100: healthy. Yellow 70-84: watch. Red below 70, a warning in the last 3 flights, or an ACT SOON trend: needs attention.")
+            }
+
+            if health.flights.count >= 2 {
+                Section("Score by flight") {
+                    Chart {
+                        RuleMark(y: .value("Healthy", 85.0))
+                            .foregroundStyle(Color.green.opacity(0.6))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                        RuleMark(y: .value("Watch", 70.0))
+                            .foregroundStyle(Color.red.opacity(0.6))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                        ForEach(health.flights) { f in
+                            LineMark(x: .value("Flight", f.date), y: .value("Score", f.score))
+                                .interpolationMethod(.monotone)
+                                .foregroundStyle(Color.cyan)
+                            PointMark(x: .value("Flight", f.date), y: .value("Score", f.score))
+                                .foregroundStyle(f.score >= 85 ? Color.green : (f.score >= 70 ? Color.yellow : Color.red))
+                        }
+                    }
+                    .chartYScale(domain: 0...100)
+                    .frame(height: 200)
+                }
+            }
+
+            Section {
+                if health.deductions.isEmpty {
+                    Label("Nothing took points off. Every recent flight stayed inside your limits.", systemImage: "checkmark.circle")
+                        .foregroundStyle(.green)
+                }
+                ForEach(health.deductions) { d in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(d.title).font(.subheadline.bold())
+                            Text(d.detail).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text("-\(Int(d.points.rounded()))")
+                            .font(.headline.monospacedDigit())
+                            .foregroundStyle(d.severity == .warning ? Color.red : (d.severity == .caution ? Color.orange : Color.secondary))
+                    }
+                }
+            } header: {
+                Text("What took points off")
+            } footer: {
+                Text("Each flight starts at 100: a warning costs 20, a caution 8 and a watch item 3. Newer flights count more. Early-warning trends cost 6 (15 if ACT SOON). Reviewing items doesn't change the score; flying within limits does.")
+            }
+
+            Section {
+                NavigationLink { IssueHistoryView() } label: {
+                    Label("Review open items", systemImage: "checklist")
+                }
+                NavigationLink { EarlyWarningView() } label: {
+                    Label("Engine trends and early warnings", systemImage: "chart.xyaxis.line")
+                }
+            }
+        }
+        .navigationTitle("Engine Health")
     }
 }

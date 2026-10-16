@@ -1,5 +1,12 @@
 # Engine Pulse changelog
 
+## 0.7.5 (2026-10-16)
+- The HOME gauge is now Engine HEALTH, scored from the last 10 flights themselves: each flight starts at 100 (warning -20, caution -8, watch -3), newer flights count more, and early-warning trends take 6 (15 if ACT SOON). Items waiting for review no longer lower it; they stay on the Open items tile.
+- Status colour: green Healthy (85-100), yellow Watch (70-84), red Needs attention (below 70, a warning in the last 3 flights, or an ACT SOON trend). The pulse line and badge follow it.
+- Trend arrow under the gauge: Improving, Steady or Declining, from the slope of the per-flight scores.
+- Tap the gauge or badge for the breakdown: the score by flight on a chart, and exactly what took points off.
+- Version 0.7.5 (22).
+
 ## 0.7.4 (2026-10-16)
 - HOME is fully tappable: Flights analyzed opens DIAGNOSTICS, Engine hours opens MY FLYING, Open items and the health badge / Pulse score open the issue list, Oil change opens MAINTENANCE, and the trend card opens engine trends and early warnings. Tiles show a chevron and press down when tapped.
 - Version 0.7.4 (21).
