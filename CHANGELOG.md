@@ -1,5 +1,10 @@
 # Engine Pulse changelog
 
+## 0.7.2 (2026-10-16)
+- POH and supplement cross-check: limits are read from the POH and from uploaded AFM supplements (for example the Tornado Alley turbonormalizer supplement) and compared line by line in Aircraft Profile: Match, Supplement governs, POH only or Supplement only, with the page of each. Where they differ the supplement value is used.
+- New turbo limits read from the supplement or POH Section 9: TIT max and manifold pressure max. Both are locked like the other limits and checked after every flight.
+- Version 0.7.2 (19).
+
 ## 0.7.1 (2026-10-16)
 - Document checklist asks for nothing twice. The POH / AFM item is now the whole PDF including Section 9 supplements, and it covers the engine model, all limits and the turbo limits. It shows done once the POH has been read.
 - The separate turbo item appears only when the POH and manuals read on the iPad don't contain the turbo limits.
