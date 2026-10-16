@@ -1,4 +1,4 @@
-# AI Engine Monitoring upload website
+# Engine Pulse upload website
 
 A single static page (`index.html`, `app.js`, `config.js`, `logo.png`) where pilots sign in with the same account as the app and upload their engine logs and documents. Uploads go to the same Supabase project as the app. The app brings them in whenever it opens.
 

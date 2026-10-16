@@ -1,4 +1,9 @@
-# AI Engine Monitoring changelog
+# Engine Pulse changelog
+
+## 0.6.3 (2026-10-16)
+- App renamed **Engine Pulse** everywhere: home-screen name, title, landing page, registration, account, reports and PDFs, the upload website, email templates and docs. App binary EnginePulse.app; bundle ID, module and repo unchanged.
+- App icon and logo wordmark now read ENGINE PULSE.
+- Version 0.6.3 (10).
 
 ## 0.6.2 (2026-10-16)
 - Email confirmation and password reset use a 6-digit code typed into the app, so pilots never land on a dead web page. Register shows the code box right away; Log in shows it if the email isn't confirmed yet; Resend code.

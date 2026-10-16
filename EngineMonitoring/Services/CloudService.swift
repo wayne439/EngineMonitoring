@@ -463,7 +463,7 @@ final class CloudStore: ObservableObject {
         defer { isBusy = false }
         do {
             try await api.sendSignInLink(email: email, redirect: portal)
-            return "Sent. Open the email from AI Engine Monitoring on your computer and click the link: the upload page opens already signed in."
+            return "Sent. Open the email from Engine Pulse on your computer and click the link: the upload page opens already signed in."
         } catch {
             return "Could not send the link: \(error.localizedDescription)"
         }

@@ -302,7 +302,7 @@ enum PreShopReport {
         let hours = flights.compactMap { $0.engineChecks?.card?.airborneHours }.reduce(0, +)
         var lookAt: [String] = []
         var t = "PRE-SHOP ENGINE REPORT\n"
-        t += "\(AircraftKnowledge.aircraftSummary). Generated \(d.string(from: generated)) by AI Engine Monitoring from "
+        t += "\(AircraftKnowledge.aircraftSummary). Generated \(d.string(from: generated)) by Engine Pulse from "
         t += "\(flights.count) engine data logs"
         if let a = flights.first, let b = flights.last { t += " (\(d.string(from: a.start)) to \(d.string(from: b.start)), " + String(format: "%.0f", hours) + " flight hours)" }
         t += ". Recorded values compared with this airplane's own history; advisory only.\n\n"

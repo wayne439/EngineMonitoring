@@ -1,4 +1,4 @@
-// AI Engine Monitoring upload page. Uses the same Supabase project as the iPad app:
+// Engine Pulse upload page. Uses the same Supabase project as the iPad app:
 // files go to the private "engine-logs" bucket under <user id>/inbox/ and a row in inbox_uploads,
 // which the app picks up the next time it opens.
 (function () {
@@ -75,7 +75,7 @@
   // ---------- auth
   function setMode(reg) {
     registering = reg;
-    $("auth-title").textContent = reg ? "Register for AI Engine Monitoring" : "Log in";
+    $("auth-title").textContent = reg ? "Register for Engine Pulse" : "Log in";
     $("auth-submit").textContent = reg ? "Register" : "Log in";
     $("toggle-mode").textContent = reg ? "Already registered? Log in" : "New here? Register";
     $("name-field").classList.toggle("hidden", !reg);

@@ -138,7 +138,7 @@ struct DataPathAdvice: Equatable, Sendable {
                     monitor == .jpiEDM
                         ? "Download the flights from the EDM to a USB stick or with JPI's download cable/app (older EDMs use a serial cable)."
                         : "Export the flight data from the EI monitor to a USB stick.",
-                    "Send the file to the iPad (AirDrop, Files, email) and choose Open in AI Engine Monitoring.",
+                    "Send the file to the iPad (AirDrop, Files, email) and choose Open in Engine Pulse.",
                     "Full analysis for this monitor is coming. While signed in, your files are saved to your account now and processed when it arrives.",
                 ])
         }
@@ -149,7 +149,7 @@ struct DataPathAdvice: Equatable, Sendable {
                 automatic: true,
                 steps: [
                     "Your GDL 60 uploads every flight to flyGarmin after shutdown (PlaneSync subscription).",
-                    "We are applying to Garmin's flyGarmin sharing program. Once approved you switch on sharing with AI Engine Monitoring in flyGarmin once, and every flight arrives automatically.",
+                    "We are applying to Garmin's flyGarmin sharing program. Once approved you switch on sharing with Engine Pulse in flyGarmin once, and every flight arrives automatically.",
                     "Until then, use the data card: " + sdCardSteps[2],
                 ])
         case .flightStream510 where monitor.flightStream510CarriesEngineData:
@@ -158,7 +158,7 @@ struct DataPathAdvice: Equatable, Sendable {
                 automatic: true,
                 steps: [
                     "Your Flight Stream 510 sends the flight logs to the Garmin Pilot app, which uploads them to flyGarmin.",
-                    "We are applying to Garmin's flyGarmin sharing program. Once approved, switch on sharing with AI Engine Monitoring in flyGarmin and flights arrive automatically.",
+                    "We are applying to Garmin's flyGarmin sharing program. Once approved, switch on sharing with Engine Pulse in flyGarmin and flights arrive automatically.",
                     "Until then, use the data card: " + sdCardSteps[2],
                 ])
         case .flightStream510:
@@ -179,7 +179,7 @@ struct DataPathAdvice: Equatable, Sendable {
                 automatic: false,
                 steps: [
                     "Cirrus IQ syncs your flights from the airplane (2020 and later G6 / G7).",
-                    "In Cirrus IQ, open a flight, tap Share and choose AI Engine Monitoring.",
+                    "In Cirrus IQ, open a flight, tap Share and choose Engine Pulse.",
                     "Or use the data card: " + sdCardSteps[2],
                 ])
         case .airSync:
@@ -188,7 +188,7 @@ struct DataPathAdvice: Equatable, Sendable {
                 automatic: true,
                 steps: [
                     "AirSync uploads your flights over LTE after shutdown.",
-                    "We are working with AirSync to add AI Engine Monitoring as an upload destination. Until then, use the data card: " + sdCardSteps[2],
+                    "We are working with AirSync to add Engine Pulse as an upload destination. Until then, use the data card: " + sdCardSteps[2],
                 ])
         case .notSure:
             return DataPathAdvice(

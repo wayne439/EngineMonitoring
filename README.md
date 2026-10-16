@@ -1,4 +1,4 @@
-# AI Engine Monitoring
+# Engine Pulse
 
 iPad app for aircraft owners whose avionics record engine data (Garmin and other modern engine monitors; piston first, turbine later): import engine monitor logs, learn each aircraft's normals, and get post-flight engine reports, early warnings and maintenance tracking.
 
@@ -8,10 +8,10 @@ Advisory only. Not FAA-approved; the POH/AFM, the engine monitor and your A&P re
 Engine analysis: valve watch, probe check, early warning, trend charts, report card, run-up mag check, GAMI, turbo/induction checks and the A&P pre-shop report. No data about any specific aircraft ships with the app.
 
 ## App identity
-- Name: AI Engine Monitoring (App Store and home screen); repo, bundle ID and module keep the EngineMonitoring name
+- Name: Engine Pulse (App Store and home screen); repo, bundle ID and module keep the EngineMonitoring name
 - Bundle ID: com.fueledconsulting.EngineMonitoring (tests: com.fueledconsulting.EngineMonitoringTests)
 - Team: D64ZNA8J2P, automatic signing (Xcode Cloud manages distribution signing)
-- Version 0.6.2 (9)
+- Version 0.6.3 (10)
 
 ## Roadmap (see Multi-Aircraft-App-Plan.pdf)
 1. v0.1.0 - starting code base, renamed. DONE

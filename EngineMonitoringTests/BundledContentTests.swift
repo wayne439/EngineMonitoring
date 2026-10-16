@@ -2,7 +2,7 @@ import XCTest
 import PDFKit
 @testable import EngineMonitoring
 
-/// Checks the app bundle itself. Runs inside the host app, so Bundle.main is AI Engine Monitoring.
+/// Checks the app bundle itself. Runs inside the host app, so Bundle.main is Engine Pulse.
 @MainActor
 final class BundledContentTests: XCTestCase {
     func testCatalogDecodesAndEveryDocumentIsBundled() {
@@ -56,7 +56,7 @@ final class BundledContentTests: XCTestCase {
         }
     }
 
-    /// AI Engine Monitoring ships no data about any particular aircraft: no flight history,
+    /// Engine Pulse ships no data about any particular aircraft: no flight history,
     /// no POH text and no approach cards. Owners supply their own.
     func testNoAircraftSpecificDataIsBundled() {
         for name in ["flight_history", "poh_index", "approach_cards"] {
