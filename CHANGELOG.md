@@ -1,5 +1,11 @@
 # Engine Pulse changelog
 
+## 0.7.3 (2026-10-16)
+- Same account on every device: after logging in on a new iPhone or iPad, the app adopts the account's aircraft, restores the aircraft profile (unless this device has a newer locked one) and downloads every flight not on the device yet.
+- ACCOUNT now offers "Log in with email" and "Register" when signed out, not only Sign in with Apple, and explains that Apple's "Hide My Email" creates a separate account. Signing out returns to the landing page.
+- Token refreshes run one at a time, so two screens refreshing together can no longer end a session.
+- Version 0.7.3 (20).
+
 ## 0.7.2 (2026-10-16)
 - POH and supplement cross-check: limits are read from the POH and from uploaded AFM supplements (for example the Tornado Alley turbonormalizer supplement) and compared line by line in Aircraft Profile: Match, Supplement governs, POH only or Supplement only, with the page of each. Where they differ the supplement value is used.
 - New turbo limits read from the supplement or POH Section 9: TIT max and manifold pressure max. Both are locked like the other limits and checked after every flight.

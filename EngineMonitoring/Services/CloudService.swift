@@ -368,8 +368,11 @@ final class CloudStore: ObservableObject {
     @Published private(set) var inboxItems: [InboxItem] = []
 
     let api: CloudAPI?
-    /// Cloud id of this device's aircraft (one aircraft per device for now).
-    let aircraftID: UUID
+    /// Cloud id of this device's aircraft (one aircraft per account for now). Adopts the account's
+    /// existing aircraft when a pilot signs in on another device.
+    private(set) var aircraftID: UUID
+    /// One token refresh at a time: Supabase revokes a session if the same refresh token is used twice.
+    private var refreshTask: Task<CloudSession, Error>?
     private let defaults: UserDefaults
 
     private static let aircraftIDKey = "EM.cloud.aircraftID"
@@ -552,8 +555,16 @@ final class CloudStore: ObservableObject {
         guard let api else { throw CloudError.notConfigured }
         guard var s = session else { throw CloudError.notSignedIn }
         if s.expiresAt.timeIntervalSinceNow < 120 {
-            s = try await api.refresh(s)
-            setSession(s)
+            if let running = refreshTask {
+                s = try await running.value
+            } else {
+                let current = s
+                let task = Task { try await api.refresh(current) }
+                refreshTask = task
+                defer { refreshTask = nil }
+                s = try await task.value
+                setSession(s)
+            }
         }
         return (api, s)
     }
@@ -719,6 +730,60 @@ final class CloudStore: ObservableObject {
         } catch {
             lastError = "Could not open \(item.filename): \(error.localizedDescription)"
             return nil
+        }
+    }
+
+    /// On a new device (or after signing in again): adopts the account's aircraft, restores the profile
+    /// unless this device has a newer locked one, and downloads every flight not on this device yet.
+    func restore(aircraft: AircraftProfileStore, logs: FlightLogStore) async {
+        guard isConfigured, isSignedIn, !isBusy else { return }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let (api, s) = try await token()
+            let planes = try await api.select(table: "aircraft",
+                                              query: [URLQueryItem(name: "select", value: "id,profile,updated_at"),
+                                                      URLQueryItem(name: "order", value: "updated_at.desc")],
+                                              token: s.accessToken)
+            if let newest = planes.first, let rawID = newest["id"] as? String, let cloudID = UUID(uuidString: rawID) {
+                let ids = planes.compactMap { ($0["id"] as? String).flatMap(UUID.init(uuidString:)) }
+                if !ids.contains(aircraftID) {
+                    aircraftID = cloudID
+                    defaults.set(cloudID.uuidString, forKey: Self.aircraftIDKey)
+                }
+                if let json = newest["profile"], !(json is NSNull),
+                   let cloud = try? EventPersistence.decoder.decode(AircraftProfile.self, from: JSONSerialization.data(withJSONObject: json)) {
+                    let local = aircraft.profile
+                    if !local.isLocked || cloud.updatedAt > local.updatedAt {
+                        aircraft.profile = cloud
+                    }
+                }
+            }
+            let rows = try await api.select(table: "flight_logs",
+                                            query: [URLQueryItem(name: "select", value: "filename,original_filename,storage_path")],
+                                            token: s.accessToken)
+            let have = Set(logs.entries.map(\.filename))
+            let missing = rows.filter { ($0["filename"] as? String).map { !have.contains($0) } ?? false }
+            guard !missing.isEmpty else { return }
+            let folder = FileManager.default.temporaryDirectory.appendingPathComponent("restore-\(UUID().uuidString)", isDirectory: true)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            defer { try? FileManager.default.removeItem(at: folder) }
+            var files: [URL] = []
+            for (i, row) in missing.enumerated() {
+                guard let path = row["storage_path"] as? String, let name = row["filename"] as? String else { continue }
+                status = "Restoring flight \(i + 1) of \(missing.count) from your account…"
+                let data = try await api.downloadFile(path: path, token: s.accessToken)
+                let url = folder.appendingPathComponent(name)
+                try data.write(to: url)
+                files.append(url)
+                uploadedLogs.insert(name)
+            }
+            defaults.set(Array(uploadedLogs), forKey: Self.uploadedKey)
+            await logs.importFiles(files)
+            status = "Restored \(files.count) flight\(files.count == 1 ? "" : "s") from your account."
+            lastError = nil
+        } catch {
+            lastError = "Could not restore from your account: \(error.localizedDescription)"
         }
     }
 
