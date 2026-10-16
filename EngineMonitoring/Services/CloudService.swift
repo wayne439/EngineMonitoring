@@ -87,6 +87,12 @@ struct CloudAPI: Sendable {
         return try Self.session(from: data)
     }
 
+    /// Emails a one-click sign-in link for an existing account that opens `redirect` (the upload website) signed in.
+    func sendSignInLink(email: String, redirect: URL) async throws {
+        _ = try await send("POST", "auth/v1/otp", query: [URLQueryItem(name: "redirect_to", value: redirect.absoluteString)],
+                           json: ["email": email, "create_user": false], token: nil)
+    }
+
     /// Sends the signup confirmation email again.
     func resendConfirmation(email: String) async throws {
         _ = try await send("POST", "auth/v1/resend", query: [], json: ["type": "signup", "email": email], token: nil)
@@ -443,6 +449,23 @@ final class CloudStore: ObservableObject {
                 lastError = "Log in failed: \(text)"
             }
             return false
+        }
+    }
+
+    /// Emails the signed-in pilot a link that opens the upload website already signed in, for uploading from a computer.
+    func emailUploadLink() async -> String {
+        guard let api, let session else { return "Sign in first." }
+        guard let portal = WebPortal.url else { return "The upload website isn't live yet. It's coming soon; for now upload from this iPad." }
+        guard let email = session.email, !email.isEmpty else {
+            return "Your account has no email address we can send to. Open \(portal.absoluteString) on your computer instead."
+        }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            try await api.sendSignInLink(email: email, redirect: portal)
+            return "Sent. Open the email from AI Engine Monitoring on your computer and click the link: the upload page opens already signed in."
+        } catch {
+            return "Could not send the link: \(error.localizedDescription)"
         }
     }
 
