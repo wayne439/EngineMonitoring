@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selection: SectionItem? = .fly
+    @State private var selection: SectionItem? = .diagnostics
     @EnvironmentObject private var flightLogs: FlightLogStore
     @EnvironmentObject private var issues: IssueStore
     @EnvironmentObject private var maintenance: MaintenanceStore
@@ -11,8 +11,6 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     enum SectionItem: String, CaseIterable, Identifiable {
-        case fly = "FLY"
-        case procedures = "PROCEDURES"
         case diagnostics = "DIAGNOSTICS"
         case myFlying = "MY FLYING"
         case maintenance = "MAINTENANCE"
@@ -24,8 +22,6 @@ struct ContentView: View {
 
         var icon: String {
             switch self {
-            case .fly: "airplane"
-            case .procedures: "exclamationmark.triangle"
             case .diagnostics: "stethoscope"
             case .myFlying: "chart.xyaxis.line"
             case .maintenance: "checklist"
@@ -51,9 +47,7 @@ struct ContentView: View {
             }
         } detail: {
             NavigationStack {
-                switch selection ?? .fly {
-                case .fly: FlyView()
-                case .procedures: ProceduresView()
+                switch selection ?? .diagnostics {
                 case .diagnostics: DiagnosticsView()
                 case .myFlying: MyFlyingView()
                 case .maintenance: MaintenanceView()
@@ -63,7 +57,7 @@ struct ContentView: View {
                 }
             }
             // A fresh stack per section, so switching sections never leaves a stale pushed screen.
-            .id(selection ?? .fly)
+            .id(selection ?? .diagnostics)
         }
         // Issue history follows the flight summaries (bundled history plus every imported log).
         .task(id: flightLogs.summaries.count) {
