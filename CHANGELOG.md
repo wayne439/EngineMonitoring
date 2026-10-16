@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.6.9 (2026-10-16)
+- Focused on engine monitoring: FLY and PROCEDURES are removed from the menu (and the procedures link in ASK). The app opens on DIAGNOSTICS. Your POH is still read for the aircraft profile limits, ASK search and issue guidance.
+- Version 0.6.9 (16).
+
 ## 0.6.8 (2026-10-16)
 - Aircraft Profile fills itself from the POH: engine model, cylinders, turbo, max RPM, overspeed, oil temperature max, oil pressure min / max / caution, CHT caution and max are read from Section 2, each showing its POH page.
 - Required details lock once complete (automatically when the POH supplies them, or with "Everything matches my POH: lock the profile"). Locked values can't be edited; "Request a change" emails support, and a support code unlocks once.

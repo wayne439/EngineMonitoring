@@ -460,13 +460,6 @@ struct AskView: View {
                         .foregroundStyle(.secondary)
                 }
                 Section {
-                    NavigationLink {
-                        ProceduresView()
-                    } label: {
-                        Label("Emergency and Abnormal Procedures", systemImage: "exclamationmark.triangle")
-                    }
-                }
-                Section {
                     Text("AI answers are off on this iPad (on-device AI needs an M-series or A17 Pro iPad). Search shows the POH's own words with page numbers.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
