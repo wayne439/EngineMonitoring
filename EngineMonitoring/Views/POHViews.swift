@@ -1,26 +1,84 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Emergency (Section 3) and abnormal (Section 3A) procedures from the POH, one tap away. Works offline.
 struct ProceduresView: View {
     @EnvironmentObject private var poh: POHRepository
+    @EnvironmentObject private var cloud: CloudStore
+    @State private var picking = false
 
     var body: some View {
         List {
-            if let index = poh.index {
+            if poh.isBuilding {
                 Section {
-                    Label("Text from the POH (\(index.document.partNumber), \(index.document.revision)). Verify against the printed POH; the turbonormalizer supplement is not loaded.",
+                    HStack(spacing: 12) {
+                        ProgressView()
+                        Text(poh.buildStatus ?? "Reading your POH…")
+                    }
+                } footer: {
+                    Text("Your POH is being read on this iPad. Large manuals take a minute or two.")
+                }
+            }
+            if let index = poh.index, !index.procedures.isEmpty {
+                Section {
+                    Label("Text from your POH (\(index.document.partNumber), \(index.document.revision)). Verify against the printed POH and any approved supplements.",
                           systemImage: "checkmark.shield")
                         .font(.footnote)
                 }
                 procedureSections(index, kind: .emergency, title: "Emergency Procedures - Section 3")
                 procedureSections(index, kind: .abnormal, title: "Abnormal Procedures - Section 3A")
-            } else if let error = poh.loadError {
-                Label(error, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red)
-            } else {
-                ProgressView("Loading POH…")
+            } else if let index = poh.index {
+                Section {
+                    Label("Your POH (\(index.document.title)) is loaded and searchable in ASK, but its emergency checklists could not be picked out automatically.",
+                          systemImage: "info.circle")
+                    if let url = poh.pdfURL(for: index.document) {
+                        NavigationLink {
+                            POHPDFScreen(url: url, pdfPage: firstPage(of: "Section 3 ", in: index), title: "POH Section 3")
+                        } label: {
+                            Label("Open POH at Section 3", systemImage: "doc.richtext")
+                        }
+                    }
+                }
+            } else if !poh.isBuilding {
+                Section {
+                    Label(poh.loadError ?? POHRepository.noPOHMessage, systemImage: "book.closed")
+                    if cloud.isSignedIn {
+                        Button {
+                            Task {
+                                await cloud.refreshInbox()
+                                await poh.syncFromUploads(cloud: cloud)
+                            }
+                        } label: {
+                            Label("Load my POH from my uploads", systemImage: "arrow.down.doc")
+                        }
+                    }
+                    NavigationLink {
+                        DocumentsView()
+                    } label: {
+                        Label("Documents and uploads", systemImage: "tray.and.arrow.up")
+                    }
+                }
+            }
+            Section {
+                Button {
+                    picking = true
+                } label: {
+                    Label(poh.index == nil ? "Choose a POH PDF from Files" : "Replace with a POH PDF from Files", systemImage: "folder")
+                }
+                .disabled(poh.isBuilding)
             }
         }
         .navigationTitle("PROCEDURES")
+        .task { await poh.syncFromUploads(cloud: cloud) }
+        .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf]) { result in
+            if case .success(let url) = result {
+                Task { await poh.installFromFiles(url) }
+            }
+        }
+    }
+
+    private func firstPage(of prefix: String, in index: POHIndex) -> Int {
+        index.pages.first { $0.section.hasPrefix(prefix) }?.pdfPage ?? 1
     }
 
     @ViewBuilder
@@ -88,6 +146,7 @@ struct ProcedureView: View {
 
 struct POHPageView: View {
     let page: POHIndex.Page
+    var document: POHIndex.DocumentInfo?
     var highlight: String = ""
     @EnvironmentObject private var poh: POHRepository
 
@@ -95,7 +154,7 @@ struct POHPageView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    AuthorityBadge(authority: .approved)
+                    AuthorityBadge(authority: document?.authority ?? .approved)
                     Text("\(page.section) - page \(page.label)").font(.caption.bold())
                     Spacer()
                 }
@@ -108,12 +167,12 @@ struct POHPageView: View {
         .navigationTitle("POH \(page.label)")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if let url = poh.pdfURL {
+            if let url = document.flatMap({ poh.pdfURL(for: $0) }) ?? poh.pdfURL {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        POHPDFScreen(url: url, pdfPage: page.pdfPage, title: "POH \(page.label)")
+                        POHPDFScreen(url: url, pdfPage: page.pdfPage, title: "\(document?.authority == .manufacturer ? "Page" : "POH") \(page.label)")
                     } label: {
-                        Label("Open POH Page", systemImage: "doc.richtext")
+                        Label("Open Page", systemImage: "doc.richtext")
                     }
                 }
             }

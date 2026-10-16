@@ -450,7 +450,7 @@ struct AskView: View {
         List {
             if query.trimmingCharacters(in: .whitespaces).isEmpty {
                 Section {
-                    Label("Search the full POH and this aircraft's records. Works offline.", systemImage: "magnifyingglass")
+                    Label("Search your POH, your other manuals and this aircraft's records. Works offline.", systemImage: "magnifyingglass")
                     Text("Try: oil pressure, alternator, partial power, CHT, CAPS, icing")
                         .foregroundStyle(.secondary)
                 }
@@ -468,14 +468,21 @@ struct AskView: View {
                 }
             } else {
                 let hits = poh.search(query)
-                Section("POH (\(hits.count))") {
-                    if hits.isEmpty { Text("No POH page contains all of those words.").foregroundStyle(.secondary) }
+                Section("POH and manuals (\(hits.count))") {
+                    if poh.index == nil && poh.manuals.isEmpty {
+                        Text(POHRepository.noPOHMessage).foregroundStyle(.secondary)
+                    } else if hits.isEmpty {
+                        Text("No page contains all of those words.").foregroundStyle(.secondary)
+                    }
                     ForEach(hits) { hit in
                         NavigationLink {
-                            POHPageView(page: hit.page, highlight: query)
+                            POHPageView(page: hit.page, document: hit.document, highlight: query)
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Page \(hit.page.label) - \(hit.page.section)").font(.headline)
+                                if hit.document.authority == .manufacturer || hit.page.section == hit.document.title {
+                                    Text(hit.document.title).font(.caption.bold()).foregroundStyle(.tint)
+                                }
                                 Text(hit.snippet).font(.caption).foregroundStyle(.secondary).lineLimit(3)
                             }
                         }
@@ -495,7 +502,7 @@ struct AskView: View {
                 OnlineResourcesSection()
             }
         }
-        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search POH and records")
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search POH, manuals and records")
         .autocorrectionDisabled()
         .navigationTitle("ASK")
     }

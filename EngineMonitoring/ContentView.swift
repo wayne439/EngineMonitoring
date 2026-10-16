@@ -7,6 +7,7 @@ struct ContentView: View {
     @EnvironmentObject private var maintenance: MaintenanceStore
     @EnvironmentObject private var aircraft: AircraftProfileStore
     @EnvironmentObject private var cloud: CloudStore
+    @EnvironmentObject private var poh: POHRepository
     @Environment(\.scenePhase) private var scenePhase
 
     enum SectionItem: String, CaseIterable, Identifiable {
@@ -76,6 +77,10 @@ struct ContentView: View {
         .task { await cloud.pullInbox(logs: flightLogs) }
         .onChange(of: scenePhase) {
             if scenePhase == .active { Task { await cloud.pullInbox(logs: flightLogs) } }
+        }
+        // POH and manual PDFs from the uploads are read on this iPad (PROCEDURES, ASK).
+        .onChange(of: cloud.inboxItems) {
+            Task { await poh.syncFromUploads(cloud: cloud) }
         }
         // Profile edits are uploaded when the owner leaves the profile screen (it stamps updatedAt).
         .onChange(of: aircraft.profile.updatedAt) {
