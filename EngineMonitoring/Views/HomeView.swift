@@ -105,16 +105,25 @@ struct HomeView: View {
                         .filter { !$0.isEmpty }.joined(separator: " "))
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.75))
-                    Label(health.label, systemImage: health.icon)
+                    NavigationLink { IssueHistoryView() } label: {
+                        HStack(spacing: 6) {
+                            Label(health.label, systemImage: health.icon)
+                            Image(systemName: "chevron.right").font(.caption.bold())
+                        }
                         .font(.headline)
                         .padding(.horizontal, 12).padding(.vertical, 6)
                         .background(health.color.opacity(0.22), in: Capsule())
                         .foregroundStyle(health.color)
-                        .padding(.top, 4)
+                    }
+                    .buttonStyle(TileButtonStyle())
+                    .padding(.top, 4)
                 }
                 Spacer(minLength: 0)
-                ScoreGauge(score: flights.isEmpty ? nil : score, color: health.color)
-                    .frame(width: 132, height: 132)
+                NavigationLink { IssueHistoryView() } label: {
+                    ScoreGauge(score: flights.isEmpty ? nil : score, color: health.color)
+                        .frame(width: 132, height: 132)
+                }
+                .buttonStyle(TileButtonStyle())
             }
             .padding(24)
         }
@@ -135,12 +144,24 @@ struct HomeView: View {
         let hours = flights.reduce(0.0) { $0 + $1.end.timeIntervalSince($1.start) } / 3600
         let oil = maintenance.items.first { $0.id == "oil-change" }.map { maintenance.status($0, summaries: Array(logs.summaries.values)) }
         return LazyVGrid(columns: [GridItem(.adaptive(minimum: 200), spacing: 14)], spacing: 14) {
-            StatTile(title: "Flights analyzed", value: "\(flights.count)", icon: "airplane.departure", tint: .cyan)
-            StatTile(title: "Engine hours logged", value: String(format: "%.1f", hours), icon: "clock.fill", tint: .indigo)
-            StatTile(title: "Open items", value: "\(attention.count)", icon: "exclamationmark.triangle.fill",
-                     tint: attention.isEmpty ? .green : .orange)
-            StatTile(title: "Oil change", value: oil.map { $0.state == .ok ? ($0.summary.isEmpty ? "OK" : $0.summary) : $0.state.label } ?? "Not set",
-                     icon: "drop.fill", tint: oil.map { $0.state == .ok ? Color.green : ($0.state == .dueSoon ? .orange : .red) } ?? .secondary)
+            Button { go(.diagnostics) } label: {
+                StatTile(title: "Flights analyzed", value: "\(flights.count)", icon: "airplane.departure", tint: .cyan)
+            }
+            .buttonStyle(TileButtonStyle())
+            Button { go(.myFlying) } label: {
+                StatTile(title: "Engine hours logged", value: String(format: "%.1f", hours), icon: "clock.fill", tint: .indigo)
+            }
+            .buttonStyle(TileButtonStyle())
+            NavigationLink { IssueHistoryView() } label: {
+                StatTile(title: "Open items", value: "\(attention.count)", icon: "exclamationmark.triangle.fill",
+                         tint: attention.isEmpty ? .green : .orange)
+            }
+            .buttonStyle(TileButtonStyle())
+            Button { go(.maintenance) } label: {
+                StatTile(title: "Oil change", value: oil.map { $0.state == .ok ? ($0.summary.isEmpty ? "OK" : $0.summary) : $0.state.label } ?? "Not set",
+                         icon: "drop.fill", tint: oil.map { $0.state == .ok ? Color.green : ($0.state == .dueSoon ? .orange : .red) } ?? .secondary)
+            }
+            .buttonStyle(TileButtonStyle())
         }
     }
 
@@ -216,6 +237,13 @@ struct HomeView: View {
                 .chartForegroundStyleScale(["CHT max": Color.orange, "Oil temp": Color.cyan])
                 .chartYAxisLabel("°F")
                 .frame(height: 180)
+                NavigationLink { EarlyWarningView() } label: {
+                    HStack {
+                        Text("Open engine trends and early warnings").font(.subheadline.bold())
+                        Spacer()
+                        Image(systemName: "chevron.right").font(.caption.bold())
+                    }
+                }
             }
         }
     }
@@ -413,6 +441,17 @@ private struct ScoreGauge: View {
     }
 }
 
+/// Tiles press down slightly when tapped, so they read as buttons.
+private struct TileButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.primary)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .opacity(configuration.isPressed ? 0.85 : 1)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
+
 private struct StatTile: View {
     let title: String
     let value: String
@@ -431,8 +470,10 @@ private struct StatTile: View {
                 Text(title).font(.caption).foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)
+            Image(systemName: "chevron.right").font(.caption.bold()).foregroundStyle(.tertiary)
         }
         .padding(14)
+        .contentShape(Rectangle())
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
