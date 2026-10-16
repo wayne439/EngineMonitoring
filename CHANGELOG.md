@@ -1,5 +1,11 @@
 # AI Engine Monitoring changelog
 
+## 0.6.2 (2026-10-16)
+- Email confirmation and password reset use a 6-digit code typed into the app, so pilots never land on a dead web page. Register shows the code box right away; Log in shows it if the email isn't confirmed yet; Resend code.
+- Forgot password: enter the emailed code and a new password in the app, then you're signed in.
+- Email templates for Supabase in supabase/email-templates (confirm signup, reset password).
+- Version 0.6.2 (9).
+
 ## 0.6.1 (2026-10-16)
 - Connected to the live Supabase project (dzihbnffnzixutfrdpai, West US): Register, Log in, Sign in with Apple, cloud sync, documents and the upload website now work. Anon (public) key only; row-level security protects data.
 - Version 0.6.1 (8).
