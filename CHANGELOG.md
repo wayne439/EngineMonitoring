@@ -1,5 +1,12 @@
 # Engine Pulse changelog
 
+## 0.7.1 (2026-10-16)
+- Document checklist asks for nothing twice. The POH / AFM item is now the whole PDF including Section 9 supplements, and it covers the engine model, all limits and the turbo limits. It shows done once the POH has been read.
+- The separate turbo item appears only when the POH and manuals read on the iPad don't contain the turbo limits.
+- "Last annual and last oil change" also counts as done when both are recorded under MAINTENANCE.
+- "Engine total time" replaces "engine model, total time and time since overhaul" (the model comes from the POH; overhaul only if there was one). Same changes on the registration checklist and the upload website.
+- Version 0.7.1 (18).
+
 ## 0.7.0 (2026-10-16)
 - New HOME screen, where the app now opens: a hero card with the tail number, a live pulse line colored by engine health, and an Engine Pulse score gauge (100 = nothing open; unreviewed warnings, cautions, watch items and overdue maintenance take points off).
 - Tiles for flights analyzed, engine hours logged, open items and oil change status; the last flight with cruise CHT, oil temperature, oil pressure and fuel flow; a cruise CHT and oil temperature trend chart; what needs attention; a getting-set-up checklist; and quick actions (import flights, upload documents, AD check, ask).

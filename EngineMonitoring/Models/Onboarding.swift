@@ -86,14 +86,11 @@ enum DataChecklist {
         var list: [Item] = [
             Item(id: "tail", title: "Tail number and aircraft serial number", detail: "From the data plate or registration.", level: .required),
             Item(id: "logs", title: "Engine monitor log files", detail: logs, level: .required),
-            Item(id: "limits", title: "Engine limits from your POH/AFM", detail: "Section 2 (Limitations): maximum RPM, CHT, oil temperature and oil pressure range, bus voltage.", level: .required),
+            Item(id: "limits", title: "Your POH / AFM as a PDF", detail: "The whole handbook including Section 9 supplements. Engine model and limits (including turbo limits) are read from it automatically.", level: .required),
             Item(id: "annual", title: "Date of the last annual inspection", detail: "From the airframe logbook.", level: .required),
             Item(id: "oil", title: "Last oil change: date and tach or total time", detail: "From the engine logbook, plus your usual oil change interval.", level: .required),
-            Item(id: "engine-time", title: "Engine model, total time and time since overhaul", detail: "From the engine logbook or data plate.", level: .recommended),
+            Item(id: "engine-time", title: "Engine total time", detail: "From the latest engine logbook entry (and the overhaul entry, if it has been overhauled).", level: .recommended),
         ]
-        if turbo {
-            list.append(Item(id: "turbo", title: "Turbo limits and supplement", detail: "TIT limit and manifold-pressure limits from your POH or turbo supplement.", level: .recommended))
-        }
         list += [
             Item(id: "oil-analysis", title: "Recent oil analysis reports", detail: "PDF or photo of your lab reports, if you use oil analysis.", level: .optional),
             Item(id: "squawks", title: "Open squawks and recent engine work", detail: "Anything your A&P is watching, and work done since the last annual (cylinders, injectors, magnetos).", level: .optional),
@@ -213,23 +210,27 @@ struct DocumentRequirement: Identifiable, Hashable, Sendable {
     /// File types the picker offers for this item.
     let acceptsLogs: Bool
 
-    static func list(turbo: Bool) -> [DocumentRequirement] {
+    /// What to upload, with nothing asked twice: the POH covers the engine model, the limits and
+    /// (in Section 9) the turbo supplement; a separate turbo item appears only when the POH read on
+    /// this iPad doesn't cover the turbo limits.
+    static func list(turbo: Bool, turboSupplementMissing: Bool = false) -> [DocumentRequirement] {
         var items: [DocumentRequirement] = [
             .init(id: "logs", title: "Engine monitor log files",
                   detail: "The CSV files from your avionics data card (data_log folder). The last 20 or more flights give the best baseline.",
                   level: .required, acceptsLogs: true),
-            .init(id: "poh-limits", title: "Engine limits from your POH/AFM",
-                  detail: "A photo or PDF of Section 2 (Limitations): RPM, CHT, oil temperature and pressure, bus voltage.",
+            .init(id: "poh-limits", title: "Your POH / AFM (the whole PDF)",
+                  detail: "Including the Section 9 supplements. The engine model, all engine limits and any turbo limits are read from it, so nothing else about limits is needed.",
                   level: .required, acceptsLogs: false),
             .init(id: "logbook", title: "Last annual and last oil change",
-                  detail: "Photos or scans of the logbook entries (date and tach / total time), plus your AD compliance record if you have one.",
+                  detail: "Logbook entries (date and tach / total time), or record them under MAINTENANCE instead. Add your AD compliance record if you have one.",
                   level: .required, acceptsLogs: false),
-            .init(id: "engine-time", title: "Engine model, total time and time since overhaul",
-                  detail: "Engine logbook page or data plate photo.", level: .recommended, acceptsLogs: false),
+            .init(id: "engine-time", title: "Engine total time",
+                  detail: "The latest engine logbook entry showing total time. If the engine has been overhauled, include the overhaul entry.",
+                  level: .recommended, acceptsLogs: false),
         ]
-        if turbo {
-            items.append(.init(id: "turbo", title: "Turbo limits and supplement",
-                               detail: "TIT and manifold-pressure limits from your POH or turbo supplement.",
+        if turbo && turboSupplementMissing {
+            items.append(.init(id: "turbo", title: "Turbo supplement (not found in your POH)",
+                               detail: "Your POH doesn't include the turbo or turbonormalizer limits. Upload the AFM supplement that has the TIT and manifold-pressure limits.",
                                level: .recommended, acceptsLogs: false))
         }
         items += [
