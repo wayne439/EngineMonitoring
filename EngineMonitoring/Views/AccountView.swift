@@ -9,6 +9,7 @@ struct AccountView: View {
     @State private var nonce = ""
     @State private var confirmDelete = false
     @State private var restoreOffer: AircraftProfile?
+    @AppStorage("EM.exploreWithoutAccount") private var exploring = false
 
     var body: some View {
         List {
@@ -56,7 +57,24 @@ struct AccountView: View {
         }
     }
 
+    @ViewBuilder
     private var signInSection: some View {
+        Section {
+            NavigationLink {
+                LoginView()
+            } label: {
+                Label("Log in with email", systemImage: "envelope.fill").font(.headline)
+            }
+            NavigationLink {
+                RegisterView()
+            } label: {
+                Label("Register a new account", systemImage: "person.badge.plus")
+            }
+        } header: {
+            Text("Log In")
+        } footer: {
+            Text("Use the same email and password on every iPad and iPhone, and on the upload website.")
+        }
         Section {
             SignInWithAppleButton(.signIn) { request in
                 nonce = CloudAPI.randomNonce()
@@ -86,9 +104,9 @@ struct AccountView: View {
             .signInWithAppleButtonStyle(.black)
             .frame(height: 48)
         } header: {
-            Text("Sign In")
+            Text("Or Sign In with Apple")
         } footer: {
-            Text("Signing in stores your aircraft profile and engine logs in your own private cloud account, so they are backed up and available on a new iPad.")
+            Text("Only if you registered with Apple. Choose \"Share My Email\" so it joins your email account; \"Hide My Email\" creates a separate, empty account.")
         }
     }
 
@@ -118,7 +136,10 @@ struct AccountView: View {
         }
 
         Section {
-            Button("Sign out") { cloud.signOut() }
+            Button("Sign out") {
+                cloud.signOut()
+                exploring = false
+            }
             Button("Delete account…", role: .destructive) { confirmDelete = true }
                 .disabled(cloud.isBusy)
         }

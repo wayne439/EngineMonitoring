@@ -71,7 +71,11 @@ struct ContentView: View {
             await cloud.sync(profile: aircraft.profile, logs: flightLogs)
         }
         // Files uploaded on the website arrive whenever the app opens or comes back to the front.
-        .task { await cloud.pullInbox(logs: flightLogs) }
+        // After signing in (here or on another device): bring back the aircraft and flights, then new uploads.
+        .task(id: cloud.session?.userID) {
+            await cloud.restore(aircraft: aircraft, logs: flightLogs)
+            await cloud.pullInbox(logs: flightLogs)
+        }
         .onChange(of: scenePhase) {
             if scenePhase == .active { Task { await cloud.pullInbox(logs: flightLogs) } }
         }
