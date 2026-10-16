@@ -323,6 +323,18 @@ struct InboxItem: Identifiable, Hashable, Sendable {
     }
 }
 
+/// Maintenance, issue reviews and event markers, saved to the account as one file so every device matches.
+struct AppSyncState: Codable {
+    var version = 1
+    var maintenanceModified: Date?
+    var maintenanceItems: [MaintenanceItem]?
+    var maintenanceEntries: [MaintenanceEntry]?
+    var issuesModified: Date?
+    var issueRecords: [String: IssueStatusRecord]?
+    var eventsModified: Date?
+    var events: [DiagnosticEvent]?
+}
+
 /// Stores the session in the Keychain (this device only).
 enum CloudKeychain {
     private static let service = "com.fueledconsulting.EngineMonitoring.cloud"
@@ -373,6 +385,7 @@ final class CloudStore: ObservableObject {
     private(set) var aircraftID: UUID
     /// One token refresh at a time: Supabase revokes a session if the same refresh token is used twice.
     private var refreshTask: Task<CloudSession, Error>?
+    private var stateSyncing = false
     private let defaults: UserDefaults
 
     private static let aircraftIDKey = "EM.cloud.aircraftID"
@@ -742,21 +755,29 @@ final class CloudStore: ObservableObject {
         do {
             let (api, s) = try await token()
             let planes = try await api.select(table: "aircraft",
-                                              query: [URLQueryItem(name: "select", value: "id,profile,updated_at"),
-                                                      URLQueryItem(name: "order", value: "updated_at.desc")],
+                                              query: [URLQueryItem(name: "select", value: "id,profile,updated_at,created_at"),
+                                                      URLQueryItem(name: "order", value: "created_at.asc")],
                                               token: s.accessToken)
+            // One aircraft per account: every device uses the account's first aircraft, so a device that
+            // uploaded before restoring doesn't end up with its own copy.
             if let newest = planes.first, let rawID = newest["id"] as? String, let cloudID = UUID(uuidString: rawID) {
-                let ids = planes.compactMap { ($0["id"] as? String).flatMap(UUID.init(uuidString:)) }
-                if !ids.contains(aircraftID) {
+                if aircraftID != cloudID {
                     aircraftID = cloudID
                     defaults.set(cloudID.uuidString, forKey: Self.aircraftIDKey)
                 }
                 if let json = newest["profile"], !(json is NSNull),
                    let cloud = try? EventPersistence.decoder.decode(AircraftProfile.self, from: JSONSerialization.data(withJSONObject: json)) {
                     let local = aircraft.profile
-                    if !local.isLocked || cloud.updatedAt > local.updatedAt {
-                        aircraft.profile = cloud
+                    // The first time this account is restored on this device, the account's profile wins (this
+                    // device may already have filled a few values from the POH). After that, the newer one wins.
+                    let firstKey = "EM.cloud.profileRestored.\(s.userID.lowercased())"
+                    let first = !defaults.bool(forKey: firstKey)
+                    if first || cloud.updatedAt > local.updatedAt {
+                        var merged = cloud
+                        merged.documentsAppliedFrom = nil   // re-read this device's POH copy against the restored profile
+                        aircraft.profile = merged
                     }
+                    defaults.set(true, forKey: firstKey)
                 }
             }
             let rows = try await api.select(table: "flight_logs",
@@ -784,6 +805,53 @@ final class CloudStore: ObservableObject {
             lastError = nil
         } catch {
             lastError = "Could not restore from your account: \(error.localizedDescription)"
+        }
+    }
+
+    // MARK: Everything else the pilot records (maintenance, issue reviews, event markers)
+
+    /// Pulls the account's saved app state, takes each part that is newer than this device's, and uploads
+    /// the parts this device changed more recently. Each part is last-change-wins as a whole.
+    func syncAppState(maintenance: MaintenanceStore, issues: IssueStore, events: DiagnosticEventStore) async {
+        guard isConfigured, isSignedIn, !stateSyncing else { return }
+        stateSyncing = true
+        defer { stateSyncing = false }
+        do {
+            let (api, s) = try await token()
+            let path = "\(s.userID.lowercased())/app-state.json"
+            var remote: AppSyncState?
+            do {
+                let data = try await api.downloadFile(path: path, token: s.accessToken)
+                remote = try EventPersistence.decoder.decode(AppSyncState.self, from: data)
+            } catch CloudError.server(let code, let body) where code == 404 || code == 400 && body.lowercased().contains("not found") {
+                remote = nil
+            }
+            var upload = remote == nil
+
+            let rm = remote?.maintenanceModified ?? .distantPast
+            if rm > maintenance.modifiedAt, let items = remote?.maintenanceItems, let entries = remote?.maintenanceEntries {
+                maintenance.replaceFromCloud(items: items, entries: entries, modified: rm)
+            } else if maintenance.modifiedAt > rm { upload = true }
+
+            let ri = remote?.issuesModified ?? .distantPast
+            if ri > issues.modifiedAt, let records = remote?.issueRecords {
+                await issues.replaceFromCloud(records: records, modified: ri)
+            } else if issues.modifiedAt > ri { upload = true }
+
+            let re = remote?.eventsModified ?? .distantPast
+            if re > events.modifiedAt, let list = remote?.events {
+                events.replaceFromCloud(events: list, modified: re)
+            } else if events.modifiedAt > re { upload = true }
+
+            if upload {
+                let state = AppSyncState(maintenanceModified: maintenance.modifiedAt, maintenanceItems: maintenance.items,
+                                         maintenanceEntries: maintenance.entries, issuesModified: issues.modifiedAt,
+                                         issueRecords: issues.records, eventsModified: events.modifiedAt, events: events.events)
+                let data = try EventPersistence.encoder.encode(state)
+                try await api.uploadFile(path: path, data: data, contentType: "application/json", token: s.accessToken)
+            }
+        } catch {
+            lastError = "Could not sync maintenance and notes: \(error.localizedDescription)"
         }
     }
 

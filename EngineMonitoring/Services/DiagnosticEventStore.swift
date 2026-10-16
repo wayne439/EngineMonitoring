@@ -5,6 +5,9 @@ final class DiagnosticEventStore: ObservableObject {
     @Published private(set) var events: [DiagnosticEvent] = []
     /// Last storage error, shown to the pilot rather than silently dropped.
     @Published var lastError: String?
+    /// When the pilot last added, edited or deleted a marker (drives sync between devices).
+    @Published private(set) var modifiedAt: Date = .distantPast
+    private static let modifiedKey = "EM.sync.events.modified"
 
     private let persistence: EventPersistence
     private let defaults: UserDefaults
@@ -13,7 +16,12 @@ final class DiagnosticEventStore: ObservableObject {
     init(directory: URL = EventPersistence.defaultDirectory(), defaults: UserDefaults = .standard) {
         persistence = EventPersistence(directory: directory)
         self.defaults = defaults
+        modifiedAt = defaults.object(forKey: Self.modifiedKey) as? Date ?? .distantPast
         load()
+        if modifiedAt == .distantPast, !events.isEmpty {
+            modifiedAt = events.map(\.timestamp).max() ?? Date()
+            defaults.set(modifiedAt, forKey: Self.modifiedKey)
+        }
     }
 
     /// Records a marker at this instant. Call this the moment the pilot taps; details come later.
@@ -40,7 +48,19 @@ final class DiagnosticEventStore: ObservableObject {
 
     func event(id: UUID) -> DiagnosticEvent? { events.first { $0.id == id } }
 
+    /// Replaces the markers with the copy from another device (newer than this one's).
+    func replaceFromCloud(events: [DiagnosticEvent], modified: Date) {
+        self.events = events.sorted { $0.timestamp > $1.timestamp }
+        do { try persistence.save(self.events) } catch {
+            lastError = "Event markers could not be saved: \(error.localizedDescription)"
+        }
+        modifiedAt = modified
+        defaults.set(modified, forKey: Self.modifiedKey)
+    }
+
     private func save() {
+        modifiedAt = Date()
+        defaults.set(modifiedAt, forKey: Self.modifiedKey)
         do { try persistence.save(events) } catch {
             lastError = "Event markers could not be saved: \(error.localizedDescription)"
         }
