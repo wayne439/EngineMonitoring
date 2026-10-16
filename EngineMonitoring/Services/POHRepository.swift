@@ -130,6 +130,18 @@ final class POHRepository: ObservableObject {
         return DocumentRepository.resourceURL(named: document.filename, in: bundle)
     }
 
+    /// True when the POH or an uploaded manual has turbo limits (TIT and turbo / turbonormalizer text).
+    var coversTurbo: Bool {
+        ([index].compactMap { $0 } + manuals).contains { doc in
+            doc.pages.contains { p in
+                let t = p.text.lowercased()
+                return (t.contains("turbine inlet temperature") || t.contains(" tit "))
+                    && (t.contains("turbo") || t.contains("turbonormal"))
+                    && (t.contains("limit") || t.contains("maximum"))
+            }
+        }
+    }
+
     /// The POH's PDF, for "Open POH Page".
     var pdfURL: URL? {
         guard let index else { return bundle.url(forResource: "POH", withExtension: "pdf") }

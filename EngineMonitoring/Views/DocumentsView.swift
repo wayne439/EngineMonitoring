@@ -18,6 +18,8 @@ struct DocumentsView: View {
     @EnvironmentObject private var cloud: CloudStore
     @EnvironmentObject private var aircraft: AircraftProfileStore
     @EnvironmentObject private var logs: FlightLogStore
+    @EnvironmentObject private var poh: POHRepository
+    @EnvironmentObject private var maintenance: MaintenanceStore
     @State private var category = "logs"
     @State private var picking = false
     @State private var message: String?
@@ -75,7 +77,7 @@ struct DocumentsView: View {
                     NavigationLink("Edit") { AircraftProfileView() }
                         .fixedSize()
                 }
-                ForEach(DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged)) { item in
+                ForEach(requirements) { item in
                     RequiredDocumentRow(item: item, count: count(for: item)) {
                         category = item.id
                         picking = true
@@ -147,6 +149,11 @@ struct DocumentsView: View {
         .quickLookPreview($preview)
     }
 
+    private var requirements: [DocumentRequirement] {
+        DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged,
+                                 turboSupplementMissing: poh.index != nil && !poh.isBuilding && !poh.coversTurbo)
+    }
+
     private var aircraftDetailsDone: Bool {
         !aircraft.profile.tailNumber.trimmingCharacters(in: .whitespaces).isEmpty
             && !aircraft.profile.serialNumber.trimmingCharacters(in: .whitespaces).isEmpty
@@ -155,15 +162,26 @@ struct DocumentsView: View {
     /// Files received for an item (engine logs also count flights already imported on this iPad).
     private func count(for item: DocumentRequirement) -> Int {
         let uploaded = cloud.inboxItems.filter { $0.category == item.id && $0.status != "failed" }.count
-        return item.id == "logs" ? max(uploaded, logs.entries.count) : uploaded
+        switch item.id {
+        case "logs": return max(uploaded, logs.entries.count)
+        case "poh-limits": return max(uploaded, poh.index == nil ? 0 : 1)
+        case "logbook":
+            // Annual and oil change typed into MAINTENANCE count as done.
+            let all = Array(logs.summaries.values)
+            let recorded = ["annual", "oil-change"].allSatisfy { id in
+                maintenance.item(id).map { maintenance.status($0, summaries: all).state != .neverDone } ?? false
+            }
+            return max(uploaded, recorded ? 1 : 0)
+        default: return uploaded
+        }
     }
 
     private var requiredTotal: Int {
-        DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged).filter { $0.level == .required }.count + 1
+        requirements.filter { $0.level == .required }.count + 1
     }
 
     private var requiredDone: Int {
-        DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged)
+        requirements
             .filter { $0.level == .required && count(for: $0) > 0 }.count + (aircraftDetailsDone ? 1 : 0)
     }
 
