@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.7.4 (2026-10-16)
+- HOME is fully tappable: Flights analyzed opens DIAGNOSTICS, Engine hours opens MY FLYING, Open items and the health badge / Pulse score open the issue list, Oil change opens MAINTENANCE, and the trend card opens engine trends and early warnings. Tiles show a chevron and press down when tapped.
+- Version 0.7.4 (21).
+
 ## 0.7.3 (2026-10-16)
 - Same account on every device: after logging in on a new iPhone or iPad, the app adopts the account's aircraft, restores the aircraft profile (unless this device has a newer locked one) and downloads every flight not on the device yet.
 - ACCOUNT now offers "Log in with email" and "Register" when signed out, not only Sign in with Apple, and explains that Apple's "Hide My Email" creates a separate account. Signing out returns to the landing page.
