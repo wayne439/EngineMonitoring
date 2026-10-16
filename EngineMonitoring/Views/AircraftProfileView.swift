@@ -90,11 +90,44 @@ struct AircraftProfileView: View {
                 limitRow("Oil pressure max", "psi", \.oilPressureMax, key: "oilPressureMax")
                 limitRow("Bus voltage low", "V", \.busVoltsLow, key: "busVoltsLow")
                 limitRow("Bus voltage high", "V", \.busVoltsHigh, key: "busVoltsHigh")
+                if store.profile.isTurbocharged {
+                    optionalLimitRow("TIT max", "°F", \.titMax, key: "titMax")
+                    optionalLimitRow("Manifold pressure max", "inHg", \.mapMax, key: "mapMax")
+                }
                 LabeledContent("Source", value: store.profile.limits.limitsSource)
             } header: {
                 Text("Limits")
             } footer: {
                 Text("Read from your POH Section 2 where it can be found (the page is shown under each value). Anything not found comes from the model template until you enter it. Advisory only: your POH/AFM, your engine monitor and your A&P remain the authority.")
+            }
+
+            if let checks = store.profile.limitCrossChecks, !checks.isEmpty {
+                Section {
+                    ForEach(checks) { c in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(c.label).font(.subheadline.bold())
+                                Spacer()
+                                Label(c.status.rawValue, systemImage: icon(c.status))
+                                    .font(.caption.bold())
+                                    .foregroundStyle(tint(c.status))
+                            }
+                            HStack(spacing: 16) {
+                                Text("POH: " + (c.poh.map { "\($0.formatted(.number)) \(c.unit)" } ?? "not stated"))
+                                Text("Supplement: " + (c.supplement.map { "\($0.formatted(.number)) \(c.unit)" } ?? "not stated"))
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            Text([c.pohPage, c.supplementPage].compactMap { $0 }.joined(separator: " · "))
+                                .font(.caption2).foregroundStyle(.tertiary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                } header: {
+                    Text("POH and Supplement Cross-Check")
+                } footer: {
+                    Text("Each limit read from your POH is compared with your AFM supplement. Where they differ, the supplement governs and its value is used above. Check any \"Supplement governs\" line against both printed documents.")
+                }
             }
 
             Section {
@@ -118,7 +151,7 @@ struct AircraftProfileView: View {
         .navigationTitle("Aircraft Profile")
         .onDisappear { store.touch() }
         .task {
-            if let index = poh.index { store.applyPOH(index) }
+            store.applyDocuments(poh: poh.index, manuals: poh.manuals)
         }
         .alert("Unlock with support code", isPresented: $showUnlock) {
             TextField("6-character code", text: $unlockCode)
@@ -181,6 +214,35 @@ struct AircraftProfileView: View {
     }
 
     private func source(_ key: String) -> String? { store.profile.pohSources?[key] }
+
+    private func icon(_ s: LimitCrossCheck.Status) -> String {
+        switch s {
+        case .match: "checkmark.circle.fill"
+        case .supplementGoverns: "arrow.triangle.swap"
+        case .pohOnly, .supplementOnly: "doc.text"
+        }
+    }
+
+    private func tint(_ s: LimitCrossCheck.Status) -> Color {
+        switch s {
+        case .match: .green
+        case .supplementGoverns: .orange
+        case .pohOnly, .supplementOnly: .secondary
+        }
+    }
+
+    @ViewBuilder
+    private func optionalLimitRow(_ label: String, _ unit: String, _ path: WritableKeyPath<EngineLimitSettings, Double?>, key: String) -> some View {
+        let value = store.profile.limits[keyPath: path]
+        if locked || source(key) != nil {
+            LockedRow(label: label, value: value.map { "\($0.formatted(.number)) \(unit)" } ?? "Not in your documents",
+                      source: source(key) ?? (locked ? "Locked" : nil))
+        } else {
+            NumberRow(label: label, unit: unit, value: Binding(
+                get: { store.profile.limits[keyPath: path] ?? 0 },
+                set: { store.profile.limits[keyPath: path] = $0 > 0 ? $0 : nil }))
+        }
+    }
 
     @ViewBuilder
     private func limitRow(_ label: String, _ unit: String, _ path: WritableKeyPath<EngineLimitSettings, Double>, key: String) -> some View {

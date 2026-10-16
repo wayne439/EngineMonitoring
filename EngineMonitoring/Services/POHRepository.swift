@@ -371,10 +371,68 @@ enum POHLimitExtractor {
         var oilPressureCautionBelow: Value?
         var chtWarning: Value?
         var chtCaution: Value?
+        var titMax: Value?
+        var mapMax: Value?
+
+        static let numberKeys: [(key: String, label: String, unit: String, path: WritableKeyPath<Found, Value?>)] = [
+            ("rpmMax", "Max RPM", "RPM", \.rpmMax), ("rpmOverspeed", "Overspeed RPM", "RPM", \.rpmOverspeed),
+            ("oilTempMax", "Oil temperature max", "°F", \.oilTempMax), ("oilPressureMin", "Oil pressure min", "psi", \.oilPressureMin),
+            ("oilPressureMax", "Oil pressure max", "psi", \.oilPressureMax),
+            ("oilPressureCautionBelow", "Oil pressure caution below", "psi", \.oilPressureCautionBelow),
+            ("chtWarning", "CHT max", "°F", \.chtWarning), ("chtCaution", "CHT caution", "°F", \.chtCaution),
+            ("titMax", "TIT max", "°F", \.titMax), ("mapMax", "Manifold pressure max", "inHg", \.mapMax),
+        ]
 
         var count: Int {
-            [rpmMax, rpmOverspeed, oilTempMax, oilPressureMin, oilPressureMax, oilPressureCautionBelow, chtWarning, chtCaution]
-                .compactMap { $0 }.count + (engineModel == nil ? 0 : 1)
+            Self.numberKeys.filter { self[keyPath: $0.path] != nil }.count + (engineModel == nil ? 0 : 1)
+        }
+
+        /// Page labels prefixed with the document kind, e.g. "POH 2-6".
+        func labelled(_ prefix: String) -> Found {
+            var f = self
+            for k in Self.numberKeys {
+                if let v = f[keyPath: k.path] { f[keyPath: k.path] = Value(number: v.number, page: "\(prefix) \(v.page)") }
+            }
+            if let e = f.engineModel { f.engineModel = Text(text: e.text, page: "\(prefix) \(e.page)") }
+            return f
+        }
+
+        /// Keeps this value where set, otherwise takes the other's.
+        func filling(from other: Found) -> Found {
+            var f = self
+            for k in Self.numberKeys where f[keyPath: k.path] == nil { f[keyPath: k.path] = other[keyPath: k.path] }
+            if f.engineModel == nil { f.engineModel = other.engineModel; f.cylinders = other.cylinders; f.turbocharged = other.turbocharged }
+            return f
+        }
+
+        /// The other's values win where it has them (a supplement over the POH).
+        func overridden(by other: Found) -> Found {
+            other.filling(from: self)
+        }
+    }
+
+    /// An AFM / POH supplement (for example a turbonormalizer STC supplement), as opposed to a pilot's guide.
+    static func isSupplement(_ index: POHIndex) -> Bool {
+        let front = index.pages.prefix(4).map(\.text).joined(separator: " ").lowercased() + " " + index.document.title.lowercased()
+        return front.contains("supplement") && (front.contains("flight manual") || front.contains("afm") || front.contains("operating handbook") || front.contains("poh"))
+    }
+
+    /// The POH's Section 9 (supplements) as its own document, when it contains AFM supplements.
+    static func section9(of index: POHIndex) -> POHIndex? {
+        let pages = index.pages.filter { $0.section.hasPrefix("Section 9") }
+        guard !pages.isEmpty, pages.contains(where: { $0.text.lowercased().contains("supplement") }) else { return nil }
+        let d = index.document
+        let info = POHIndex.DocumentInfo(title: "POH Section 9 supplements", partNumber: d.partNumber, revision: d.revision,
+                                         filename: d.filename, pageCount: d.pageCount, authority: d.authority, note: d.note)
+        return POHIndex(document: info, procedures: [], pages: pages)
+    }
+
+    static func crossCheck(poh: Found, supplement: Found) -> [LimitCrossCheck] {
+        Found.numberKeys.compactMap { k in
+            let a = poh[keyPath: k.path], b = supplement[keyPath: k.path]
+            guard a != nil || b != nil else { return nil }
+            return LimitCrossCheck(key: k.key, label: k.label, unit: k.unit, poh: a?.number, pohPage: a?.page,
+                                   supplement: b?.number, supplementPage: b?.page)
         }
     }
 
@@ -414,6 +472,10 @@ enum POHLimitExtractor {
         } else {
             f.chtWarning = number(#"Cylinder Head Temp\w*"# + lead + #"(\d{3})\s*°?\s*F?\s*(?:\(\d+\s*°?\s*C\)\s*)?max"#, in: pages)
         }
+        f.titMax = number(#"(?:Maximum|Max\.?)[^.]{0,30}?(?:Turbine Inlet Temp\w*|\bTIT\b)"# + lead + #"(1[4-9]\d{2})\s*°?\s*F"#, in: pages)
+            ?? number(#"(?:Turbine Inlet Temp\w*|\bTIT\b)[^.]{0,80}?(1[4-9]\d{2})\s*°?\s*F[^.]{0,20}?(?:max|limit|red)"#, in: pages)
+            ?? number(#"(?:Turbine Inlet Temp\w*|\bTIT\b)\s*\([^)]*\)[^>]{0,80}?>\s*(1[4-9]\d{2})"#, in: pages)
+        f.mapMax = number(#"(?:Maximum Manifold Pressure|Manifold Pressure[^.]{0,40}?Maximum)"# + lead + #"(\d{2}(?:\.\d)?)\s*(?:in\.?|inches|"|Hg|In)"#, in: pages)
         return f
     }
 
