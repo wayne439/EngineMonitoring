@@ -165,7 +165,7 @@ struct DataPathAdvice: Equatable, Sendable {
             return DataPathAdvice(
                 title: "Use the data card (Flight Stream 510 does not carry engine data on this avionics)",
                 automatic: false,
-                steps: ["Garmin lists Flight Stream 510 engine-data transfer for the G1000 NXi and TXi only."] + sdCardSteps)
+                steps: ["Garmin lists Flight Stream 510 engine-data transfer for the G1000 NXi, TXi and GI 275 EIS only (not Perspective or Perspective+)."] + sdCardSteps)
         case .flightStream210:
             return DataPathAdvice(
                 title: "Use the data card (Flight Stream 210 does not transfer engine data)",

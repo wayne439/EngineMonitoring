@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.6.7 (2026-10-16)
+- Registration advice: Flight Stream 510 engine-data transfer now includes the GI 275 EIS (per Garmin), and says Perspective / Perspective+ are not on Garmin's list.
+- Version 0.6.7 (14).
+
 ## 0.6.6 (2026-10-16)
 - PROCEDURES and ASK now use the pilot's own POH. POH / AFM PDFs uploaded in the app or on the website are read on the iPad: page labels (3-17), sections, and the Section 3 / 3A emergency and abnormal checklists (from the PDF bookmarks, or from the checklist headings).
 - Other manuals uploaded (for example a Garmin Perspective pilot's guide) are searchable in ASK alongside the POH, each result naming its manual and opening its page.
