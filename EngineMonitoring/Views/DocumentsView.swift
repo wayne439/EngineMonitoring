@@ -76,7 +76,7 @@ struct DocumentsView: View {
                         .fixedSize()
                 }
                 ForEach(DocumentRequirement.list(turbo: aircraft.profile.isTurbocharged)) { item in
-                    DocumentRow(item: item, count: count(for: item)) {
+                    RequiredDocumentRow(item: item, count: count(for: item)) {
                         category = item.id
                         picking = true
                     }
@@ -186,7 +186,7 @@ struct DocumentsView: View {
 }
 
 /// One document with its status and its own Upload button.
-private struct DocumentRow: View {
+private struct RequiredDocumentRow: View {
     let item: DocumentRequirement
     let count: Int
     let upload: () -> Void
