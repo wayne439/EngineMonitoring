@@ -1,131 +1,434 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Engine Pulse – Upload</title>
-  <link rel="icon" href="logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --navy: #0b1d3a; --navy2: #12305e; --cyan: #6ed7ff; --green: #46d28c; --amber: #ffbe3c; --red: #ff524a;
-      --bg: #f4f6fa; --card: #ffffff; --text: #14213d; --muted: #5b6782; --line: #e3e8f0;
+<meta charset="utf-8">
+<script>
+  // Sign-in, confirmation and password-reset links from older app builds land here; send them on to the upload page.
+  (function () {
+    var h = location.hash || "", q = location.search || "";
+    if (/access_token|refresh_token|type=recovery|type=signup|type=magiclink|error/.test(h) || /[?&](code|token_hash|error)=/.test(q)) {
+      location.replace(new URL("upload/" + q + h, location.href).href);
     }
-    @media (prefers-color-scheme: dark) {
-      :root { --bg: #0a1426; --card: #111f39; --text: #e8eefb; --muted: #9aa8c4; --line: #1f3156; }
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
-    header { background: linear-gradient(160deg, var(--navy), var(--navy2)); color: #fff; padding: 28px 16px 36px; }
-    .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
-    .brand { display: flex; align-items: center; gap: 14px; }
-    .brand img { width: 56px; height: 56px; border-radius: 14px; }
-    .brand h1 { margin: 0; font-size: 1.5rem; font-weight: 800; }
-    .brand p { margin: 2px 0 0; color: #c9d7f2; }
-    main { margin-top: -18px; padding-bottom: 48px; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
-    h2 { margin: 0 0 6px; font-size: 1.15rem; }
-    .muted { color: var(--muted); }
-    label { display: block; font-weight: 600; margin: 12px 0 4px; }
-    input[type=email], input[type=password], input[type=text], select {
-      width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit;
-    }
-    button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer; }
-    .primary { background: #1f6feb; color: #fff; }
-    .ghost { background: transparent; color: #1f6feb; padding: 8px 4px; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
-    .msg { margin-top: 10px; font-size: .92rem; }
-    .err { color: var(--red); } .ok { color: var(--green); }
-    .item { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 10px; }
-    .item-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
-    .tag { font-size: .7rem; font-weight: 800; letter-spacing: .04em; padding: 3px 8px; border-radius: 99px; background: rgba(91,103,130,.15); }
-    .tag.req { background: rgba(255,190,60,.25); }
-    .drop { margin-top: 10px; border: 2px dashed var(--line); border-radius: 10px; padding: 14px; text-align: center; color: var(--muted); }
-    .drop.over { border-color: var(--cyan); color: var(--text); }
-    .files { list-style: none; padding: 0; margin: 8px 0 0; font-size: .88rem; }
-    .files li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px solid var(--line); }
-    .hidden { display: none; }
-    .notice { background: rgba(255,190,60,.15); border: 1px solid rgba(255,190,60,.5); border-radius: 12px; padding: 12px 14px; }
-    footer { text-align: center; font-size: .8rem; color: var(--muted); padding: 0 16px 32px; }
-  </style>
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Engine Pulse</title>
+<meta name="description" content="Engine Pulse checks every flight against your own POH limits and watches for slow changes across flights. Engine monitoring for piston aircraft on iPad and iPhone.">
+<meta property="og:title" content="Engine Pulse: know your engine before it tells you">
+<meta property="og:description" content="Post-flight engine checks against your POH, early warning across flights and a 0-100 engine health score. iPad and iPhone.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#050b16">
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-  <header>
-    <div class="wrap brand">
-      <img src="logo.png" alt="">
-      <div>
-        <h1>Engine Pulse</h1>
-        <p>Upload your aircraft's data. It appears in the app as soon as you open it.</p>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Engine Pulse home"><img src="logo.png" alt=""><span>Engine <b>Pulse</b></span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav class="menu" id="menu" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="demo/">Demo</a>
+      <a href="support/">Support</a>
+      <a href="upload/">Upload</a>
+      <a class="btn btn-primary btn-sm" href="#beta">Join the beta</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Engine monitoring for piston aircraft</span>
+      <h1>Know your engine <em>before</em> it tells you.</h1>
+      <p class="lede">Engine Pulse reads the engine data your avionics already record. It checks every flight against the limits in your own POH, and it watches for the slow changes across flights that come before a problem.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#beta">Join the beta</a>
+        <a class="btn btn-ghost" href="demo/">Try the live demo</a>
       </div>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <div id="not-configured" class="card notice hidden">
-      This upload page is not connected yet. The site owner needs to add the Supabase URL and anon key to <code>config.js</code>.
+      <div class="badges"><span>iPad and iPhone</span><span>iOS / iPadOS 17 or later</span><span>Garmin Perspective and G1000 logs today</span></div>
     </div>
 
-    <!-- Signed out -->
-    <section id="auth" class="card hidden">
-      <h2 id="auth-title">Log in</h2>
-      <p class="muted">Use the same email and password as in the app.</p>
-      <form id="auth-form">
-        <div id="name-field" class="hidden">
-          <label for="name">Full name</label>
-          <input id="name" type="text" autocomplete="name">
-        </div>
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="username" required>
-        <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" minlength="8" required>
+    <figure style="margin:0">
+      <div class="glass hero-card" role="img" aria-label="Illustration of the Engine Pulse home screen: engine health 92, Healthy, steady trend, and an early-warning list with every value inside its normal band.">
         <div class="row">
-          <button class="primary" type="submit" id="auth-submit">Log in</button>
-          <button class="ghost" type="button" id="toggle-mode">New here? Register</button>
-          <button class="ghost" type="button" id="forgot">Forgot password?</button>
-        </div>
-        <div id="auth-msg" class="msg"></div>
-      </form>
-      <p class="muted msg">Signed up in the app with Apple? Choose Forgot password with the email Apple shared to set a password for this site.</p>
-    </section>
-
-    <!-- Signed in -->
-    <section id="app" class="hidden">
-      <div class="card">
-        <div class="item-head">
-          <div>
-            <h2 id="hello">Your uploads</h2>
-            <div class="muted" id="aircraft-line"></div>
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <span class="eyebrow" style="color:#9fb4d6;font-size:12px">Engine health</span>
+            <span class="tail">N123EP</span>
+            <span class="sub">Last 10 flights · newer flights count more</span>
+            <span class="pill" style="color:var(--green);background:rgba(61,220,132,.16)">● Healthy · Steady →</span>
           </div>
-          <button class="ghost" id="signout">Sign out</button>
+          <div class="gauge" aria-hidden="true">
+            <svg viewBox="0 0 136 136">
+              <defs><linearGradient id="gg" x1="0" x2="1" y1="1" y2="0"><stop offset="0" stop-color="#ff5a5f"/><stop offset=".45" stop-color="#f7c948"/><stop offset="1" stop-color="#3ddc84"/></linearGradient></defs>
+              <circle cx="68" cy="68" r="54" fill="none" stroke="#ffffff1f" stroke-width="11" stroke-linecap="round" stroke-dasharray="254.5 339.3" transform="rotate(135 68 68)"/>
+              <circle cx="68" cy="68" r="54" fill="none" stroke="url(#gg)" stroke-width="11" stroke-linecap="round" stroke-dasharray="234.1 339.3" transform="rotate(135 68 68)"/>
+            </svg>
+            <div class="val"><b>92</b><span>HEALTH</span></div>
+          </div>
         </div>
-        <div id="aircraft-pick" class="hidden">
-          <label for="aircraft">Aircraft</label>
-          <select id="aircraft"></select>
+        <svg class="pulse" viewBox="0 0 600 70" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 44 H70 Q80 36 90 44 H100 L108 54 L118 8 L128 60 L136 44 Q150 32 166 44 H270 Q280 36 290 44 H300 L308 54 L318 8 L328 60 L336 44 Q350 32 366 44 H470 Q480 36 490 44 H500 L508 54 L518 8 L528 60 L536 44 Q550 32 566 44 H600" fill="none" stroke="#3ddc84" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        <div class="mini">
+          <div><div class="k">Hottest CHT</div><div class="v">352°F</div></div>
+          <div><div class="k">Oil temp</div><div class="v">186°F</div></div>
+          <div><div class="k">Oil pressure</div><div class="v">53 psi</div></div>
         </div>
-        <p class="muted msg hidden" id="no-aircraft"></p>
+        <div class="ew">
+          <span>CHT spread<small>Normal 30–54 °F</small></span>
+          <svg viewBox="0 0 90 26" aria-hidden="true"><rect x="0" y="6" width="90" height="14" fill="#3ddc84" fill-opacity=".14"/><path d="M2 14 L14 12 L26 15 L38 11 L50 13 L62 12 L74 14 L88 12" fill="none" stroke="#5fd4ff" stroke-width="2"/></svg>
+          <span class="lvl" style="color:#3ddc84;background:rgba(61,220,132,.14)">Normal</span>
+        </div>
+        <div class="ew">
+          <span>Oil temperature<small>Normal 167–207 °F</small></span>
+          <svg viewBox="0 0 90 26" aria-hidden="true"><rect x="0" y="5" width="90" height="16" fill="#3ddc84" fill-opacity=".14"/><path d="M2 10 L14 12 L26 11 L38 13 L50 12 L62 14 L74 13 L88 15" fill="none" stroke="#5fd4ff" stroke-width="2"/></svg>
+          <span class="lvl" style="color:#3ddc84;background:rgba(61,220,132,.14)">Normal</span>
+        </div>
       </div>
+      <figcaption class="caption">Illustration of the HOME screen. <a href="demo/">The live demo</a> runs on a year of real flights.</figcaption>
+    </figure>
+  </div>
 
-      <div class="card">
-        <h2>What we need</h2>
-        <p class="muted">Drop files on each item or click to choose them. Engine log CSV files become flights in the app; PDFs and photos are kept with your aircraft.</p>
-        <div id="checklist"></div>
+  <div class="advisory">
+    <div class="wrap">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2zM12 10v5M12 18v.5"/></svg>
+      <p><strong style="color:var(--text)">Advisory only.</strong> Engine Pulse is not FAA-approved. It never replaces your POH/AFM, your engine monitor or your A&amp;P, and the pilot in command remains responsible for the aircraft (14 CFR 91.3).</p>
+    </div>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps, then it runs after every flight.</h2>
       </div>
-
-      <div class="card">
-        <h2>Everything you've uploaded</h2>
-        <ul class="files" id="all-files"></ul>
+      <div class="steps">
+        <div class="step">
+          <h3>Upload your POH and logs</h3>
+          <p>Add your POH PDF and your engine log files, from a computer on this website or straight from your iPad or iPhone. The app reads the Section 2 engine limits from your POH, cross-checks them against any AFM supplement, then locks them.</p>
+        </div>
+        <div class="step">
+          <h3>Every flight is checked</h3>
+          <p>Each flight is checked against those limits: RPM, CHT, oil temperature and pressure, bus voltage, and TIT and manifold pressure on turbo engines. You also get per-cylinder CHT and EGT, a cruise card, the run-up mag check and more.</p>
+        </div>
+        <div class="step">
+          <h3>Early warning across flights</h3>
+          <p>Cruise values are corrected for outside air temperature and fuel flow and compared with your engine's own normal range. Shifts and slow drifts show up flights before they reach a limit.</p>
+        </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer>
-    Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&amp;P.<br>
-    © Fueled Consulting LLC, Cave Creek, Arizona
-  </footer>
+  <section id="features" class="divider">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">In the app today</span>
+        <h2>Everything your engine data can tell you.</h2>
+        <p class="lede">These are all working in the current beta.</p>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+          <h3>Engine health score</h3>
+          <p>One number from 0 to 100 on HOME, built from your last 10 flights, with a trend arrow, a live pulse line and a breakdown of exactly what cost points.</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg></span>
+          <h3>After every flight</h3>
+          <ul>
+            <li>Limit checks against your POH</li>
+            <li>Per-cylinder CHT and EGT</li>
+            <li>Cruise card: TAS, power, fuel flow, nm/gal</li>
+            <li>Run-up mag check, valve watch, probe check</li>
+            <li>Takeoff and landing technique</li>
+          </ul>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span>
+          <h3>Early warning</h3>
+          <p>A baseline from your engine's own history, values corrected for OAT and fuel flow, and SHIFT and DRIFT detection. Sparklines on HOME show each value against its normal band.</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+          <h3>Limits from your POH</h3>
+          <p>Your POH PDF is read on the device. Section 2 limits come out with their page numbers and are cross-checked against AFM supplements, such as the Tornado Alley turbonormalizer, which govern where they differ. Then the profile locks.</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          <h3>Ask your manuals</h3>
+          <p>ASK searches your POH and any manuals you upload, such as the Garmin pilot's guide, so the answer comes from your own documents.</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14h6M9 18h4"/></svg></span>
+          <h3>AD check</h3>
+          <p>FAA airworthiness directives from the Federal Register for your aircraft model, engine and propeller, with links to the FAA's Dynamic Regulatory System (DRS).</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>
+          <h3>Maintenance</h3>
+          <p>Service history, reminders and oil-change tracking, alongside the flights they relate to.</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span>
+          <h3>Easy uploads</h3>
+          <p>Drop files on the upload website from any computer, with a slot for each document, or send them from the iPad or iPhone with Files, AirDrop or "Open in Engine Pulse".</p>
+        </article>
+        <article class="feature">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="16" rx="2"/><rect x="15" y="9" width="6" height="11" rx="1.5"/></svg></span>
+          <h3>Your account, every device</h3>
+          <p>Sign in with email or with Apple. Flights, your aircraft profile, maintenance, reviews and event markers sync between your iPad and iPhone.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-  <script src="config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+  <section id="health" class="divider">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Engine health</span>
+        <h2>A score you can check the math on.</h2>
+        <p class="lede">Every point lost has a reason you can open. Reviewing an item doesn't change the score; flying within limits does.</p>
+      </div>
+      <div class="score-grid">
+        <div class="card">
+          <h3>What the colours mean</h3>
+          <div class="bands">
+            <div class="band"><b style="color:var(--green)">85–100</b><span><strong>Green · Healthy.</strong> Nothing that needs action.</span></div>
+            <div class="band"><b style="color:var(--yellow)">70–84</b><span><strong>Yellow · Watch.</strong> Something is worth a look at your next opportunity.</span></div>
+            <div class="band"><b style="color:var(--red)">&lt; 70</b><span><strong>Red · Needs attention.</strong> Review the findings and talk to your A&amp;P.</span></div>
+          </div>
+          <p class="fine">A trend arrow shows whether the score is improving, steady or declining.</p>
+        </div>
+        <div class="card">
+          <h3>How it's scored</h3>
+          <p>Each flight starts at 100. Findings on that flight take points off, and newer flights count more than older ones.</p>
+          <div class="costs">
+            <div class="cost"><div class="v" style="color:var(--red)">−20</div><div class="k">Warning</div></div>
+            <div class="cost"><div class="v" style="color:var(--orange)">−8</div><div class="k">Caution</div></div>
+            <div class="cost"><div class="v" style="color:var(--yellow)">−3</div><div class="k">Watch item</div></div>
+            <div class="cost"><div class="v" style="color:#b07cff">−6 / −15</div><div class="k">Early-warning trend / ACT SOON</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="avionics" class="divider">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Supported avionics</span>
+        <h2>Works with the logs you already have.</h2>
+      </div>
+      <div class="avionics">
+        <div class="card">
+          <span class="status"><span class="dot" style="background:var(--green)"></span>Works today</span>
+          <p>Garmin CSV data logs from:</p>
+          <div class="chips">
+            <span class="chip live">Cirrus Perspective</span>
+            <span class="chip live">Perspective+</span>
+            <span class="chip live">G1000</span>
+            <span class="chip live">G1000 NXi</span>
+          </div>
+        </div>
+        <div class="card">
+          <span class="status"><span class="dot" style="background:var(--yellow)"></span>Coming</span>
+          <p>Next on the list:</p>
+          <div class="chips">
+            <span class="chip">Garmin TXi</span>
+            <span class="chip">Garmin GI 275</span>
+            <span class="chip">Garmin G3X</span>
+            <span class="chip">JPI EDM</span>
+            <span class="chip">EI MVP</span>
+            <span class="chip">Avidyne</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="data" class="divider">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Getting data in</span>
+        <h2>No more SD-card juggling.</h2>
+      </div>
+      <div class="ways">
+        <div class="card way">
+          <span class="tag live">Available now</span>
+          <h3>From any computer</h3>
+          <ul>
+            <li>Sign in on the <a href="upload/">upload page</a> with your app account.</li>
+            <li>A checklist has a slot for each document: engine logs, POH, logbook entries and more.</li>
+            <li>From the app, use "Email me an upload link" to open it on a computer.</li>
+          </ul>
+        </div>
+        <div class="card way">
+          <span class="tag live">Available now</span>
+          <h3>From iPad or iPhone</h3>
+          <ul>
+            <li>Import from the Files app.</li>
+            <li>AirDrop logs and PDFs from a Mac.</li>
+            <li>Choose "Open in Engine Pulse" from another app's share sheet.</li>
+          </ul>
+        </div>
+        <div class="card way">
+          <span class="tag planned">Planned</span>
+          <h3>Wireless</h3>
+          <ul>
+            <li>Garmin flyGarmin / PlaneSync sharing for GDL 60 and Flight Stream 510. Flight Stream 510 carries engine data only on G1000 NXi, TXi and GI 275.</li>
+            <li>AirSync automatic upload after shutdown.</li>
+            <li>Both depend on partner approval and aren't live yet.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="divider">
+    <div class="wrap pricing">
+      <div class="section-head" style="margin:0">
+        <span class="eyebrow">Pricing</span>
+        <h2>One plan. Every feature.</h2>
+        <p class="lede">Beta testers use Engine Pulse free until it launches on the App Store. After launch, every new account starts with a free trial.</p>
+      </div>
+      <div class="price-card">
+        <span class="eyebrow" style="color:var(--soft)">Engine Pulse</span>
+        <div class="price"><b>$14.99</b><span>per month</span></div>
+        <ul class="ticks">
+          <li>15-day free trial</li>
+          <li>Every feature, for every flight</li>
+          <li>Billed through Apple as an auto-renewing subscription</li>
+          <li>Cancel any time in Settings &gt; Apple ID &gt; Subscriptions, at least 24 hours before renewal</li>
+        </ul>
+        <a class="btn btn-primary" href="#beta">Join the free beta</a>
+        <p class="fine">Subscriptions start when Engine Pulse launches on the App Store. Nothing is charged on this website.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo" class="divider">
+    <div class="wrap">
+      <div class="demo-band">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <span class="eyebrow">Interactive demo</span>
+          <h2>See it on a real engine.</h2>
+          <p class="lede">The demo runs the app's HOME, flight reports, trends and locked limits on a year of real flights from N63KA, a turbonormalized Cirrus SR22. Departure airports and times are left out.</p>
+          <div class="ctas"><a class="btn btn-primary" href="demo/">Open the demo</a></div>
+        </div>
+        <div class="stats">
+          <div><div class="v">324</div><div class="k">flights</div></div>
+          <div><div class="v">452</div><div class="k">engine hours</div></div>
+          <div><div class="v">11 mo</div><div class="k">Oct 2025 to Oct 2026</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="divider">
+    <div class="wrap narrow">
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Questions pilots ask.</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Is Engine Pulse FAA-approved?</summary>
+          <div><p>No. Engine Pulse is an advisory tool. It doesn't replace your POH/AFM, your engine monitor or your A&amp;P, and the pilot in command is responsible for the aircraft. Use it to notice things earlier and to have better conversations with your mechanic.</p></div>
+        </details>
+        <details>
+          <summary>Which aircraft and avionics does it work with?</summary>
+          <div><p>Piston aircraft whose avionics record Garmin CSV data logs: Cirrus Perspective, Perspective+, G1000 and G1000 NXi. Garmin TXi, GI 275 and G3X, JPI EDM, EI MVP and Avidyne are coming.</p></div>
+        </details>
+        <details>
+          <summary>Why do you need my POH?</summary>
+          <div><p>So every check uses your aircraft's real limits, not generic numbers. The app reads the Section 2 limits from your POH PDF on your device, notes the page each came from, and cross-checks them against any AFM supplement you upload. Where a supplement differs, the supplement governs.</p></div>
+        </details>
+        <details>
+          <summary>Why is my aircraft profile locked?</summary>
+          <div><p>Once the limits are read and checked, the profile locks so they can't be changed by accident. If something needs to change, such as an engine swap or a new STC, email <a href="mailto:support@fueledconsulting.com">support@fueledconsulting.com</a> and we'll unlock it.</p></div>
+        </details>
+        <details>
+          <summary>Where is my data stored, and who can see it?</summary>
+          <div><p>Your account, flights and documents are stored with Supabase in the US (West, Oregon). Row-level security means each account can see only its own data. We don't show ads, track you or sell your data. Read the <a href="privacy/">Privacy Policy</a> for the details.</p></div>
+        </details>
+        <details>
+          <summary>Do I need both an iPad and an iPhone?</summary>
+          <div><p>No. Engine Pulse runs on either, with iOS or iPadOS 17 or later. If you use both, sign in with the same account and everything syncs.</p></div>
+        </details>
+        <details>
+          <summary>What does it cost?</summary>
+          <div><p>Free during the beta. After the App Store launch it's $14.99 a month after a 15-day free trial, billed through Apple. You can cancel any time in Settings &gt; Apple ID &gt; Subscriptions, at least 24 hours before renewal.</p></div>
+        </details>
+        <details>
+          <summary>Can I upload wirelessly from the airplane?</summary>
+          <div><p>Not yet. Garmin flyGarmin / PlaneSync and AirSync uploads are planned and depend on partner approval. Today you upload from a computer on the <a href="upload/">upload page</a> or from your iPad or iPhone.</p></div>
+        </details>
+        <details>
+          <summary>How do I delete my account?</summary>
+          <div><p>In the app, open ACCOUNT and choose Delete account. That deletes your data from the cloud as well. See <a href="support/#delete">Support</a> for more.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="beta" class="divider">
+    <div class="wrap beta">
+      <div class="section-head" style="margin:0">
+        <span class="eyebrow">Join the beta</span>
+        <h2>Fly with Engine Pulse.</h2>
+        <p class="lede">Engine Pulse is in beta on iPad and iPhone through Apple's TestFlight. Email us your tail number and avionics, and we'll send you an invitation.</p>
+      </div>
+      <div class="contact">
+        <span class="eyebrow" style="color:var(--soft)">Email us</span>
+        <div class="addr"><code id="email">support@fueledconsulting.com</code><button class="copy" type="button" data-copy="email">Copy</button></div>
+        <ol>
+          <li>Your tail number</li>
+          <li>Your avionics (for example Perspective, G1000 or G1000 NXi)</li>
+        </ol>
+        <a class="btn btn-primary" href="mailto:support@fueledconsulting.com?subject=Engine%20Pulse%20beta&amp;body=Tail%20number%3A%20%0AAvionics%3A%20%0A">Write the email</a>
+        <p class="fine">Beta testers use Engine Pulse free until launch.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="./" style="font-size:20px"><img src="logo.png" alt="" style="width:28px;height:28px"><span>Engine <b>Pulse</b></span></a>
+      <p style="margin-top:12px">Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&amp;P.</p>
+      <p style="margin-top:12px">© <span id="year">2026</span> Fueled Consulting LLC, Cave Creek, Arizona</p>
+    </div>
+    <div>
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="demo/">Interactive demo</a></li>
+        <li><a href="upload/">Upload data</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Help and legal</h4>
+      <ul>
+        <li><a href="support/">Support</a></li>
+        <li><a href="privacy/">Privacy Policy</a></li>
+        <li><a href="terms/">Terms of Use</a></li>
+        <li><a href="mailto:support@fueledconsulting.com">support@fueledconsulting.com</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+<script src="assets/site.js"></script>
 </body>
 </html>
