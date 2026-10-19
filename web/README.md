@@ -1,6 +1,6 @@
 # Engine Pulse website
 
-A static site with no build step. Drag this `web` folder onto Netlify (Site → Deploys) or deploy it from this repo with the root directory set to `web`.
+A static site with no build step, live at **https://www.enginepulse.com** (Netlify). Netlify deploys it from this repo on every merge to `main`; `netlify.toml` at the repo root sets the base directory to `web`.
 
 | Path | Page |
 |---|---|
@@ -17,8 +17,16 @@ Shared styles and scripts are in `assets/`. The upload portal (`upload/index.htm
 Older app builds send confirmation and password-reset links to the site root. A script at the top of `index.html` forwards any link carrying `access_token`, `type=recovery`, `error`, or a `code` / `token_hash` query to `/upload/` with the hash and query intact.
 
 ## After deploying
-1. **Supabase:** Authentication → URL Configuration → add `https://<site>/upload/` to Redirect URLs (keep the root address too).
-2. **App:** set `EMWebPortalURL` in `EngineMonitoring/Info.plist` to `https://<site>/upload/` (done by the app-development chat).
+1. **Supabase:** Authentication → URL Configuration → Site URL `https://www.enginepulse.com/upload/`; Redirect URLs include `https://www.enginepulse.com/upload/` and `https://www.enginepulse.com/` (keep the old Netlify address while older builds are in use).
+2. **App:** `EMWebPortalURL` in `EngineMonitoring/Info.plist` is `https://www.enginepulse.com/upload/` (changed by the app-development chat).
+
+## DNS (GoDaddy)
+| Type | Name | Value |
+|---|---|---|
+| A | `@` | `75.2.60.5` |
+| CNAME | `www` | the Netlify site address (`<name>.netlify.app`) |
+
+`www.enginepulse.com` is the primary domain; Netlify redirects `enginepulse.com` to it.
 
 ## How an upload flows
 1. **Pilot drops a file on a checklist item.** It's uploaded to the private `engine-logs` bucket at `<user id>/inbox/<time>-<name>`, and a row is added to `inbox_uploads` with source `web`, the category and status `received`.

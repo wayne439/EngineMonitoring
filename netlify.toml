@@ -1,0 +1,13 @@
+# Netlify settings for the Engine Pulse website (www.enginepulse.com).
+# The site is the static web/ folder; there is no build step.
+[build]
+  base = "web"
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
