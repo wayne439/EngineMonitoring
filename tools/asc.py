@@ -175,7 +175,7 @@ def cmd_ensure_build(sha):
 
 def cmd_release_beta(group_name="Pilot Beta", what_to_test=""):
     a = app()
-    g = next((g for g in groups(a["id"]) if g["attributes"]["name"] == group_name), None)
+    g = next((g for g in groups(a["id"]) if g["attributes"]["name"].strip().lower() == group_name.strip().lower()), None)
     if not g:
         raise SystemExit(f"No beta group named {group_name}.")
     b = next((b for b in testflight_builds(a["id"], 10) if b["state"] == "VALID" and not b["expired"]), None)
