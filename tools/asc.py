@@ -204,7 +204,33 @@ def post_log(title):
            {"body": f"**{title}**\n\n```\n" + "\n".join(LOG)[-60000:] + "\n```"})
 
 
+def annotate(kind, title, text):
+    """Shows text as a GitHub annotation (readable from the check run without the Actions page)."""
+    esc = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+    print(f"::{kind} title={title}::{esc[:60000]}")
+
+
+def safe_post(title):
+    try:
+        post_log(title)
+    except Exception as e:  # posting the log must never hide the real result
+        annotate("warning", "log-issue", f"Could not post to the log issue: {e}")
+
+
 def main():
+    try:
+        run()
+    except SystemExit:
+        raise
+    except Exception as e:
+        import traceback
+        log("ERROR: " + "".join(traceback.format_exception_only(type(e), e)).strip())
+        annotate("error", "asc", "\n".join(LOG))
+        safe_post("failed")
+        raise SystemExit(1)
+
+
+def run():
     args = sys.argv[1:] or ["status"]
     cmd = args[0]
     title = " ".join(args)
@@ -222,13 +248,16 @@ def main():
     except SystemExit as e:
         if e.code not in (None, 0):
             log(f"ERROR: {e.code}")
-            post_log(title + " (failed)")
+            annotate("error", "asc", "\n".join(LOG))
+            safe_post(title + " (failed)")
             raise
     except KeyError as e:
         log(f"ERROR: missing secret {e}. Add it under Settings > Secrets and variables > Actions.")
-        post_log(title + " (failed)")
+        annotate("error", "asc", "\n".join(LOG))
+        safe_post(title + " (failed)")
         raise SystemExit(1)
-    post_log(title)
+    annotate("notice", "asc", "\n".join(LOG))
+    safe_post(title)
 
 
 if __name__ == "__main__":
