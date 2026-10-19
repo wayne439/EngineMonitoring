@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.8.3 (2026-10-19)
+- Wording: the landing page now reads "Engine monitoring for your aircraft", and registration no longer says piston aircraft only.
+- Version 0.8.3 (28).
+
 ## 0.8.2 (2026-10-19)
 - The paywall fetches the subscription from the App Store each time it opens, so price and free-trial changes show without restarting the app.
 - Version 0.8.2 (27).
