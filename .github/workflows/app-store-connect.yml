@@ -7,7 +7,7 @@ name: App Store Connect
 on:
   push:
     branches: [main]
-    paths-ignore: ["web/**", "netlify.toml"]
+    paths-ignore: ["web/**", "netlify.toml", "tools/**", ".github/**"]
   repository_dispatch:
     types: [asc]
   workflow_dispatch:
