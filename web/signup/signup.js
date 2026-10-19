@@ -6,7 +6,7 @@
   "use strict";
 
   const SUPPORTED_TODAY = ["Cirrus Perspective", "Cirrus Perspective+", "Garmin G1000", "Garmin G1000 NXi"];
-  const TERMS_VERSION = "2026-10-17";
+  const TERMS_VERSION = "2026-10-19";
   const $ = (id) => document.getElementById(id);
   const cfg = window.EM_CONFIG || {};
 
@@ -94,7 +94,7 @@
     if (error) {
       const m = (error.message || "").toLowerCase();
       if (m.includes("already registered") || m.includes("already exists")) return alreadyRegistered(out);
-      if (m.includes("rate limit")) return say(out, "Too many sign-ups in a short time. Please try again in a few minutes, or email support@fueledconsulting.com.", "err");
+      if (m.includes("rate limit")) return say(out, "Too many sign-ups in a short time. Please try again in a few minutes, or email sales@enginepulse.net.", "err");
       return say(out, error.message, "err");
     }
     // Supabase hides whether an email is taken: an existing, confirmed account comes back with no identities.
