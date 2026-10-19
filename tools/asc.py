@@ -32,8 +32,20 @@ def log(line=""):
     LOG.append(line)
 
 
+def private_key():
+    """Rebuilds a clean PEM from however the .p8 was pasted (one line, extra spaces, quotes, with or without the BEGIN/END lines)."""
+    import re
+    raw = os.environ["ASC_PRIVATE_KEY"].replace("\\n", "\n").strip().strip('"').strip("'")
+    body = re.sub(r"-----(BEGIN|END)[A-Z ]*-----", "", raw)
+    body = re.sub(r"[^A-Za-z0-9+/=]", "", body)
+    if len(body) < 100:
+        raise SystemExit("ASC_PRIVATE_KEY looks empty or cut off. Paste the whole contents of the AuthKey_XXXX.p8 file.")
+    lines = [body[i:i + 64] for i in range(0, len(body), 64)]
+    return "-----BEGIN PRIVATE KEY-----\n" + "\n".join(lines) + "\n-----END PRIVATE KEY-----\n"
+
+
 def token():
-    key = os.environ["ASC_PRIVATE_KEY"].strip().replace("\\n", "\n")
+    key = private_key()
     now = int(time.time())
     return jwt.encode(
         {"iss": os.environ["ASC_ISSUER_ID"].strip(), "iat": now, "exp": now + 1100, "aud": "appstoreconnect-v1"},
