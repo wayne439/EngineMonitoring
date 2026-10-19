@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engine Pulse – Upload</title>
+  <link rel="icon" href="../logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0b1d3a; --navy2: #12305e; --cyan: #6ed7ff; --green: #46d28c; --amber: #ffbe3c; --red: #ff524a;
+      --bg: #f4f6fa; --card: #ffffff; --text: #14213d; --muted: #5b6782; --line: #e3e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #0a1426; --card: #111f39; --text: #e8eefb; --muted: #9aa8c4; --line: #1f3156; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    header { background: linear-gradient(160deg, var(--navy), var(--navy2)); color: #fff; padding: 28px 16px 36px; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand img { width: 56px; height: 56px; border-radius: 14px; }
+    .brand h1 { margin: 0; font-size: 1.5rem; font-weight: 800; }
+    .brand p { margin: 2px 0 0; color: #c9d7f2; }
+    main { margin-top: -18px; padding-bottom: 48px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    h2 { margin: 0 0 6px; font-size: 1.15rem; }
+    .muted { color: var(--muted); }
+    label { display: block; font-weight: 600; margin: 12px 0 4px; }
+    input[type=email], input[type=password], input[type=text], select {
+      width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit;
+    }
+    button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer; }
+    .primary { background: #1f6feb; color: #fff; }
+    .ghost { background: transparent; color: #1f6feb; padding: 8px 4px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+    .msg { margin-top: 10px; font-size: .92rem; }
+    .err { color: var(--red); } .ok { color: var(--green); }
+    .item { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 10px; }
+    .item-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+    .tag { font-size: .7rem; font-weight: 800; letter-spacing: .04em; padding: 3px 8px; border-radius: 99px; background: rgba(91,103,130,.15); }
+    .tag.req { background: rgba(255,190,60,.25); }
+    .drop { margin-top: 10px; border: 2px dashed var(--line); border-radius: 10px; padding: 14px; text-align: center; color: var(--muted); }
+    .drop.over { border-color: var(--cyan); color: var(--text); }
+    .files { list-style: none; padding: 0; margin: 8px 0 0; font-size: .88rem; }
+    .files li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px solid var(--line); }
+    .hidden { display: none; }
+    .notice { background: rgba(255,190,60,.15); border: 1px solid rgba(255,190,60,.5); border-radius: 12px; padding: 12px 14px; }
+    footer { text-align: center; font-size: .8rem; color: var(--muted); padding: 0 16px 32px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap brand">
+      <img src="../logo.png" alt="">
+      <div>
+        <h1>Engine Pulse</h1>
+        <p>Upload your aircraft's data. It appears in the app as soon as you open it.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="not-configured" class="card notice hidden">
+      This upload page is not connected yet. The site owner needs to add the Supabase URL and anon key to <code>config.js</code>.
+    </div>
+
+    <!-- Signed out -->
+    <section id="auth" class="card hidden">
+      <h2 id="auth-title">Log in</h2>
+      <p class="muted">Use the same email and password as in the app.</p>
+      <form id="auth-form">
+        <div id="name-field" class="hidden">
+          <label for="name">Full name</label>
+          <input id="name" type="text" autocomplete="name">
+        </div>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required>
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" minlength="8" required>
+        <div class="row">
+          <button class="primary" type="submit" id="auth-submit">Log in</button>
+          <button class="ghost" type="button" id="toggle-mode">New here? Register</button>
+          <button class="ghost" type="button" id="forgot">Forgot password?</button>
+        </div>
+        <div id="auth-msg" class="msg"></div>
+      </form>
+      <p class="muted msg">Signed up in the app with Apple? Choose Forgot password with the email Apple shared to set a password for this site.</p>
+    </section>
+
+    <!-- Signed in -->
+    <section id="app" class="hidden">
+      <div class="card">
+        <div class="item-head">
+          <div>
+            <h2 id="hello">Your uploads</h2>
+            <div class="muted" id="aircraft-line"></div>
+          </div>
+          <button class="ghost" id="signout">Sign out</button>
+        </div>
+        <div id="aircraft-pick" class="hidden">
+          <label for="aircraft">Aircraft</label>
+          <select id="aircraft"></select>
+        </div>
+        <p class="muted msg hidden" id="no-aircraft"></p>
+      </div>
+
+      <div class="card">
+        <h2>What we need</h2>
+        <p class="muted">Drop files on each item or click to choose them. Engine log CSV files become flights in the app; PDFs and photos are kept with your aircraft.</p>
+        <div id="checklist"></div>
+      </div>
+
+      <div class="card">
+        <h2>Everything you've uploaded</h2>
+        <ul class="files" id="all-files"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&amp;P.<br>
+    © Fueled Consulting LLC, Cave Creek, Arizona<br>
+    <a href="../" style="color:inherit">Engine Pulse home</a> · <a href="../support/" style="color:inherit">Support</a> · <a href="../privacy/" style="color:inherit">Privacy</a> · <a href="../terms/" style="color:inherit">Terms</a>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

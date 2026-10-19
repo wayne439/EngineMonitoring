@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /upload/
+Sitemap: https://www.enginepulse.com/sitemap.xml
