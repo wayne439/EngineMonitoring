@@ -145,8 +145,9 @@ private struct ManageButton: View {
 /// ACCOUNT section: subscription status and the way in to the paywall.
 struct SubscriptionSection: View {
     @EnvironmentObject private var store: SubscriptionStore
-    @State private var showPaywall = false
-    @State private var showManage = false
+    /// Owned by the screen (sheets attached inside a List section don't always present).
+    @Binding var showPaywall: Bool
+    @Binding var showManage: Bool
 
     var body: some View {
         Section {
@@ -170,9 +171,5 @@ struct SubscriptionSection: View {
         } footer: {
             Text("Billed by Apple through your Apple ID. Cancel any time in Settings > Apple ID > Subscriptions.")
         }
-        .sheet(isPresented: $showPaywall) {
-            NavigationStack { PaywallView() }
-        }
-        .manageSubscriptionsSheet(isPresented: $showManage)
     }
 }

@@ -10,6 +10,8 @@ struct AccountView: View {
     @State private var confirmDelete = false
     @State private var restoreOffer: AircraftProfile?
     @AppStorage("EM.exploreWithoutAccount") private var exploring = false
+    @State private var showPaywall = false
+    @State private var showManage = false
 
     var body: some View {
         List {
@@ -25,7 +27,7 @@ struct AccountView: View {
                 signInSection
             }
 
-            SubscriptionSection()
+            SubscriptionSection(showPaywall: $showPaywall, showManage: $showManage)
 
             if let status = cloud.status {
                 Section { Text(status).foregroundStyle(.secondary) }
@@ -41,6 +43,10 @@ struct AccountView: View {
             }
         }
         .navigationTitle("ACCOUNT")
+        .sheet(isPresented: $showPaywall) {
+            NavigationStack { PaywallView() }
+        }
+        .manageSubscriptionsSheet(isPresented: $showManage)
         .confirmationDialog("Delete your account?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete account and cloud data", role: .destructive) {
                 Task { _ = await cloud.deleteAccount() }
