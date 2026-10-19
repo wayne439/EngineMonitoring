@@ -101,6 +101,12 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<false/>
 	<key>EMWebPortalURL</key>
-	<string>https://velvety-brigadeiros-12bd22.netlify.app</string>
+	<string>https://enginepulse.net/upload/</string>
+	<key>EMTermsURL</key>
+	<string>https://enginepulse.net/terms/</string>
+	<key>EMPrivacyURL</key>
+	<string>https://enginepulse.net/privacy/</string>
+	<key>EMRequireSubscription</key>
+	<false/>
 </dict>
 </plist>
