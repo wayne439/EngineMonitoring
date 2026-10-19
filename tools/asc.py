@@ -63,6 +63,15 @@ def call(method, path, body=None):
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")
+        if e.code == 401:
+            import re
+            iss = os.environ.get("ASC_ISSUER_ID", "").strip()
+            kid = os.environ.get("ASC_KEY_ID", "").strip()
+            uuid_ok = bool(re.fullmatch(r"[0-9a-fA-F-]{36}", iss))
+            log("Apple rejected the key. Checks (no secret values shown):")
+            log(f"- Issuer ID looks like a UUID (8-4-4-4-12): {uuid_ok} (length {len(iss)})")
+            log(f"- Key ID: {kid[:2]}...{kid[-2:]} (length {len(kid)}, normally 10)")
+            log("- The Key ID must belong to the same key as the private key, and the key must not be revoked.")
         raise SystemExit(f"{method} {path} -> HTTP {e.code}: {detail[:800]}")
 
 
