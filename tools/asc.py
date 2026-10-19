@@ -9,6 +9,7 @@ Commands:
   status                       app, latest Xcode Cloud runs, latest TestFlight builds, beta groups
   ensure-build <sha>           start the Xcode Cloud "Default" workflow for main if no run exists for <sha>
   start-build                  start the "Default" workflow on main now
+  ignore-paths [dir ...]       don't start the Default workflow when only these folders change
   release-beta [group] [text]  add the newest processed build to a beta group (default "Pilot Beta"),
                                set its What to Test text, and submit it for beta review
 """
@@ -173,6 +174,23 @@ def cmd_ensure_build(sha):
     start_build(p["id"])
 
 
+def cmd_ignore_paths(dirs=("web", "tools", ".github")):
+    """Stops the Default workflow from building when a push only touches these folders."""
+    a = app()
+    wf = workflow(ci_product(a["id"])["id"])
+    full = call("GET", f"/v1/ciWorkflows/{wf['id']}")["data"]["attributes"]
+    bsc = full.get("branchStartCondition")
+    if not bsc:
+        raise SystemExit("The Default workflow has no branch start condition to update.")
+    log("Current start condition: " + json.dumps(bsc))
+    bsc["filesAndFoldersRule"] = {"mode": "DO_NOT_START_IF_ALL_FILES_MATCH",
+                                  "matchers": [{"directory": d} for d in dirs]}
+    call("PATCH", f"/v1/ciWorkflows/{wf['id']}", {"data": {"type": "ciWorkflows", "id": wf["id"],
+                                                          "attributes": {"branchStartCondition": bsc}}})
+    after = call("GET", f"/v1/ciWorkflows/{wf['id']}")["data"]["attributes"].get("branchStartCondition")
+    log("Updated start condition: " + json.dumps(after))
+
+
 def cmd_release_beta(group_name="Pilot Beta", what_to_test=""):
     a = app()
     g = next((g for g in groups(a["id"]) if g["attributes"]["name"].strip().lower() == group_name.strip().lower()), None)
@@ -260,6 +278,8 @@ def run():
             cmd_status()
         elif cmd == "ensure-build":
             cmd_ensure_build(args[1])
+        elif cmd == "ignore-paths":
+            cmd_ignore_paths(tuple(args[1:]) or ("web", "tools", ".github"))
         elif cmd == "start-build":
             start_build(ci_product(app()["id"])["id"])
         elif cmd == "release-beta":
