@@ -121,7 +121,7 @@ struct LandingView: View {
             Text("Engine Pulse")
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
-            Text("AI early warning from your engine data")
+            Text("Engine monitoring for your aircraft")
                 .font(.title3)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -237,7 +237,7 @@ struct RegisterView: View {
             } header: {
                 Text("2. Your aircraft")
             } footer: {
-                Text("Single-engine piston aircraft for now. Twins and turbines are coming.")
+                Text("Pick your model, or Other if it isn't listed.")
             }
             Section {
                 Picker("Avionics / engine monitor", selection: $monitor) {

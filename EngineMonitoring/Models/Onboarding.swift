@@ -15,7 +15,7 @@ struct AircraftModelOption: Identifiable, Hashable, Sendable {
 
     static let other = AircraftModelOption(id: "other", make: "", model: "", cylinders: 6, turbo: false, monitor: .other)
 
-    /// Single-engine piston aircraft commonly flown with Garmin glass cockpits. Twins and turbines come later.
+    /// Aircraft commonly flown with Garmin glass cockpits (pick Other for anything not listed).
     static let catalog: [AircraftModelOption] = [
         .init(id: "sr20", make: "Cirrus", model: "SR20 (G1-G5)", cylinders: 6, turbo: false, monitor: .garminPerspective),
         .init(id: "sr20g6", make: "Cirrus", model: "SR20 G6", cylinders: 4, turbo: false, monitor: .garminPerspective),

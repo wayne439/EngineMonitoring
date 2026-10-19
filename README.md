@@ -1,6 +1,6 @@
 # Engine Pulse
 
-iPad app for aircraft owners whose avionics record engine data (Garmin and other modern engine monitors; piston first, turbine later): import engine monitor logs, learn each aircraft's normals, and get post-flight engine reports, early warnings and maintenance tracking.
+iPad app for aircraft owners whose avionics record engine data (Garmin and other modern engine monitors): import engine monitor logs, learn each aircraft's normals, and get post-flight engine reports, early warnings and maintenance tracking.
 
 Advisory only. Not FAA-approved; the POH/AFM, the engine monitor and your A&P remain the authority.
 
