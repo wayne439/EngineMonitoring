@@ -7,6 +7,7 @@ import UIKit
 struct RootView: View {
     @EnvironmentObject private var cloud: CloudStore
     @EnvironmentObject private var flightLogs: FlightLogStore
+    @EnvironmentObject private var subscription: SubscriptionStore
     @AppStorage("EM.exploreWithoutAccount") private var exploring = false
     @State private var incomingMessage: String?
     @AppStorage("EM.documentsPromptShown") private var documentsPromptShown = false
@@ -14,7 +15,10 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if cloud.isSignedIn || exploring {
+            if (cloud.isSignedIn || exploring) && !subscription.hasAccess {
+                // After the beta: the app needs Engine Pulse Pro (the free trial starts here).
+                NavigationStack { PaywallView(isGate: true) }
+            } else if cloud.isSignedIn || exploring {
                 ContentView()
             } else {
                 LandingView(exploring: $exploring)

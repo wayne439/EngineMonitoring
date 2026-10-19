@@ -1,5 +1,12 @@
 # Engine Pulse changelog
 
+## 0.8.0 (2026-10-19)
+- Engine Pulse Pro subscription (StoreKit 2): product com.fueledconsulting.enginepulse.monthly, $14.99 a month with the free-trial introductory offer set in App Store Connect. Paywall with what's included, trial and price read from the App Store, Restore Purchases, Manage subscription, Apple's renewal terms and links to Terms, Privacy and Apple's EULA.
+- ACCOUNT shows the subscription status (trial, active, renews or ends), Manage subscription and Restore Purchases.
+- During the beta the subscription is not required (Info.plist EMRequireSubscription = false); testers can still try buying in TestFlight (sandbox, not charged). Setting it to true locks the app behind the paywall when there is no active subscription or trial.
+- Upload website, Terms and Privacy now point to enginepulse.net (/upload/, /terms/, /privacy/).
+- Version 0.8.0 (25).
+
 ## 0.7.7 (2026-10-16)
 - Everything syncs between devices, not just flights: maintenance items and service history, issue reviews and notes, and event markers are saved to the account (one app-state file) and pulled on every device when the app opens, comes to the front, or a few seconds after a change. Each part is last-change-wins.
 - Aircraft profile (FIKI, serial, home airport, limits): the first time an account is restored on a device, the account's profile wins over values the device filled in from the POH; after that the newer one wins.

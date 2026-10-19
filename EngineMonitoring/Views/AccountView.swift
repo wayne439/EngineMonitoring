@@ -25,6 +25,8 @@ struct AccountView: View {
                 signInSection
             }
 
+            SubscriptionSection()
+
             if let status = cloud.status {
                 Section { Text(status).foregroundStyle(.secondary) }
             }
