@@ -1,0 +1,66 @@
+# App Store Connect automation (tools/asc.py). Uses the ASC_* repository secrets.
+# - After every push to main: make sure Xcode Cloud built it (starts the Default workflow if it was missed).
+# - On demand (repository_dispatch type "asc" with client_payload.args, or Run workflow): status, start-build, release-beta.
+# Results are posted on the issue "App Store Connect automation log".
+name: App Store Connect
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["web/**", "netlify.toml"]
+  repository_dispatch:
+    types: [asc]
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "status | start-build | release-beta"
+        default: status
+      group:
+        description: "Beta group for release-beta"
+        default: "Pilot Beta"
+      what_to_test:
+        description: "What to Test text for release-beta"
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: asc-${{ github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  asc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "pyjwt[crypto]==2.9.0"
+      - name: Run
+        env:
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          SHA: ${{ github.sha }}
+          ARGS_JSON: ${{ toJSON(github.event.client_payload.args) }}
+          INPUT_COMMAND: ${{ inputs.command }}
+          INPUT_GROUP: ${{ inputs.group }}
+          INPUT_WHAT: ${{ inputs.what_to_test }}
+        run: |
+          case "$EVENT" in
+            push) python tools/asc.py ensure-build "$SHA" ;;
+            workflow_dispatch) python tools/asc.py "$INPUT_COMMAND" "$INPUT_GROUP" "$INPUT_WHAT" ;;
+            repository_dispatch)
+              python - <<'PY'
+          import json, os, subprocess, sys
+          args = json.loads(os.environ.get("ARGS_JSON") or "null") or ["status"]
+          sys.exit(subprocess.call([sys.executable, "tools/asc.py", *[str(a) for a in args]]))
+          PY
+              ;;
+          esac
