@@ -129,7 +129,8 @@ struct PaywallView: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
             }
         }
-        .task { await store.refresh() }
+        // Fetch the product again each time, so a price or trial change in App Store Connect shows without a restart.
+        .task { await store.load() }
     }
 }
 

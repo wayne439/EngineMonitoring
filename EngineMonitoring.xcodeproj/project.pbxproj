@@ -521,7 +521,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -530,7 +530,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = EnginePulse;
@@ -544,7 +544,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -553,7 +553,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = EnginePulse;
@@ -567,10 +567,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -585,10 +585,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

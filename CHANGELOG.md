@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.8.2 (2026-10-19)
+- The paywall fetches the subscription from the App Store each time it opens, so price and free-trial changes show without restarting the app.
+- Version 0.8.2 (27).
+
 ## 0.8.1 (2026-10-19)
 - ACCOUNT: "See Engine Pulse Pro" and "Manage subscription" open reliably (the sheets now belong to the screen rather than the list section).
 - Version 0.8.1 (26).
