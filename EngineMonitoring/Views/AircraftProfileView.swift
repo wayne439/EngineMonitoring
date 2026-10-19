@@ -162,7 +162,7 @@ struct AircraftProfileView: View {
             }
             Button("Cancel", role: .cancel) { unlockCode = "" }
         } message: {
-            Text("Email support@fueledconsulting.com with your tail number and the correction. We'll send a code that unlocks the profile once.")
+            Text("Email sales@enginepulse.net with your tail number and the correction. We'll send a code that unlocks the profile once.")
         }
     }
 
@@ -175,7 +175,7 @@ struct AircraftProfileView: View {
                 if let date = store.profile.lockedAt {
                     Text("Locked \(date.formatted(date: .abbreviated, time: .shortened)).").font(.caption).foregroundStyle(.secondary)
                 }
-                Link(destination: URL(string: "mailto:support@fueledconsulting.com?subject=Engine%20Pulse%20profile%20change%20\(store.profile.tailNumber.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")") ?? URL(string: "mailto:support@fueledconsulting.com")!) {
+                Link(destination: URL(string: "mailto:sales@enginepulse.net?subject=Engine%20Pulse%20profile%20change%20\(store.profile.tailNumber.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? "")") ?? URL(string: "mailto:sales@enginepulse.net")!) {
                     Label("Request a change", systemImage: "envelope")
                 }
                 Button {
