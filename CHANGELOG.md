@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.8.1 (2026-10-19)
+- ACCOUNT: "See Engine Pulse Pro" and "Manage subscription" open reliably (the sheets now belong to the screen rather than the list section).
+- Version 0.8.1 (26).
+
 ## 0.8.0 (2026-10-19)
 - Engine Pulse Pro subscription (StoreKit 2): product com.fueledconsulting.enginepulse.monthly, $14.99 a month with the free-trial introductory offer set in App Store Connect. Paywall with what's included, trial and price read from the App Store, Restore Purchases, Manage subscription, Apple's renewal terms and links to Terms, Privacy and Apple's EULA.
 - ACCOUNT shows the subscription status (trial, active, renews or ends), Manage subscription and Restore Purchases.
