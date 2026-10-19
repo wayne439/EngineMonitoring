@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign up · Engine Pulse</title>
+<meta name="description" content="Create your Engine Pulse account and join the iPad and iPhone beta.">
+<meta name="theme-color" content="#050b16">
+<link rel="canonical" href="https://enginepulse.net/signup/">
+<link rel="icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="Engine Pulse home"><img src="../logo.png" alt=""><span>Engine <b>Pulse</b></span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav class="menu" id="menu" aria-label="Main">
+      <a href="../#how">How it works</a>
+      <a href="../#features">Features</a>
+      <a href="../#pricing">Pricing</a>
+      <a href="../demo/">Demo</a>
+      <a href="../support/">Support</a>
+      <a href="../upload/">Upload</a>
+      <a class="btn btn-primary btn-sm" href="../signup/" aria-current="page">Sign up</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap signup">
+  <div class="signup-intro">
+    <span class="eyebrow">Join the beta</span>
+    <h1>Create your Engine Pulse account.</h1>
+    <p class="lede">Sign up here, and we'll email you an invitation to the iPad and iPhone beta through Apple's TestFlight. Use the same email and password in the app and on the upload page.</p>
+    <ol class="signup-steps" aria-label="What happens next">
+      <li><b>Create your account</b><span>Your name, email, a password and your aircraft.</span></li>
+      <li><b>Confirm your email</b><span>Enter the 6-digit code we email you.</span></li>
+      <li><b>Get the app</b><span>We send your TestFlight invitation. The beta is free until launch.</span></li>
+    </ol>
+    <p class="fine">Prefer Sign in with Apple? Email us for an invitation and sign in with Apple in the app instead.</p>
+  </div>
+
+  <div class="form-card" aria-live="polite">
+    <div id="not-configured" class="callout" hidden><p>Sign-up isn't available right now. Please email <a href="mailto:support@fueledconsulting.com">support@fueledconsulting.com</a> and we'll set you up.</p></div>
+
+    <!-- Step 1: account details -->
+    <form id="step-account" novalidate>
+      <h2 class="form-title">Your account</h2>
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
+      </div>
+      <div class="field">
+        <label for="password">Password <span class="hint">8 or more characters</span></label>
+        <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+
+      <h2 class="form-title" style="margin-top:8px">Your aircraft</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="tail">Tail number</label>
+          <input id="tail" name="tail" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="N12345" maxlength="10" required>
+        </div>
+        <div class="field">
+          <label for="aircraft">Make and model <span class="hint">optional</span></label>
+          <input id="aircraft" name="aircraft" type="text" autocomplete="off" placeholder="Cirrus SR22T" maxlength="60">
+        </div>
+      </div>
+      <div class="field">
+        <label for="avionics">Avionics</label>
+        <select id="avionics" name="avionics" required>
+          <option value="">Choose…</option>
+          <option>Cirrus Perspective</option>
+          <option>Cirrus Perspective+</option>
+          <option>Garmin G1000</option>
+          <option>Garmin G1000 NXi</option>
+          <option>Garmin G3X</option>
+          <option>Garmin TXi</option>
+          <option>Garmin GI 275</option>
+          <option>JPI EDM</option>
+          <option>EI MVP</option>
+          <option>Avidyne</option>
+          <option>Other</option>
+        </select>
+        <p class="hint" id="avionics-note" hidden></p>
+      </div>
+      <div class="field" id="other-field" hidden>
+        <label for="other">Which avionics or engine monitor?</label>
+        <input id="other" name="other" type="text" maxlength="60">
+      </div>
+      <fieldset class="field">
+        <legend>Which devices will you use?</legend>
+        <div class="checks">
+          <label class="check"><input type="checkbox" name="device" value="iPad" checked> iPad</label>
+          <label class="check"><input type="checkbox" name="device" value="iPhone"> iPhone</label>
+        </div>
+      </fieldset>
+      <label class="check consent">
+        <input id="consent" type="checkbox" required>
+        <span>I agree to the <a href="../terms/" target="_blank" rel="noopener">Terms of Use</a> and <a href="../privacy/" target="_blank" rel="noopener">Privacy Policy</a>, and I understand Engine Pulse is advisory only and never replaces my POH/AFM, engine monitor or A&amp;P.</span>
+      </label>
+      <button class="btn btn-primary btn-block" type="submit" id="create">Create account</button>
+      <p class="form-msg" id="account-msg" role="status"></p>
+      <p class="fine">Already have an account? <a href="../upload/">Sign in on the upload page</a>.</p>
+    </form>
+
+    <!-- Step 2: confirmation code -->
+    <form id="step-code" hidden novalidate>
+      <h2 class="form-title">Check your email</h2>
+      <p>We sent a 6-digit code to <b id="code-email"></b>. It expires in an hour.</p>
+      <div class="field">
+        <label for="code">Confirmation code</label>
+        <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="10" class="code-input" required>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="verify">Confirm email</button>
+      <p class="form-msg" id="code-msg" role="status"></p>
+      <div class="row-links">
+        <button class="link-btn" type="button" id="resend">Send a new code</button>
+        <button class="link-btn" type="button" id="restart">Use a different email</button>
+      </div>
+      <p class="fine">Nothing after a few minutes? Check your spam or junk folder, or email <a href="mailto:support@fueledconsulting.com">support@fueledconsulting.com</a>.</p>
+    </form>
+
+    <!-- Step 3: done -->
+    <section id="step-done" hidden>
+      <span class="status"><span class="dot" style="background:var(--green)"></span>Account created</span>
+      <h2 class="form-title">You're on the beta list.</h2>
+      <p>Thanks<span id="done-name"></span>. We'll email your TestFlight invitation to <b id="done-email"></b>, usually within one business day.</p>
+      <ol class="next">
+        <li>On your iPad or iPhone, install <b>TestFlight</b> from the App Store.</li>
+        <li>Open the invitation email on that device and tap <b>View in TestFlight</b>, then <b>Install</b>.</li>
+        <li>Open Engine Pulse and log in with this email and password.</li>
+      </ol>
+      <p>Want a head start? Upload your POH and engine logs now, and they'll be waiting when you open the app.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="../upload/">Upload your data</a>
+        <a class="btn btn-ghost" href="../demo/">Try the demo</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="../" style="font-size:20px"><img src="../logo.png" alt="" style="width:28px;height:28px"><span>Engine <b>Pulse</b></span></a>
+      <p style="margin-top:12px">Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&amp;P.</p>
+      <p style="margin-top:12px">© <span id="year">2026</span> Fueled Consulting LLC, Cave Creek, Arizona</p>
+    </div>
+    <div>
+      <h4>Product</h4>
+      <ul>
+        <li><a href="../#features">Features</a></li>
+        <li><a href="../#pricing">Pricing</a></li>
+        <li><a href="../demo/">Interactive demo</a></li>
+        <li><a href="../signup/">Sign up</a></li>
+        <li><a href="../upload/">Upload data</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Help and legal</h4>
+      <ul>
+        <li><a href="../support/">Support</a></li>
+        <li><a href="../privacy/">Privacy Policy</a></li>
+        <li><a href="../terms/">Terms of Use</a></li>
+        <li><a href="mailto:support@fueledconsulting.com">support@fueledconsulting.com</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+<script src="../assets/site.js"></script>
+<script src="../upload/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="signup.js"></script>
+</body>
+</html>
