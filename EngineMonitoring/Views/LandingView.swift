@@ -91,7 +91,7 @@ struct LandingView: View {
                     }
                     InfoCard(title: "About us", systemImage: "person.2") {
                         Text("Engine Pulse is built by Fueled Consulting LLC in Cave Creek, Arizona. It started as the tool we built to watch the engine on our own airplane after every flight, and we are now opening it to every owner whose avionics record engine data.")
-                        Text("We are pilots and owners first. Questions or ideas: support@fueledconsulting.com")
+                        Text("We are pilots and owners first. Questions or ideas: sales@enginepulse.net")
                             .foregroundStyle(.secondary)
                     }
                     Text("Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")

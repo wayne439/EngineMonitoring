@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.8.4 (2026-10-19)
+- Contact email is now sales@enginepulse.net everywhere in the app (About, profile change requests and the unlock-code note), matching the website.
+- Version 0.8.4 (29).
+
 ## 0.8.3 (2026-10-19)
 - Wording: the landing page now reads "Engine monitoring for your aircraft", and registration no longer says piston aircraft only.
 - Version 0.8.3 (28).
