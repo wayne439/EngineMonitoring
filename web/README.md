@@ -6,7 +6,7 @@ A static site with no build step, live at **https://enginepulse.net** (Netlify).
 |---|---|
 | `/` | Home: features, how it works, avionics, pricing, demo, FAQ, join the beta |
 | `/signup/` | Sign-up: creates the app account (email, password, 6-digit code) and records the beta request in user metadata |
-| `/demo/` | Interactive demo on N63KA's real flights |
+| `/demo/` | Interactive demo on a year of real flights (tail number hidden) |
 | `/upload/` | Upload portal (sign in with the app account; files go to Supabase) |
 | `/support/` | Support (the App Store Connect Support URL) |
 | `/privacy/` | Privacy Policy (the App Store Connect Privacy Policy URL) |

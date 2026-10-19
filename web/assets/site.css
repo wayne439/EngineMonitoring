@@ -75,6 +75,7 @@ section { padding-block: 72px; }
 .hero-card { padding: 24px; display: grid; gap: 18px; }
 .hero-card .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .hero-card .tail { font-family: var(--display); font-weight: 800; font-size: 46px; line-height: .9; letter-spacing: .02em; }
+.blur-tail { filter: blur(9px); user-select: none; -webkit-user-select: none; width: fit-content; }
 .hero-card .sub { color: #b9c9e4; font-size: 14px; }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-weight: 600; font-size: 14px; }
 .gauge { position: relative; width: 132px; height: 132px; flex: none; }
