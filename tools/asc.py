@@ -125,7 +125,7 @@ def start_build(product_id):
     log(f"Started Xcode Cloud build #{run['data']['attributes'].get('number')} of {WORKFLOW_NAME} on main.")
 
 
-def testflight_builds(app_id, limit=6):
+def testflight_builds(app_id, limit=8):
     data = call("GET", f"/v1/builds?filter[app]={app_id}&sort=-uploadedDate&limit={limit}&include=preReleaseVersion")
     versions = {i["id"]: i["attributes"]["version"] for i in data.get("included", []) if i["type"] == "preReleaseVersions"}
     out = []
@@ -153,7 +153,7 @@ def cmd_status():
     log("TestFlight builds (newest first):")
     for i, b in enumerate(testflight_builds(a["id"])):
         extra = ""
-        if i < 3:
+        if i < 8:
             try:
                 d = call("GET", f"/v1/builds/{b['id']}/buildBetaDetail")["data"]["attributes"]
                 extra += f" | external: {d.get('externalBuildState')}"
