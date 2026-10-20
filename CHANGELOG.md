@@ -1,5 +1,11 @@
 # Engine Pulse changelog
 
+## 0.8.5 (2026-10-20)
+- New "Flights from Garmin" guide for GDL 60 and Flight Stream 510 owners (including Perspective+): share a flight from the Garmin Pilot logbook as CSV straight to Engine Pulse, or download Original CSV from flyGarmin and drop it on enginepulse.net/upload.
+- The data-path advice for GDL 60 and Flight Stream 510 now gives these steps, with a data-card fallback note for Perspective+ over Flight Stream 510. The guide is also linked from Import Logs.
+- Friendlier message when a CSV isn't an avionics engine log, asking the pilot to email it to sales@enginepulse.net so support can be added.
+- Version 0.8.5 (30).
+
 ## 0.8.4 (2026-10-19)
 - Contact email is now sales@enginepulse.net everywhere in the app (About, profile change requests and the unlock-code note), matching the website.
 - Version 0.8.4 (29).

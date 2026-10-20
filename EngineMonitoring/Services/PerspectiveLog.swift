@@ -130,8 +130,8 @@ enum PerspectiveLogError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .unreadable: return "The file could not be read as text."
-        case .noHeaderRow: return "This does not look like a Perspective data log (no column header row found)."
-        case .missingTimeColumns: return "The log has no Lcl Date / Lcl Time columns, so events cannot be matched to it."
+        case .noHeaderRow: return "This doesn't look like an avionics engine log (no column header row found). If it came from Garmin Pilot or flyGarmin, email it to sales@enginepulse.net and we'll add support for it."
+        case .missingTimeColumns: return "The log has no Lcl Date / Lcl Time columns. If it came from Garmin Pilot, try flyGarmin > Download > Original CSV instead, or email it to sales@enginepulse.net and we'll add support for it."
         case .noSamples: return "The log contains no timestamped samples."
         }
     }

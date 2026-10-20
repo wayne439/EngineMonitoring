@@ -423,6 +423,11 @@ struct FlightLogsView: View {
                     Label("Import individual log files", systemImage: "square.and.arrow.down")
                 }
                 .disabled(logStore.isImporting)
+                NavigationLink {
+                    GarminImportGuideView()
+                } label: {
+                    Label("Flights from Garmin Pilot or flyGarmin", systemImage: "airplane.arrival")
+                }
                 if logStore.isImporting { ProgressView("Importing...") }
                 if let summary = logStore.importSummary {
                     Label(summary, systemImage: "checkmark.circle").foregroundStyle(.green)
