@@ -649,7 +649,7 @@ enum GenericEngineCSV {
         guard let header = best else { throw EngineLogImportError.unrecognized }
         let headerFields = split(lines[header.index], delimiter: header.delimiter)
         let preamble = lines[..<header.index].joined(separator: "\n")
-        let preambleLower = preamble.lowercased()
+        let preambleLower = preamble.lowercased().split(whereSeparator: { $0 == " " || $0 == "\t" }).joined(separator: " ")
         // Units stated before the table (JPI: "Eng Deg F OAT Deg F"; EI headers).
         let engineDefault: TempUnit = preambleLower.contains("eng deg c") ? .c : .f
         let oatDefault: TempUnit = preambleLower.contains("oat deg f") ? .f : (preambleLower.contains("oat deg c") ? .c : .unknown)

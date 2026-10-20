@@ -66,7 +66,7 @@ func compare(_ logs: [ConvertedEngineLog], label: String) {
             }
         }
     }
-    print("\(label): compared \(cells) values")
+    print("::notice::\(label): compared \(cells) values, \(failures) failures so far")
 }
 
 // 1. JPI binary download.
@@ -151,5 +151,5 @@ do {
     check(false, "contacts.csv should be rejected")
 } catch let e as EngineLogImportError { check(e == .unrecognized, "contacts.csv: \(e)") } catch { check(false, "contacts.csv: \(error)") }
 
-print(failures == 0 ? "ALL IMPORT CHECKS PASSED" : "\(failures) IMPORT CHECKS FAILED")
+print(failures == 0 ? "::notice::ALL IMPORT CHECKS PASSED" : "::notice::\(failures) IMPORT CHECKS FAILED")
 exit(failures == 0 ? 0 : 1)
