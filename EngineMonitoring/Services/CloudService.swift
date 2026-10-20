@@ -320,7 +320,7 @@ struct InboxItem: Identifiable, Hashable, Sendable {
 
     var categoryTitle: String { Self.categories.first { $0.id == category }?.title ?? category }
 
-    var isLog: Bool { category == "logs" && filename.lowercased().hasSuffix(".csv") }
+    var isLog: Bool { category == "logs" && EngineLogConverter.logExtensions.contains((filename as NSString).pathExtension.lowercased()) }
 
     init?(row: [String: Any]) {
         guard let id = row["id"] as? String, let name = row["original_filename"] as? String,
@@ -681,7 +681,7 @@ final class CloudStore: ObservableObject {
     static func format(for url: URL) -> String {
         switch url.pathExtension.lowercased() {
         case "csv": return "garmin-csv"
-        case "jpi": return "jpi"
+        case "jpi", "dat": return "jpi"
         case "pdf": return "pdf"
         case "jpg", "jpeg", "png", "heic": return "image"
         default: return "unknown"
@@ -708,7 +708,8 @@ final class CloudStore: ObservableObject {
     func pullInbox(logs: FlightLogStore) async {
         guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil else { return }
         await refreshInbox()
-        let waiting = inboxItems.filter { $0.status == "received" }
+        // New uploads, and engine logs saved earlier in a format this version can now read (JPI, EI, Dynon).
+        let waiting = inboxItems.filter { $0.status == "received" || ($0.status == "unsupported" && $0.isLog) }
         guard !waiting.isEmpty else { return }
         isBusy = true
         defer { isBusy = false }

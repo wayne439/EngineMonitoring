@@ -90,6 +90,24 @@ struct FlightLogLibrary: Sendable {
         try EventPersistence.encoder.encode(entries).write(to: indexURL, options: [.atomic])
     }
 
+    /// Converts any supported engine log (Garmin CSV, JPI .JPI / .DAT, JPI CSV, EI, Dynon and other CSV
+    /// logs) to the Garmin layout and stores each flight in it. Returns the flights in file order.
+    func importAny(data: Data, originalFilename: String, existing: [FlightLogEntry]) throws -> (entries: [FlightLogEntry], logs: [PerspectiveLog], index: [FlightLogEntry]) {
+        let converted = try EngineLogConverter.convert(data: data, filename: originalFilename)
+        var index = existing
+        var entries: [FlightLogEntry] = []
+        var logs: [PerspectiveLog] = []
+        for c in converted {
+            // Garmin logs keep their own name; converted flights are named for their start time.
+            let name = c.source == "Garmin" ? originalFilename : c.filename
+            let r = try importLog(data: c.data, originalFilename: name, existing: index)
+            index = r.index
+            entries.append(r.entry)
+            logs.append(r.log)
+        }
+        return (entries, logs, index)
+    }
+
     /// Parses `data` as a Perspective log and stores a copy. Re-importing the same log replaces it.
     func importLog(data: Data, originalFilename: String, existing: [FlightLogEntry]) throws -> (entry: FlightLogEntry, log: PerspectiveLog, index: [FlightLogEntry]) {
         let storedName = Self.storedFilename(for: originalFilename)

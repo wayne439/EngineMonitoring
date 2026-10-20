@@ -56,11 +56,25 @@ final class FlightLogStore: ObservableObject {
         }.value
     }
 
-    /// Imports Perspective CSV files picked by the user (security-scoped URLs from the file importer).
+    private static let importedSourcesKey = "EM.importedLogSources"
+
+    private var importedSources: Set<String> {
+        get { Set(UserDefaults.standard.stringArray(forKey: Self.importedSourcesKey) ?? []) }
+        set { UserDefaults.standard.set(Array(newValue), forKey: Self.importedSourcesKey) }
+    }
+
+    /// "u130614.jpi|4317": name and size of a file already imported.
+    static func sourceKey(_ url: URL) -> String {
+        let size = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+        return url.lastPathComponent.lowercased() + "|\(size)"
+    }
+
+    /// Imports engine log files picked by the user (security-scoped URLs from the file importer).
     func importFiles(_ urls: [URL]) async {
         isImporting = true
         defer { isImporting = false }
         var failures: [String] = []
+        var added = 0
         for url in urls {
             let scoped = url.startAccessingSecurityScopedResource()
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
@@ -70,20 +84,26 @@ final class FlightLogStore: ObservableObject {
                 let existing = entries
                 let library = self.library
                 // Parsing a multi-MB log takes noticeable time; keep it off the main thread.
+                // JPI downloads hold many flights; every monitor's file is converted to the Garmin layout.
                 let result = try await Task.detached(priority: .userInitiated) {
-                    try library.importLog(data: data, originalFilename: name, existing: existing)
+                    try library.importAny(data: data, originalFilename: name, existing: existing)
                 }.value
                 entries = result.index
-                remember(result.log)
-                if let summary = await Task.detached(priority: .utility, operation: { library.loadSummary(for: result.entry.filename) }).value {
-                    summaries[summary.filename] = summary
+                for log in result.logs { remember(log) }
+                for entry in result.entries {
+                    if let summary = await Task.detached(priority: .utility, operation: { library.loadSummary(for: entry.filename) }).value {
+                        summaries[summary.filename] = summary
+                    }
                 }
+                added += result.entries.count
+                // Files that hold several flights (JPI downloads) are remembered by name and size, so the
+                // same download isn't imported again from the card; a newer, bigger download is.
+                importedSources.insert(Self.sourceKey(url))
             } catch {
                 failures.append("\(url.lastPathComponent): \(error.localizedDescription)")
             }
         }
         if !failures.isEmpty { lastError = "Some files were not imported.\n" + failures.joined(separator: "\n") }
-        let added = urls.count - failures.count
         importSummary = added > 0 ? "Imported \(added) flight\(added == 1 ? "" : "s")." : nil
     }
 
@@ -96,7 +116,7 @@ final class FlightLogStore: ObservableObject {
 
     /// Engine log files in a folder (and one level of subfolders) that have not been imported yet.
     /// nil when the folder cannot be read (card removed, or access lost).
-    static func newLogFiles(in folder: URL, existing: [FlightLogEntry]) -> [URL]? {
+    static func newLogFiles(in folder: URL, existing: [FlightLogEntry], importedSources: Set<String> = []) -> [URL]? {
         let known = Set(existing.map { $0.originalFilename.lowercased() })
         let fm = FileManager.default
         var found: [URL] = []
@@ -111,7 +131,8 @@ final class FlightLogStore: ObservableObject {
             }
         }
         return found
-            .filter { $0.pathExtension.lowercased() == "csv" && !known.contains($0.lastPathComponent.lowercased()) }
+            .filter { EngineLogConverter.logExtensions.contains($0.pathExtension.lowercased())
+                && !known.contains($0.lastPathComponent.lowercased()) && !importedSources.contains(sourceKey($0)) }
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
     }
 
@@ -122,7 +143,7 @@ final class FlightLogStore: ObservableObject {
         if let bookmark = try? folder.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil) {
             UserDefaults.standard.set(bookmark, forKey: Self.folderBookmarkKey)
         }
-        guard let files = Self.newLogFiles(in: folder, existing: entries) else {
+        guard let files = Self.newLogFiles(in: folder, existing: entries, importedSources: importedSources) else {
             UserDefaults.standard.removeObject(forKey: Self.folderBookmarkKey)
             lastError = "That folder could not be opened. Insert the card and choose the data_log folder again."
             return

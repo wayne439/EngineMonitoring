@@ -1,5 +1,17 @@
 # Engine Pulse changelog
 
+## 0.9.0 (2026-10-20)
+- Engine monitors beyond Garmin. Every import is converted to the Garmin layout the analysis uses, so every monitor gets the same reports, early warning and cloud sync:
+  - J.P. Instruments EDM downloads (.JPI and older .DAT): every flight in the file is added. Checked value for value against JPI's own export of a sample EDM-830 download.
+  - JPI EzTrends / EZSave CSV exports.
+  - Garmin G3X Touch, G3000, G500 / G600 TXi and GI 275 CSV logs (G3X header layout, Volts1 / Amps1 and m/d/yy dates).
+  - Electronics International MVP / CGR, Dynon SkyView / HDX, Avidyne Entegra R9 (C_ENGINE.CSV), GRT, AFS, MGL and other CSV engine logs: columns recognised by name, °C converted to °F, fuel flow to gal/h, time from the file, its header or its name.
+- Logs without airspeed (JPI, most EI) get engine-only flight phases: run-up and taxi, climb (full power), cruise and descent.
+- Website uploads saved earlier as "not readable yet" (JPI files) are imported now.
+- Avionics list: G3000, Dynon, GRT, AFS, MGL and Insight added, each with its own download steps in setup and the data checklist.
+- Aircraft list: about 110 piston models across 30 makes (Cessna, Piper, Beechcraft, Mooney, Diamond, Cirrus by generation, Grumman, Commander, Socata, Maule, Van's and other kits), split by year where the factory avionics changed, each suggesting its usual avionics. Registration picks the make, then the model.
+- Version 0.9.0 (33).
+
 ## 0.8.7 (2026-10-20)
 - New avionics choice: Cirrus Perspective Touch+ (G7). Its SD-card data logs import like Perspective+, and the GDL 60 / Flight Stream 510 advice and Garmin guide cover it (tester feedback).
 - Perspective+ now reads "Cirrus Perspective+ (G6)". Profiles saved with the old combined G6 / G7 name still open as Perspective+.
