@@ -151,14 +151,27 @@ def cmd_status():
         log(f"- #{r['number']} {r['status']} {r['result'] or ''} commit {r['sha'][:7]} started {r['started']}")
     log("")
     log("TestFlight builds (newest first):")
-    for b in testflight_builds(a["id"]):
-        log(f"- {b['version']} ({b['build']}) {b['state']}{' expired' if b['expired'] else ''} uploaded {b['uploaded']}")
+    for i, b in enumerate(testflight_builds(a["id"])):
+        extra = ""
+        if i < 3:
+            try:
+                d = call("GET", f"/v1/builds/{b['id']}/buildBetaDetail")["data"]["attributes"]
+                extra += f" | external: {d.get('externalBuildState')}"
+            except SystemExit:
+                pass
+            try:
+                r = call("GET", f"/v1/builds/{b['id']}/betaAppReviewSubmission")["data"]
+                if r:
+                    extra += f" | beta review: {r['attributes'].get('betaReviewState')}"
+            except SystemExit:
+                pass
+        log(f"- {b['version']} ({b['build']}) {b['state']}{' expired' if b['expired'] else ''} uploaded {b['uploaded']}{extra}")
     log("")
     log("Beta groups:")
     for g in groups(a["id"]):
         at = g["attributes"]
         log(f"- {at['name']} ({'internal' if at.get('isInternalGroup') else 'external'})"
-            f"{', public link on' if at.get('publicLinkEnabled') else ''}")
+            f"{', public link: ' + (at.get('publicLink') or 'on') if at.get('publicLinkEnabled') else ''}")
 
 
 def cmd_ensure_build(sha):
