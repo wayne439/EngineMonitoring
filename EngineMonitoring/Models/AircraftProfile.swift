@@ -4,7 +4,9 @@ import CryptoKit
 /// Engine monitors the app knows about. Only the Garmin CSV formats are imported today.
 enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     case garminPerspective = "Cirrus Perspective (Garmin)"
+    // Raw value kept from 0.2 so saved profiles still decode; shown as "Perspective+ (G6)".
     case garminPerspectivePlus = "Cirrus Perspective+ (G6 / G7)"
+    case garminPerspectiveTouchPlus = "Cirrus Perspective Touch+ (G7)"
     // Raw value kept from 0.2 so saved profiles still decode.
     case garminG1000 = "Garmin G1000 / G1000 NXi"
     case garminG1000NXi = "Garmin G1000 NXi"
@@ -19,17 +21,26 @@ enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     var id: String { rawValue }
 
     /// Shown in pickers; the original combined entry reads as plain G1000 (NXi has its own entry).
-    var label: String { self == .garminG1000 ? "Garmin G1000" : rawValue }
+    var label: String {
+        switch self {
+        case .garminG1000: return "Garmin G1000"
+        case .garminPerspectivePlus: return "Cirrus Perspective+ (G6)"
+        default: return rawValue
+        }
+    }
+
+    /// Cirrus Perspective+ and Perspective Touch+ (G6 and G7): same Garmin data logs and data links.
+    var isPerspectivePlusFamily: Bool { self == .garminPerspectivePlus || self == .garminPerspectiveTouchPlus }
 
     /// True when the importer can read this monitor's log files in this version (Garmin CSV data logs).
     var isSupported: Bool {
         switch self {
-        case .garminPerspective, .garminPerspectivePlus, .garminG1000, .garminG1000NXi: return true
+        case .garminPerspective, .garminPerspectivePlus, .garminPerspectiveTouchPlus, .garminG1000, .garminG1000NXi: return true
         default: return false
         }
     }
 
-    /// Garmin avionics whose engine data the Flight Stream 510 can carry (per Garmin: G1000 NXi, TXi and GI 275 EIS; Perspective+ not listed).
+    /// Garmin avionics whose engine data the Flight Stream 510 can carry (per Garmin: G1000 NXi, TXi and GI 275 EIS; Perspective+ and Perspective Touch+ not listed).
     var flightStream510CarriesEngineData: Bool { self == .garminG1000NXi || self == .garminTXi || self == .garminGI275 }
 }
 
