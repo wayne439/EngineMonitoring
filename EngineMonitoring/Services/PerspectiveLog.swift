@@ -29,6 +29,9 @@ enum PerspectiveChannel {
     static let pitchMode = "PitchM"
     static let gpsFix = "GPSfix"
 
+    /// Other Garmin units' names for the same channels (G3X: Volts1, Amps1), mapped to the G1000 names.
+    static let aliases: [String: String] = ["Volts1": volt1, "Volts2": volt2, "Amps1": amp1, "Volt1": volt1, "Amp1": amp1]
+
     /// Columns kept as text rather than numbers.
     static let textColumns: Set<String> = [date, time, utcOffset, "AtvWpt", "HSIS", rollMode, pitchMode, gpsFix]
 }
@@ -169,9 +172,16 @@ enum PerspectiveLogParser {
                 return // "#yyy-mm-dd, ..." units row and other comments
             }
 
+            // First non-comment row is the header. G3X logs put a row of long names ("Date (yyyy-mm-dd)", ...)
+            // before the short-name row, so a later row with Lcl Date replaces a header that has no time columns.
+            if header != nil && dateIdx < 0 && timeIdx < 0 && fields.contains(where: { $0 == PerspectiveChannel.date }) {
+                header = nil
+                columnIndex = [:]
+                numericCols = []
+                textCols = []
+            }
             if header == nil {
-                // First non-comment row is the header.
-                let names = fields.map(String.init)
+                let names = fields.map { PerspectiveChannel.aliases[String($0)] ?? String($0) }
                 header = names
                 for (i, name) in names.enumerated() where !name.isEmpty && columnIndex[name] == nil {
                     columnIndex[name] = i
@@ -235,7 +245,7 @@ enum PerspectiveLogParser {
         return result
     }
 
-    /// Fast path for "yyyy-MM-dd" + "HH:mm:ss" + "-07:00"; falls back to DateFormatter for anything else.
+    /// Fast path for "yyyy-MM-dd" + "HH:mm:ss" + "-07:00"; falls back to other date layouts (G3X "5/19/23").
     static func fastTimestamp(date: Substring, time: Substring, offset: Substring, fallbackSeconds: Int) -> Date? {
         let d = date.split(separator: "-"), t = time.split(separator: ":")
         guard d.count == 3, t.count == 3,
@@ -285,7 +295,14 @@ enum PerspectiveLogParser {
 
     /// Builds an absolute time from the log's local date, local time and "-07:00" style offset.
     static func timestamp(date: String, time: String, offset: String, fallbackSeconds: Int) -> Date? {
-        guard !date.isEmpty, !time.isEmpty, let asUTC = formatter.date(from: "\(date) \(time)") else { return nil }
+        guard !date.isEmpty, !time.isEmpty else { return nil }
+        var asUTC = formatter.date(from: "\(date) \(time)")
+        if asUTC == nil, let d = DateParsing.day(date), let k = DateParsing.clock(time),
+           let y = d.year, let mo = d.month, let day = d.day {
+            let days = daysFromCivil(year: y, month: mo, day: day)
+            asUTC = Date(timeIntervalSince1970: Double(days) * 86_400 + Double(k.h * 3600 + k.m * 60) + k.s)
+        }
+        guard let asUTC else { return nil }
         let offsetSeconds = parseOffset(offset) ?? fallbackSeconds
         return asUTC.addingTimeInterval(TimeInterval(-offsetSeconds))
     }
