@@ -1,0 +1,28 @@
+name: import-check
+# Compiles the engine-log importers on Linux and checks them against sample files (JPI, Garmin, EI, Dynon).
+on:
+  push:
+    paths:
+      - EngineMonitoring/Services/EngineLogImport.swift
+      - EngineMonitoring/Services/PerspectiveLog.swift
+      - tools/linuxcheck/**
+      - .github/workflows/import-check.yml
+  repository_dispatch:
+    types: [import-check]
+jobs:
+  import-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run
+        shell: bash
+        run: |
+          set -o pipefail
+          swift --version || true
+          if ! swiftc -O -o /tmp/importcheck tools/linuxcheck/main.swift \
+               EngineMonitoring/Services/EngineLogImport.swift EngineMonitoring/Services/PerspectiveLog.swift 2>&1 \
+               | tee /tmp/build.log; then
+            sed -nE 's#^(/[^:]*/)?([^:]+\.swift):([0-9]+):([0-9]+): error: (.*)$#::error file=\2,line=\3,col=\4::\5#p' /tmp/build.log | head -40
+            exit 1
+          fi
+          /tmp/importcheck tools/linuxcheck/testdata

@@ -53,7 +53,7 @@ struct RootView: View {
     /// Garmin CSV logs are analyzed right away; other formats go to the cloud inbox until they are supported.
     private func receive(_ url: URL) async {
         guard url.isFileURL else { return }
-        if url.pathExtension.lowercased() == "csv" {
+        if EngineLogConverter.logExtensions.contains(url.pathExtension.lowercased()) {
             flightLogs.lastError = nil
             await flightLogs.importFiles([url])
             incomingMessage = flightLogs.lastError ?? flightLogs.importSummary ?? "\(url.lastPathComponent) was imported."
@@ -77,7 +77,7 @@ struct LandingView: View {
                     hero
                     actions
                     InfoCard(title: "What it does", systemImage: "waveform.path.ecg") {
-                        Bullet("Reads the engine data your avionics already record. Garmin G1000 / NXi and Perspective logs work today, with more monitors coming.")
+                        Bullet("Reads the engine data your avionics already record: Garmin G1000 / NXi, Perspective, G3X and TXi, J.P. Instruments EDM, Electronics International, Dynon, Avidyne and other CSV engine logs.")
                         Bullet("After every flight, compares each cylinder, temperature and pressure with your engine's own normal and with the limits from your POH.")
                         Bullet("Early warning spots slow trends (exhaust valves, probes, induction leaks, turbo, oil) before they turn into squawks.")
                         Bullet("Keeps maintenance on track: oil changes, the annual and your own pilot checks.")
@@ -178,6 +178,7 @@ struct RegisterView: View {
     @State private var tailNumber = ""
     @State private var monitor: EngineMonitorType = .garminG1000
     @State private var link: DataLink = .notSure
+    @State private var make = ""
     @State private var name = ""
     @State private var email = ""
     @State private var password = ""
@@ -219,25 +220,31 @@ struct RegisterView: View {
                 Text("1. Create your account")
             }
             Section {
-                Picker("Aircraft", selection: $aircraftID) {
-                    Text("Select your aircraft").tag("")
-                    ForEach(AircraftModelOption.catalog) { option in
-                        Text(option.id == AircraftModelOption.other.id ? "Other (enter details later)" : option.name).tag(option.id)
-                    }
+                Picker("Make", selection: $make) {
+                    Text("Select the make").tag("")
+                    ForEach(AircraftModelOption.makes, id: \.self) { Text($0).tag($0) }
+                    Text("Other (enter details later)").tag(AircraftModelOption.other.id)
                 }
                 .pickerStyle(.menu)
+                if !make.isEmpty && make != AircraftModelOption.other.id {
+                    Picker("Model", selection: $aircraftID) {
+                        Text("Select the model").tag("")
+                        ForEach(AircraftModelOption.models(of: make)) { Text($0.model).tag($0.id) }
+                    }
+                    .pickerStyle(.menu)
+                }
                 TextField("Tail number (e.g. N12345)", text: $tailNumber)
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
                 if let selected, selected.id != AircraftModelOption.other.id {
-                    Text("\(selected.cylinders) cylinders, \(selected.turbo ? "turbocharged" : "normally aspirated"). You can change any of this in Aircraft Profile.")
+                    Text("\(selected.cylinders) cylinders, \(selected.turbo ? "turbocharged" : "normally aspirated")\(selected.twin ? ", twin (the left engine is analysed for now)" : ""). You can change any of this in Aircraft Profile.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             } header: {
                 Text("2. Your aircraft")
             } footer: {
-                Text("Pick your model, or Other if it isn't listed.")
+                Text("Pick the make and model, or Other if it isn't listed. Models are split by year where the factory avionics changed.")
             }
             Section {
                 Picker("Avionics / engine monitor", selection: $monitor) {
@@ -298,6 +305,10 @@ struct RegisterView: View {
         // Choosing an aircraft suggests its usual avionics; the pilot can still change it.
         .onChange(of: aircraftID) {
             if let selected, selected.id != AircraftModelOption.other.id { monitor = selected.monitor }
+        }
+        // A new make clears the model; Other needs no model.
+        .onChange(of: make) {
+            aircraftID = make == AircraftModelOption.other.id ? AircraftModelOption.other.id : ""
         }
     }
 }

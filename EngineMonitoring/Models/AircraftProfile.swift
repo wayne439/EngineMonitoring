@@ -1,7 +1,8 @@
 import Foundation
 import CryptoKit
 
-/// Engine monitors the app knows about. Only the Garmin CSV formats are imported today.
+/// Engine monitors and glass panels with engine data that the app knows about. Raw values are saved in
+/// profiles, so existing ones never change; new ones are only added.
 enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     case garminPerspective = "Cirrus Perspective (Garmin)"
     // Raw value kept from 0.2 so saved profiles still decode; shown as "Perspective+ (G6)".
@@ -10,12 +11,18 @@ enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     // Raw value kept from 0.2 so saved profiles still decode.
     case garminG1000 = "Garmin G1000 / G1000 NXi"
     case garminG1000NXi = "Garmin G1000 NXi"
+    case garminG3000 = "Garmin G3000"
     case garminTXi = "Garmin G500 / G600 TXi"
     case garminGI275 = "Garmin GI 275 EIS"
     case garminG3X = "Garmin G3X Touch"
     case avidyne = "Avidyne Entegra"
     case jpiEDM = "J.P. Instruments EDM"
     case eiMVP = "Electronics International MVP / CGR"
+    case dynonSkyView = "Dynon SkyView / HDX"
+    case grt = "GRT Avionics (EIS / Horizon)"
+    case afs = "Advanced Flight Systems (AFS)"
+    case mgl = "MGL Avionics"
+    case insight = "Insight Graphic Engine Monitor (GEM)"
     case other = "Other"
 
     var id: String { rawValue }
@@ -32,16 +39,79 @@ enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     /// Cirrus Perspective+ and Perspective Touch+ (G6 and G7): same Garmin data logs and data links.
     var isPerspectivePlusFamily: Bool { self == .garminPerspectivePlus || self == .garminPerspectiveTouchPlus }
 
-    /// True when the importer can read this monitor's log files in this version (Garmin CSV data logs).
-    var isSupported: Bool {
+    /// Garmin glass whose engine data is logged in Garmin's CSV layout.
+    var isGarmin: Bool {
         switch self {
-        case .garminPerspective, .garminPerspectivePlus, .garminPerspectiveTouchPlus, .garminG1000, .garminG1000NXi: return true
+        case .garminPerspective, .garminPerspectivePlus, .garminPerspectiveTouchPlus, .garminG1000, .garminG1000NXi,
+             .garminG3000, .garminTXi, .garminGI275, .garminG3X: return true
         default: return false
         }
     }
 
+    enum Support: String, Sendable {
+        /// Imported and checked against real logs.
+        case full
+        /// Imported; checked against samples, tell us if a file doesn't read.
+        case beta
+        /// Files are saved to the account for when support arrives.
+        case planned
+    }
+
+    var support: Support {
+        switch self {
+        case .garminPerspective, .garminPerspectivePlus, .garminPerspectiveTouchPlus, .garminG1000, .garminG1000NXi, .jpiEDM:
+            return .full
+        case .garminG3000, .garminTXi, .garminGI275, .garminG3X, .eiMVP, .dynonSkyView, .avidyne, .grt, .afs, .mgl, .other:
+            return .beta
+        case .insight:
+            return .planned
+        }
+    }
+
+    /// True when the importer can read this monitor's log files in this version.
+    var isSupported: Bool { support != .planned }
+
     /// Garmin avionics whose engine data the Flight Stream 510 can carry (per Garmin: G1000 NXi, TXi and GI 275 EIS; Perspective+ and Perspective Touch+ not listed).
     var flightStream510CarriesEngineData: Bool { self == .garminG1000NXi || self == .garminTXi || self == .garminGI275 }
+
+    /// How to get the engine logs off this monitor and into the app.
+    var downloadSteps: [String] {
+        switch self {
+        case .garminPerspective, .garminPerspectivePlus, .garminPerspectiveTouchPlus, .garminG1000, .garminG1000NXi, .garminG3000:
+            return ["On the ground, take the SD card out of the top slot of the MFD. The avionics save one CSV file per flight in its data_log folder.",
+                    "Copy the files to the iPad with an SD card reader, or import the data_log folder: DIAGNOSTICS > Flight Logs > Import new flights from SD card."]
+        case .garminG3X:
+            return ["Keep an SD card in the G3X display's card slot. The G3X writes one CSV file per flight in the card's data_log folder.",
+                    "On the ground, copy the files to the iPad with an SD card reader (DIAGNOSTICS > Flight Logs > Import new flights from SD card)."]
+        case .garminTXi:
+            return ["With engine indication (EIS) on the TXi, keep an SD card in the display. Engine and flight data are logged to the card as CSV files.",
+                    "On the ground, copy the CSV files to the iPad with an SD card reader and import them (DIAGNOSTICS > Flight Logs)."]
+        case .garminGI275:
+            return ["With a GI 275 set up as the engine indicator, keep a microSD card in it. Its data logs are written to the card as CSV files.",
+                    "On the ground, copy the CSV files to the iPad with a card reader and import them (DIAGNOSTICS > Flight Logs)."]
+        case .jpiEDM:
+            return ["Plug a USB stick into the EDM (units without USB need JPI's USB download box on the serial cable).",
+                    "Hold STEP and LF for 5 seconds until PROGRAM shows, tap STEP until DUMP? appears, tap LF to choose NEW (or ALL), then tap STEP. Wait for DONE, then 10 more seconds.",
+                    "Import the file (named like U241015.JPI, older units .DAT) in DIAGNOSTICS > Flight Logs, or share it to Engine Pulse. Every flight in it is added. EzTrends CSV exports work too."]
+        case .eiMVP:
+            return ["With the engine off, open the USB / Data Recording screen and download the flights to the USB data stick.",
+                    "Import the CSV files (named like Flt0001_20241015F.csv) in DIAGNOSTICS > Flight Logs, or share them to Engine Pulse."]
+        case .dynonSkyView:
+            return ["Plug a USB stick into the SkyView display, then SETUP MENU > SYSTEM SOFTWARE > EXPORT USER DATA LOGS.",
+                    "Import the file ending USER-LOG-DATA.csv in DIAGNOSTICS > Flight Logs, or share it to Engine Pulse."]
+        case .avidyne:
+            return ["Entegra Release 9: with the MFD on, insert an empty FAT32 USB stick (1 to 8 GB), go to SYS > Get Logs and choose Since Last Export or Full. Wait for Completed OK.",
+                    "Import C_ENGINE.CSV in DIAGNOSTICS > Flight Logs. Older Entegra / EX5000 units write to a FAT16 stick of 2 GB or less: send us a file so we can add it."]
+        case .grt, .afs, .mgl:
+            return ["Export the engine / flight data log from the EFIS to a USB stick as a CSV file (see the EFIS manual, data logging section).",
+                    "Import the CSV in DIAGNOSTICS > Flight Logs. Engine columns are recognised by name; if a file doesn't read, email it to sales@enginepulse.net."]
+        case .insight:
+            return ["Insight GEM data is downloaded with Insight's own software. Send us a downloaded file at sales@enginepulse.net and we'll add it."]
+        case .other:
+            return ["Export your engine monitor's flight data log as a CSV file (a USB stick or SD card, or the maker's app).",
+                    "Import it in DIAGNOSTICS > Flight Logs. Engine columns (CHT, EGT, RPM, oil, fuel flow) are recognised by name; if a file doesn't read, email it to sales@enginepulse.net."]
+        }
+    }
 }
 
 /// Engine limits and pilot references for one aircraft. Values come from the owner's POH/AFM;

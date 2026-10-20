@@ -110,6 +110,8 @@ enum FlightPhase: String, Codable, CodingKeyRepresentable, CaseIterable, Sendabl
 enum PhaseClassifier {
     /// Classifies every sample. Vertical speed is smoothed over 15 s so turbulence does not flip phases.
     static func classify(_ log: PerspectiveLog) -> [FlightPhase] {
+        // Engine monitors without airspeed or altitude (JPI EDM, most EI and older monitors).
+        if !log.hasChannel(PerspectiveChannel.ias) { return classifyEngineOnly(log) }
         let n = log.sampleCount
         let vspd: [Double?] = (0..<n).map { log.value("VSpd", at: $0) }
         var phases = [FlightPhase](repeating: .engineOff, count: n)
@@ -121,6 +123,61 @@ enum PhaseClassifier {
             let window = vspd[max(0, i - 7)...min(n - 1, i + 7)].compactMap { $0 }
             let vs = window.isEmpty ? 0 : window.reduce(0, +) / Double(window.count)
             phases[i] = vs > 300 ? .climb : (vs < -300 ? .descent : .cruise)
+        }
+        return phases
+    }
+
+    /// Phases from engine data alone. Running at 2,100 RPM or more counts as airborne (1,300 to 2,100 after
+    /// that is the descent, below 1,300 is taxi); within the airborne part, the
+    /// first sustained full-power stretch (fuel flow near the flight's highest, or manifold pressure when
+    /// there is no fuel flow) is the climb, low power after it is the descent, and the rest is cruise.
+    /// Without RPM, a hot EGT (800 °F or more) means the engine is running.
+    static func classifyEngineOnly(_ log: PerspectiveLog) -> [FlightPhase] {
+        let n = log.sampleCount
+        var phases = [FlightPhase](repeating: .engineOff, count: n)
+        guard n > 0 else { return phases }
+        let hasRPM = log.hasChannel(PerspectiveChannel.rpm)
+        let egt = PerspectiveChannel.egt.first { log.hasChannel($0) }
+        let power = log.hasChannel(PerspectiveChannel.fuelFlow) ? PerspectiveChannel.fuelFlow : PerspectiveChannel.manifoldPressure
+        let powerValues = (0..<n).compactMap { log.value(power, at: $0) }.sorted()
+        let full = powerValues.isEmpty ? nil : powerValues[Int(Double(powerValues.count - 1) * 0.95)]
+        var climbOver = false
+        var airborne = false
+        for i in 0..<n {
+            let running: Bool
+            let flying: Bool
+            let idle: Bool
+            if hasRPM {
+                let rpm = log.value(PerspectiveChannel.rpm, at: i) ?? 0
+                running = rpm >= 500
+                flying = rpm >= 2_100
+                idle = rpm < 1_300
+            } else {
+                let hot = egt.flatMap { log.value($0, at: i) } ?? 0
+                running = hot >= 800
+                flying = hot >= 1_100
+                idle = true
+            }
+            guard running else { phases[i] = .engineOff; continue }
+            // Below cruise RPM: taxi at idle, or the descent once airborne.
+            guard flying else { phases[i] = airborne && !idle ? .descent : .ground; continue }
+            airborne = true
+            let p = log.value(power, at: i)
+            if let p, let full, !climbOver, p >= full * 0.85 {
+                phases[i] = .climb
+            } else {
+                if phases[max(0, i - 1)] == .climb, let p, let full, p < full * 0.85 { climbOver = true }
+                var low = false
+                if let p, let full { low = p < full * 0.55 }
+                phases[i] = low ? .descent : .cruise
+            }
+        }
+        // Without an airspeed, takeoff power on the ground (run-up) can't be told from the climb; keep the
+        // first 30 s at high power as ground.
+        if let first = phases.firstIndex(of: .climb), first < log.times.count {
+            let t0 = log.times[first]
+            var i = first
+            while i < n, log.times[i].timeIntervalSince(t0) < 30, phases[i] == .climb { phases[i] = .ground; i += 1 }
         }
         return phases
     }

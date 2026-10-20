@@ -72,10 +72,10 @@ struct AircraftProfileView: View {
             } header: {
                 Text("Engine")
             } footer: {
-                if store.profile.monitor.isSupported {
-                    Text("Log files from this monitor can be imported.")
-                } else {
-                    Text("Importing this monitor's files is planned for a later version. Garmin Perspective and G1000 CSV logs work today.")
+                switch store.profile.monitor.support {
+                case .full: Text("Log files from this monitor are imported and analysed.")
+                case .beta: Text("Log files from this monitor are imported (new: if a file doesn't read, email it to sales@enginepulse.net).")
+                case .planned: Text("Importing this monitor's files is planned. Send us a file at sales@enginepulse.net.")
                 }
             }
 

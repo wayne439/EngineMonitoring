@@ -94,6 +94,48 @@ final class AircraftProfileTests: XCTestCase {
         XCTAssertTrue(advice.steps.joined().contains("Perspective Touch+"))
     }
 
+    // MARK: - All monitors
+
+    func testCatalogIsConsistent() {
+        let ids = AircraftModelOption.catalog.map(\.id)
+        XCTAssertEqual(ids.count, Set(ids).count, "duplicate catalog ids")
+        XCTAssertGreaterThan(AircraftModelOption.catalog.count, 90)
+        for make in AircraftModelOption.makes { XCTAssertFalse(AircraftModelOption.models(of: make).isEmpty, make) }
+        XCTAssertEqual(AircraftModelOption.catalog.first { $0.id == "sr22av" }?.monitor, .avidyne)
+        XCTAssertEqual(AircraftModelOption.catalog.first { $0.id == "c182old" }?.monitor, .jpiEDM)
+    }
+
+    func testEveryMonitorHasDownloadStepsAndAdvice() {
+        for m in EngineMonitorType.allCases {
+            XCTAssertFalse(m.downloadSteps.isEmpty, m.rawValue)
+            XCTAssertFalse(DataPathAdvice.advise(monitor: m, link: nil, make: "").steps.isEmpty, m.rawValue)
+        }
+        XCTAssertEqual(EngineMonitorType.jpiEDM.support, .full)
+        XCTAssertTrue(EngineMonitorType.dynonSkyView.isSupported)
+        XCTAssertTrue(DataPathAdvice.advise(monitor: .jpiEDM, link: nil, make: "Cessna").steps.joined().contains("DUMP"))
+    }
+
+    func testJPIStyleCSVImportsWithEngineOnlyPhases() throws {
+        var text = "Aircraft Number N12345\nFlight #3 6/14/2023 10:00:00 AM\nEng Deg F OAT Deg F\nDate,TIME,E1,E2,C1,C2,OILT,OAT,BAT,FF,RPM,MAP,OILP\n"
+        for i in 0..<120 {
+            let rpm = i < 10 ? 1000 : (i < 30 ? 2700 : (i < 100 ? 2400 : 1000))
+            let ff = i < 10 ? 3.0 : (i < 30 ? 26.0 : (i < 100 ? 15.0 : 3.0))
+            let mm = (i * 6) / 60, ss = (i * 6) % 60
+            text += String(format: "06/14/23,10:%02d:%02d,1300,1310,350,355,190,59,28.0,%.1f,%d,25.0,70\n", mm, ss, ff, rpm)
+        }
+        let converted = try EngineLogConverter.convert(data: Data(text.utf8), filename: "jpi_export.csv", timeZone: TimeZone(secondsFromGMT: 0)!)
+        XCTAssertEqual(converted.count, 1)
+        let log = try PerspectiveLogParser.parse(data: converted[0].data, filename: converted[0].filename)
+        XCTAssertEqual(log.sampleCount, 120)
+        XCTAssertEqual(log.value("E1 CHT2", at: 0), 355)
+        XCTAssertEqual(log.value("OAT", at: 0), 15)
+        let phases = PhaseClassifier.classify(log)
+        XCTAssertEqual(phases[5], .ground)
+        XCTAssertEqual(phases[25], .climb)
+        XCTAssertEqual(phases[60], .cruise)
+        XCTAssertEqual(phases[110], .ground)
+    }
+
     func testGarminLinksShowTheGarminGuide() {
         let plus = DataPathAdvice.advise(monitor: .garminPerspectivePlus, link: .flightStream510, make: "Cirrus")
         XCTAssertTrue(plus.showsGarminGuide)
