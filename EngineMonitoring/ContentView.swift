@@ -10,6 +10,8 @@ struct ContentView: View {
     @EnvironmentObject private var poh: POHRepository
     @EnvironmentObject private var diagnosticEvents: DiagnosticEventStore
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showSold = false
+    @AppStorage("EM.soldNoticeShown") private var soldNoticeShown = ""
 
     enum SectionItem: String, CaseIterable, Identifiable {
         case home = "HOME"
@@ -83,6 +85,19 @@ struct ContentView: View {
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
             await cloud.syncAppState(maintenance: maintenance, issues: issues, events: diagnosticEvents)
+        }
+        // The seller's devices, once the buyer has accepted a transfer of this aircraft.
+        .onChange(of: cloud.soldAircraft?.id) {
+            if let id = cloud.soldAircraft?.id, soldNoticeShown != id {
+                soldNoticeShown = id
+                showSold = true
+            }
+        }
+        .alert("Aircraft transferred", isPresented: $showSold) {
+            Button("Open ACCOUNT") { selection = .account }
+            Button("Later", role: .cancel) {}
+        } message: {
+            Text("\(cloud.soldAircraft?.tailNumber ?? "Your aircraft") now belongs to its new owner, with all its records. Syncing is paused on this device until you remove it (ACCOUNT).")
         }
         .onChange(of: scenePhase) {
             if scenePhase == .active {

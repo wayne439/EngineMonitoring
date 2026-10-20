@@ -183,6 +183,11 @@ struct AircraftProfileView: View {
                 } label: {
                     Label("I have a support code", systemImage: "key")
                 }
+                NavigationLink {
+                    TransferAircraftView()
+                } label: {
+                    Label("Sold this aircraft? Transfer it to the new owner", systemImage: "arrow.right.arrow.left")
+                }
             } else {
                 let missing = store.profile.missingRequired
                 if poh.index == nil {

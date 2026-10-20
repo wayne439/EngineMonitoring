@@ -40,6 +40,14 @@ Supabase's built-in email sender is only for testing: it sends a few emails per 
 | `inbox_uploads` table | Files received but not yet turned into flights: formats the app cannot read yet (JPI, EI), and later flyGarmin / AirSync / email / web uploads |
 | `engine-logs` bucket | The raw log files, under `<user id>/<aircraft id>/<file name>` (private, 50 MB per file limit) |
 
+| `aircraft_transfers` table | Sales: the seller's transfer of an aircraft to a buyer's email and cell, with the hash of the texted code (never the code itself) |
+
+## Aircraft transfers (selling the airplane)
+
+The seller starts a transfer in ACCOUNT (or AIRCRAFT) with the buyer's email and cell number. The app uploads any flights not in the cloud yet and a copy of the maintenance, issue reviews and event markers, then texts the buyer an 8-character code and emails the steps. The buyer signs in to Engine Pulse with that email (confirmed), goes to ACCOUNT → Accept a transfer and enters the code and their cell number. `accept_aircraft_transfer()` then moves the aircraft, its flight logs and its documents to the buyer. The raw files stay in the seller's folder: the storage rules let whoever owns the rows read them, and stop the seller changing or deleting them. Codes expire after 14 days, and five wrong tries cancel the transfer. The buyer's account may hold no other aircraft with flights (one aircraft per account for now).
+
+**To switch it on:** run the whole of `schema.sql` again in the SQL Editor (it is safe to re-run). Until then the app says transfers aren't switched on.
+
 Deleting an account (ACCOUNT → Delete account) removes the files, then calls `delete_my_account()`. That deletes the user, and their rows go with it.
 
 ## Testing the schema locally
@@ -51,6 +59,13 @@ createdb emtest
 psql -d emtest -f tests/supabase_stub.sql -f schema.sql -f tests/rls_test.sql
 ```
 
-The last line printed should be `ALL RLS TESTS PASSED`. The tests check that:
+The last line printed should be `ALL RLS TESTS PASSED`. The transfer tests run the same way on a fresh database:
+
+```
+createdb emtransfer
+psql -d emtransfer -f tests/supabase_stub.sql -f schema.sql -f tests/transfer_test.sql
+```
+
+and end with `ALL TRANSFER TESTS PASSED`. The tests check that:
 - one pilot can't see, change, delete or attach to another pilot's aircraft, logs or files;
 - account deletion removes only that pilot's data.

@@ -178,3 +178,213 @@ $$;
 
 revoke all on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+-- ---------------------------------------------------------------- aircraft transfer (sale)
+-- When an airplane is sold, the current owner starts a transfer in the app with the buyer's email and
+-- cell phone number. The app texts the buyer a transfer code. The buyer signs in to Engine Pulse with
+-- that email, enters the code and their cell number, and accept_aircraft_transfer() moves the aircraft,
+-- its flight logs and its documents to the buyer's account. The raw files stay where they are; the
+-- storage rules below let whoever owns the rows read them, and stop the seller deleting them.
+create table if not exists public.aircraft_transfers (
+    id               uuid primary key default gen_random_uuid(),
+    aircraft_id      uuid not null references public.aircraft (id) on delete cascade,
+    from_owner       uuid default auth.uid() references auth.users (id) on delete set null,
+    tail_number      text not null default '',
+    to_email         text not null check (to_email = lower(btrim(to_email)) and position('@' in to_email) > 1),
+    to_phone         text not null check (to_phone ~ '^[0-9]{7,15}$'),
+    -- sha256 (hex) of the transfer code, upper-cased with spaces and dashes removed. The code itself is never stored.
+    code_hash        text not null check (code_hash ~ '^[0-9a-f]{64}$'),
+    -- Snapshot of the seller's maintenance, issue reviews and event markers for this aircraft.
+    state_path       text,
+    status           text not null default 'pending' check (status in ('pending', 'accepted', 'cancelled', 'expired')),
+    failed_attempts  integer not null default 0,
+    created_at       timestamptz not null default now(),
+    expires_at       timestamptz not null default now() + interval '14 days',
+    accepted_at      timestamptz,
+    accepted_by      uuid references auth.users (id) on delete set null
+);
+
+create unique index if not exists aircraft_transfers_one_pending on public.aircraft_transfers (aircraft_id) where status = 'pending';
+create index if not exists aircraft_transfers_email_idx on public.aircraft_transfers (to_email) where status = 'pending';
+create index if not exists flight_logs_storage_path_idx on public.flight_logs (storage_path);
+create index if not exists inbox_uploads_storage_path_idx on public.inbox_uploads (storage_path);
+
+alter table public.aircraft_transfers enable row level security;
+
+-- The seller sees their transfers; the buyer sees the ones they accepted.
+drop policy if exists "aircraft_transfers: seller or buyer read" on public.aircraft_transfers;
+create policy "aircraft_transfers: seller or buyer read" on public.aircraft_transfers
+    for select to authenticated
+    using (from_owner = auth.uid() or accepted_by = auth.uid());
+
+-- Only the aircraft's current owner can start a transfer, and only as a fresh pending one.
+drop policy if exists "aircraft_transfers: owner starts" on public.aircraft_transfers;
+create policy "aircraft_transfers: owner starts" on public.aircraft_transfers
+    for insert to authenticated
+    with check (
+        from_owner = auth.uid()
+        and status = 'pending' and failed_attempts = 0 and accepted_at is null and accepted_by is null
+        and expires_at <= now() + interval '15 days'
+        and exists (select 1 from public.aircraft a where a.id = aircraft_id and a.owner_id = auth.uid())
+        and (state_path is null or state_path like auth.uid()::text || '/%')
+    );
+
+-- While pending, the seller can refresh the snapshot or cancel. Nothing else can be changed directly.
+drop policy if exists "aircraft_transfers: seller updates pending" on public.aircraft_transfers;
+create policy "aircraft_transfers: seller updates pending" on public.aircraft_transfers
+    for update to authenticated
+    using (from_owner = auth.uid() and status = 'pending')
+    with check (from_owner = auth.uid() and status in ('pending', 'cancelled')
+                and (state_path is null or state_path like auth.uid()::text || '/%'));
+
+revoke update, delete, truncate on public.aircraft_transfers from authenticated, anon;
+revoke all on public.aircraft_transfers from anon;
+grant select, insert on public.aircraft_transfers to authenticated;
+grant update (status, state_path) on public.aircraft_transfers to authenticated;
+
+-- A row's file path is set by the app, so it must point into the caller's own folder when written,
+-- and it can't be repointed later (rows moved to a buyer keep pointing at the seller's folder).
+create or replace function public.check_storage_path() returns trigger
+language plpgsql as $$
+begin
+    if auth.uid() is null then
+        return new;   -- service jobs
+    end if;
+    if tg_op = 'UPDATE' and new.storage_path = old.storage_path then
+        return new;
+    end if;
+    if new.storage_path not like auth.uid()::text || '/%' then
+        raise exception 'storage_path must be in your own folder' using errcode = '42501';
+    end if;
+    return new;
+end;
+$$;
+
+drop trigger if exists flight_logs_storage_path on public.flight_logs;
+create trigger flight_logs_storage_path before insert or update on public.flight_logs
+    for each row execute function public.check_storage_path();
+drop trigger if exists inbox_uploads_storage_path on public.inbox_uploads;
+create trigger inbox_uploads_storage_path before insert or update on public.inbox_uploads
+    for each row execute function public.check_storage_path();
+
+-- Whether a file belongs to the caller's rows, or to someone else's (security definer: it has to see
+-- other users' rows to answer, but only returns true or false).
+create or replace function public.engine_file_is_mine(path text) returns boolean
+language sql stable security definer set search_path = public
+as $$
+    select exists (select 1 from public.flight_logs where storage_path = path and owner_id = auth.uid())
+        or exists (select 1 from public.inbox_uploads where storage_path = path and owner_id = auth.uid())
+        or exists (select 1 from public.aircraft_transfers where state_path = path and accepted_by = auth.uid() and status = 'accepted')
+$$;
+
+create or replace function public.engine_file_is_others(path text) returns boolean
+language sql stable security definer set search_path = public
+as $$
+    select exists (select 1 from public.flight_logs where storage_path = path and owner_id <> auth.uid())
+        or exists (select 1 from public.inbox_uploads where storage_path = path and owner_id <> auth.uid())
+        or exists (select 1 from public.aircraft_transfers where state_path = path and accepted_by <> auth.uid() and status = 'accepted')
+$$;
+
+revoke all on function public.engine_file_is_mine(text), public.engine_file_is_others(text) from public, anon;
+grant execute on function public.engine_file_is_mine(text), public.engine_file_is_others(text) to authenticated;
+
+-- Storage rules, replacing the folder-only ones above: you can read, change and delete your own folder
+-- and any file your rows point at (an aircraft you bought), except files that now belong to someone
+-- else's rows (an aircraft you sold).
+drop policy if exists "engine-logs: owner read" on storage.objects;
+create policy "engine-logs: owner read" on storage.objects
+    for select to authenticated
+    using (bucket_id = 'engine-logs'
+           and (((storage.foldername(name))[1] = auth.uid()::text and not public.engine_file_is_others(name))
+                or public.engine_file_is_mine(name)));
+
+drop policy if exists "engine-logs: owner update" on storage.objects;
+create policy "engine-logs: owner update" on storage.objects
+    for update to authenticated
+    using (bucket_id = 'engine-logs'
+           and ((storage.foldername(name))[1] = auth.uid()::text or public.engine_file_is_mine(name))
+           and not public.engine_file_is_others(name));
+
+drop policy if exists "engine-logs: owner delete" on storage.objects;
+create policy "engine-logs: owner delete" on storage.objects
+    for delete to authenticated
+    using (bucket_id = 'engine-logs'
+           and ((storage.foldername(name))[1] = auth.uid()::text or public.engine_file_is_mine(name))
+           and not public.engine_file_is_others(name));
+
+-- The buyer accepts. Checks the signed-in (confirmed) email, the code and the cell number, then moves
+-- the aircraft and everything recorded for it. Five wrong tries cancel the transfer.
+-- Returns {"ok": true, "aircraft_id", "tail_number", "state_path"} or {"ok": false, "reason"}, where reason is
+-- unconfirmed, none, mismatch, locked, self or has_aircraft.
+create or replace function public.accept_aircraft_transfer(transfer_code text, phone text) returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+declare
+    me uuid := auth.uid();
+    my_email text;
+    t public.aircraft_transfers;
+    digits text := right(regexp_replace(coalesce(phone, ''), '[^0-9]', '', 'g'), 10);
+    hash text := encode(sha256(convert_to(upper(regexp_replace(coalesce(transfer_code, ''), '[^A-Za-z0-9]', '', 'g')), 'UTF8')), 'hex');
+    locked boolean := false;
+begin
+    if me is null then
+        raise exception 'not signed in';
+    end if;
+    select lower(email) into my_email from auth.users where id = me and email_confirmed_at is not null;
+    if my_email is null then
+        return jsonb_build_object('ok', false, 'reason', 'unconfirmed');
+    end if;
+
+    update public.aircraft_transfers set status = 'expired' where status = 'pending' and expires_at < now();
+
+    select * into t from public.aircraft_transfers
+     where status = 'pending' and to_email = my_email and code_hash = hash
+     order by created_at desc limit 1
+     for update;
+
+    if not found or right(t.to_phone, 10) <> digits then
+        with bumped as (
+            update public.aircraft_transfers
+               set failed_attempts = failed_attempts + 1,
+                   status = case when failed_attempts + 1 >= 5 then 'cancelled' else status end
+             where status = 'pending' and to_email = my_email
+            returning status)
+        select bool_or(status = 'cancelled') into locked from bumped;
+        if not exists (select 1 from public.aircraft_transfers where to_email = my_email and status in ('pending', 'cancelled')
+                       and created_at > now() - interval '15 days') then
+            return jsonb_build_object('ok', false, 'reason', 'none');
+        end if;
+        return jsonb_build_object('ok', false, 'reason', case when coalesce(locked, false) then 'locked' else 'mismatch' end);
+    end if;
+
+    if t.from_owner = me then
+        return jsonb_build_object('ok', false, 'reason', 'self');
+    end if;
+    if not exists (select 1 from public.aircraft where id = t.aircraft_id and owner_id = t.from_owner) then
+        update public.aircraft_transfers set status = 'cancelled' where id = t.id;
+        return jsonb_build_object('ok', false, 'reason', 'none');
+    end if;
+
+    -- One aircraft per account for now: an aircraft the buyer already has flights or documents for
+    -- blocks the transfer; an empty one (made while registering) is replaced.
+    if exists (select 1 from public.aircraft a where a.owner_id = me
+               and (exists (select 1 from public.flight_logs f where f.aircraft_id = a.id)
+                    or exists (select 1 from public.inbox_uploads i where i.aircraft_id = a.id))) then
+        return jsonb_build_object('ok', false, 'reason', 'has_aircraft',
+            'tail_number', (select tail_number from public.aircraft where owner_id = me order by created_at limit 1));
+    end if;
+    delete from public.aircraft where owner_id = me;
+
+    update public.aircraft set owner_id = me where id = t.aircraft_id;
+    update public.flight_logs set owner_id = me where aircraft_id = t.aircraft_id;
+    update public.inbox_uploads set owner_id = me where aircraft_id = t.aircraft_id;
+    update public.aircraft_transfers set status = 'accepted', accepted_at = now(), accepted_by = me where id = t.id;
+
+    return jsonb_build_object('ok', true, 'aircraft_id', t.aircraft_id, 'tail_number', t.tail_number, 'state_path', t.state_path);
+end;
+$$;
+
+revoke all on function public.accept_aircraft_transfer(text, text) from public, anon;
+grant execute on function public.accept_aircraft_transfer(text, text) to authenticated;
