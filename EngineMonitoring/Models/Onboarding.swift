@@ -18,10 +18,15 @@ struct AircraftModelOption: Identifiable, Hashable, Sendable {
     /// Aircraft commonly flown with Garmin glass cockpits (pick Other for anything not listed).
     static let catalog: [AircraftModelOption] = [
         .init(id: "sr20", make: "Cirrus", model: "SR20 (G1-G5)", cylinders: 6, turbo: false, monitor: .garminPerspective),
-        .init(id: "sr20g6", make: "Cirrus", model: "SR20 G6", cylinders: 4, turbo: false, monitor: .garminPerspective),
-        .init(id: "sr22", make: "Cirrus", model: "SR22", cylinders: 6, turbo: false, monitor: .garminPerspective),
+        .init(id: "sr20g6", make: "Cirrus", model: "SR20 G6", cylinders: 4, turbo: false, monitor: .garminPerspectivePlus),
+        .init(id: "sr20g7", make: "Cirrus", model: "SR20 G7", cylinders: 4, turbo: false, monitor: .garminPerspectiveTouchPlus),
+        .init(id: "sr22", make: "Cirrus", model: "SR22 (G1-G5)", cylinders: 6, turbo: false, monitor: .garminPerspective),
+        .init(id: "sr22g6", make: "Cirrus", model: "SR22 G6", cylinders: 6, turbo: false, monitor: .garminPerspectivePlus),
+        .init(id: "sr22g7", make: "Cirrus", model: "SR22 G7", cylinders: 6, turbo: false, monitor: .garminPerspectiveTouchPlus),
         .init(id: "sr22tn", make: "Cirrus", model: "SR22 Turbo (turbonormalized)", cylinders: 6, turbo: true, monitor: .garminPerspective),
-        .init(id: "sr22t", make: "Cirrus", model: "SR22T", cylinders: 6, turbo: true, monitor: .garminPerspective),
+        .init(id: "sr22t", make: "Cirrus", model: "SR22T (G5)", cylinders: 6, turbo: true, monitor: .garminPerspective),
+        .init(id: "sr22tg6", make: "Cirrus", model: "SR22T G6", cylinders: 6, turbo: true, monitor: .garminPerspectivePlus),
+        .init(id: "sr22tg7", make: "Cirrus", model: "SR22T G7", cylinders: 6, turbo: true, monitor: .garminPerspectiveTouchPlus),
         .init(id: "c172", make: "Cessna", model: "172 Skyhawk", cylinders: 4, turbo: false, monitor: .garminG1000),
         .init(id: "c182", make: "Cessna", model: "182 Skylane", cylinders: 6, turbo: false, monitor: .garminG1000),
         .init(id: "t182", make: "Cessna", model: "T182 Turbo Skylane", cylinders: 6, turbo: true, monitor: .garminG1000),
@@ -76,7 +81,7 @@ enum DataChecklist {
     static func items(turbo: Bool, monitor: EngineMonitorType) -> [Item] {
         let logs: String
         switch monitor {
-        case .garminPerspective, .garminPerspectivePlus, .garminG1000, .garminG1000NXi:
+        case .garminPerspective, .garminPerspectivePlus, .garminPerspectiveTouchPlus, .garminG1000, .garminG1000NXi:
             logs = "Insert the top SD card on the ground; the avionics save a CSV per flight in the data_log folder. Copy them to the iPad with an SD card reader. The last 20 or more flights give the best baseline."
         case .garminG3X:
             logs = "Copy the flight data logs from the G3X SD card (CSV files). The last 20 or more flights give the best baseline. G3X import is coming soon."
@@ -156,15 +161,15 @@ struct DataPathAdvice: Equatable, Sendable {
                     flyGarminComing,
                 ],
                 showsGarminGuide: true)
-        case .flightStream510 where monitor.flightStream510CarriesEngineData || monitor == .garminPerspectivePlus:
+        case .flightStream510 where monitor.flightStream510CarriesEngineData || monitor.isPerspectivePlusFamily:
             var steps = [
                 "Keep Garmin Pilot open on the iPad for the whole flight, connected to the Flight Stream 510. It receives the engine log over Bluetooth.",
                 garminPilotShare,
                 flyGarminDownload,
                 flyGarminComing,
             ]
-            if monitor == .garminPerspectivePlus {
-                steps.insert("Garmin doesn't list Perspective+ engine logs over Flight Stream 510. If the Garmin Pilot logbook entry has no engine data, use the data card: " + sdCardSteps[2], at: 3)
+            if monitor.isPerspectivePlusFamily {
+                steps.insert("Garmin doesn't list \(monitor == .garminPerspectiveTouchPlus ? "Perspective Touch+" : "Perspective+") engine logs over Flight Stream 510. If the Garmin Pilot logbook entry has no engine data, use the data card: " + sdCardSteps[2], at: 3)
             }
             return DataPathAdvice(
                 title: "Flight Stream 510: from Garmin Pilot to Engine Pulse",

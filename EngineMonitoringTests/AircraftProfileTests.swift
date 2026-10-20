@@ -80,6 +80,20 @@ final class AircraftProfileTests: XCTestCase {
         XCTAssertEqual(TransferCode.hash("abcd-2345"), "a00d76646eba91b057841554d5c8334f498dc592ed744bce404f21fe271cd36e")
     }
 
+    func testPerspectiveTouchPlusIsListedAndSupported() {
+        let touch = EngineMonitorType.garminPerspectiveTouchPlus
+        XCTAssertTrue(EngineMonitorType.allCases.contains(touch))
+        XCTAssertTrue(touch.isSupported)
+        XCTAssertTrue(touch.isPerspectivePlusFamily)
+        XCTAssertEqual(EngineMonitorType.garminPerspectivePlus.label, "Cirrus Perspective+ (G6)")
+        // Older profiles saved with the combined G6 / G7 name still decode.
+        XCTAssertEqual(EngineMonitorType(rawValue: "Cirrus Perspective+ (G6 / G7)"), .garminPerspectivePlus)
+        XCTAssertEqual(AircraftModelOption.catalog.first { $0.id == "sr22tg7" }?.monitor, touch)
+        let advice = DataPathAdvice.advise(monitor: touch, link: .flightStream510, make: "Cirrus")
+        XCTAssertTrue(advice.automatic)
+        XCTAssertTrue(advice.steps.joined().contains("Perspective Touch+"))
+    }
+
     func testGarminLinksShowTheGarminGuide() {
         let plus = DataPathAdvice.advise(monitor: .garminPerspectivePlus, link: .flightStream510, make: "Cirrus")
         XCTAssertTrue(plus.showsGarminGuide)

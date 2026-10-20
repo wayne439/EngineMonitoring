@@ -1,5 +1,11 @@
 # Engine Pulse changelog
 
+## 0.8.7 (2026-10-20)
+- New avionics choice: Cirrus Perspective Touch+ (G7). Its SD-card data logs import like Perspective+, and the GDL 60 / Flight Stream 510 advice and Garmin guide cover it (tester feedback).
+- Perspective+ now reads "Cirrus Perspective+ (G6)". Profiles saved with the old combined G6 / G7 name still open as Perspective+.
+- Registration lists Cirrus by generation: SR20, SR22 and SR22T in G6 and G7, each with the right avionics filled in.
+- Version 0.8.7 (32).
+
 ## 0.8.6 (2026-10-20)
 - Aircraft transfer for a sale. The owner enters the buyer's email and cell number (ACCOUNT > Aircraft ownership, or AIRCRAFT), types the tail number to confirm, and the app texts the buyer a transfer code and emails the steps. The buyer signs in with that email and accepts with the code and their cell number (ACCOUNT > Accept a transfer). Flights and engine analysis, the locked profile, maintenance, issue reviews, event markers and uploaded documents move to the buyer's account.
 - The code expires after 14 days, only its hash is stored, and five wrong tries cancel the transfer. The seller can cancel until the buyer accepts.
