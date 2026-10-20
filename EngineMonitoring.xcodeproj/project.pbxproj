@@ -15,6 +15,7 @@
 		000000000000000000000126 /* DiagnosticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000125 /* DiagnosticEngine.swift */; };
 		000000000000000000000128 /* DiagnosticEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000127 /* DiagnosticEventStore.swift */; };
 		00000000000000000000012A /* PerspectiveLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000129 /* PerspectiveLog.swift */; };
+		0000000000000000000001B1 /* EngineLogImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001B0 /* EngineLogImport.swift */; };
 		00000000000000000000012C /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000012B /* Persistence.swift */; };
 		00000000000000000000012E /* FlightLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000012D /* FlightLogStore.swift */; };
 		000000000000000000000130 /* AircraftKnowledge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000012F /* AircraftKnowledge.swift */; };
@@ -102,6 +103,7 @@
 		000000000000000000000125 /* DiagnosticEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiagnosticEngine.swift; path = Services/DiagnosticEngine.swift; sourceTree = "<group>"; };
 		000000000000000000000127 /* DiagnosticEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DiagnosticEventStore.swift; path = Services/DiagnosticEventStore.swift; sourceTree = "<group>"; };
 		000000000000000000000129 /* PerspectiveLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PerspectiveLog.swift; path = Services/PerspectiveLog.swift; sourceTree = "<group>"; };
+		0000000000000000000001B0 /* EngineLogImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineLogImport.swift; path = Services/EngineLogImport.swift; sourceTree = "<group>"; };
 		00000000000000000000012B /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Persistence.swift; path = Services/Persistence.swift; sourceTree = "<group>"; };
 		00000000000000000000012D /* FlightLogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlightLogStore.swift; path = Services/FlightLogStore.swift; sourceTree = "<group>"; };
 		00000000000000000000012F /* AircraftKnowledge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftKnowledge.swift; path = Models/AircraftKnowledge.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				000000000000000000000125 /* DiagnosticEngine.swift */,
 				000000000000000000000127 /* DiagnosticEventStore.swift */,
 				000000000000000000000129 /* PerspectiveLog.swift */,
+				0000000000000000000001B0 /* EngineLogImport.swift */,
 				00000000000000000000012B /* Persistence.swift */,
 				00000000000000000000012D /* FlightLogStore.swift */,
 				00000000000000000000012F /* AircraftKnowledge.swift */,
@@ -400,6 +403,7 @@
 				000000000000000000000126 /* DiagnosticEngine.swift in Sources */,
 				000000000000000000000128 /* DiagnosticEventStore.swift in Sources */,
 				00000000000000000000012A /* PerspectiveLog.swift in Sources */,
+				0000000000000000000001B1 /* EngineLogImport.swift in Sources */,
 				00000000000000000000012C /* Persistence.swift in Sources */,
 				00000000000000000000012E /* FlightLogStore.swift in Sources */,
 				000000000000000000000130 /* AircraftKnowledge.swift in Sources */,
