@@ -27,11 +27,21 @@ func reference(_ path: String) -> [(Date, [String: String])] {
     return rows
 }
 
-let jpiToGarmin: [(String, String, (Double) -> Double)] =
-    (1...6).map { ("E\($0)", "E1 EGT\($0)", { $0 }) } + (1...6).map { ("C\($0)", "E1 CHT\($0)", { $0 }) } + [
-    ("OILT", "E1 OilT", { $0 }), ("OILP", "E1 OilP", { $0 }), ("RPM", "E1 RPM", { $0 }), ("MAP", "E1 MAP", { $0 }),
-    ("HP", "E1 %Pwr", { $0 }), ("BAT", "volt1", { $0 }), ("FF", "E1 FFlow", { $0 }), ("OAT", "OAT", { ($0 - 32) * 5 / 9 }),
-]
+typealias Mapping = (jpi: String, garmin: String, convert: (Double) -> Double)
+var jpiToGarmin: [Mapping] = []
+for n in 1...6 {
+    jpiToGarmin.append(("E\(n)", "E1 EGT\(n)", { $0 }))
+    jpiToGarmin.append(("C\(n)", "E1 CHT\(n)", { $0 }))
+}
+let same: (Double) -> Double = { $0 }
+jpiToGarmin.append(("OILT", "E1 OilT", same))
+jpiToGarmin.append(("OILP", "E1 OilP", same))
+jpiToGarmin.append(("RPM", "E1 RPM", same))
+jpiToGarmin.append(("MAP", "E1 MAP", same))
+jpiToGarmin.append(("HP", "E1 %Pwr", same))
+jpiToGarmin.append(("BAT", "volt1", same))
+jpiToGarmin.append(("FF", "E1 FFlow", same))
+jpiToGarmin.append(("OAT", "OAT", { ($0 - 32) * 5 / 9 }))
 
 func compare(_ logs: [ConvertedEngineLog], label: String) {
     let refs = [45: reference(dir + "/edm830.45.txt"), 72: reference(dir + "/edm830.72.txt")]
