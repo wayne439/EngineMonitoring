@@ -118,6 +118,12 @@ struct DataPathAdvice: Equatable, Sendable {
     let title: String
     let automatic: Bool
     let steps: [String]
+    /// Shows the "Get your flights from Garmin" guide link (Garmin Pilot and flyGarmin steps).
+    var showsGarminGuide = false
+
+    static let garminPilotShare = "After landing, in Garmin Pilot: More > Logbook > Entries, open the flight, tap Share, choose CSV, then Engine Pulse."
+    static let flyGarminDownload = "Or on a computer: flyGarmin.com > Logbook, open the flight, Download > Original CSV, and drop it on enginepulse.net/upload."
+    static let flyGarminComing = "Planned: fully automatic through Garmin's flyGarmin sharing program, once Garmin approves Engine Pulse. You would switch on sharing in flyGarmin once and every flight would arrive by itself."
 
     static let sdCardSteps = [
         "After the flight, take the data card out of the avionics (on the ground, per your POH/avionics guide).",
@@ -142,27 +148,34 @@ struct DataPathAdvice: Equatable, Sendable {
         switch link ?? .notSure {
         case .gdl60:
             return DataPathAdvice(
-                title: "Automatic with your GDL 60 (Garmin PlaneSync)",
+                title: "GDL 60: your flights upload to flyGarmin after every shutdown",
                 automatic: true,
                 steps: [
-                    "Your GDL 60 uploads every flight to flyGarmin after shutdown (PlaneSync subscription).",
-                    "We are applying to Garmin's flyGarmin sharing program. Once approved you switch on sharing with Engine Pulse in flyGarmin once, and every flight arrives automatically.",
-                    "Until then, use the data card: " + sdCardSteps[2],
-                ])
-        case .flightStream510 where monitor.flightStream510CarriesEngineData:
+                    "The GDL 60 uploads each flight's engine log to flyGarmin over LTE or Wi-Fi once you shut down (PlaneSync subscription).",
+                    "Today: on flyGarmin.com > Logbook, open the flight, Download > Original CSV, and drop it on enginepulse.net/upload (or share the file to Engine Pulse on the iPad). It appears in the app with the full analysis.",
+                    flyGarminComing,
+                ],
+                showsGarminGuide: true)
+        case .flightStream510 where monitor.flightStream510CarriesEngineData || monitor == .garminPerspectivePlus:
+            var steps = [
+                "Keep Garmin Pilot open on the iPad for the whole flight, connected to the Flight Stream 510. It receives the engine log over Bluetooth.",
+                garminPilotShare,
+                flyGarminDownload,
+                flyGarminComing,
+            ]
+            if monitor == .garminPerspectivePlus {
+                steps.insert("Garmin doesn't list Perspective+ engine logs over Flight Stream 510. If the Garmin Pilot logbook entry has no engine data, use the data card: " + sdCardSteps[2], at: 3)
+            }
             return DataPathAdvice(
-                title: "Wireless with Flight Stream 510 and Garmin Pilot",
+                title: "Flight Stream 510: from Garmin Pilot to Engine Pulse",
                 automatic: true,
-                steps: [
-                    "Your Flight Stream 510 sends the flight logs to the Garmin Pilot app, which uploads them to flyGarmin.",
-                    "We are applying to Garmin's flyGarmin sharing program. Once approved, switch on sharing with Engine Pulse in flyGarmin and flights arrive automatically.",
-                    "Until then, use the data card: " + sdCardSteps[2],
-                ])
+                steps: steps,
+                showsGarminGuide: true)
         case .flightStream510:
             return DataPathAdvice(
                 title: "Use the data card (Flight Stream 510 does not carry engine data on this avionics)",
                 automatic: false,
-                steps: ["Garmin lists Flight Stream 510 engine-data transfer for the G1000 NXi, TXi and GI 275 EIS only (not Perspective or Perspective+)."] + sdCardSteps)
+                steps: ["Garmin lists Flight Stream 510 engine-log transfer for the G1000 NXi, TXi and GI 275 EIS. On other avionics it carries databases, weather and traffic, not engine logs."] + sdCardSteps)
         case .flightStream210:
             return DataPathAdvice(
                 title: "Use the data card (Flight Stream 210 does not transfer engine data)",

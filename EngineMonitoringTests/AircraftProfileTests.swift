@@ -68,6 +68,17 @@ final class AircraftProfileTests: XCTestCase {
         XCTAssertFalse(DataPathAdvice.advise(monitor: .garminPerspective, link: .flightStream510, make: "Cirrus").automatic)
     }
 
+    func testGarminLinksShowTheGarminGuide() {
+        let plus = DataPathAdvice.advise(monitor: .garminPerspectivePlus, link: .flightStream510, make: "Cirrus")
+        XCTAssertTrue(plus.showsGarminGuide)
+        XCTAssertTrue(plus.steps.joined().contains("Garmin Pilot"))
+        XCTAssertTrue(plus.steps.joined().contains("data card"))
+        let gdl = DataPathAdvice.advise(monitor: .garminPerspectivePlus, link: .gdl60, make: "Cirrus")
+        XCTAssertTrue(gdl.showsGarminGuide)
+        XCTAssertTrue(gdl.steps.joined().contains("Original CSV"))
+        XCTAssertFalse(DataPathAdvice.advise(monitor: .garminPerspective, link: .flightStream210, make: "Cirrus").showsGarminGuide)
+    }
+
     func testNoLinkMeansDataCardAndCirrusHint() {
         let a = DataPathAdvice.advise(monitor: .garminPerspective, link: nil, make: "Cirrus")
         XCTAssertFalse(a.automatic)

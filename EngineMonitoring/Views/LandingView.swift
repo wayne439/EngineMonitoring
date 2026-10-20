@@ -436,8 +436,74 @@ struct DataPathAdviceView: View {
                     Text(step).font(.footnote)
                 }
             }
+            if advice.showsGarminGuide {
+                NavigationLink {
+                    GarminImportGuideView()
+                } label: {
+                    Label("Step-by-step: get your flights from Garmin", systemImage: "book")
+                        .font(.footnote.bold())
+                }
+            }
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// How to bring flights from a GDL 60 or Flight Stream 510 into Engine Pulse, until flyGarmin sharing is approved.
+struct GarminImportGuideView: View {
+    var body: some View {
+        List {
+            Section {
+                Text("Garmin's GDL 60 and Flight Stream 510 only send engine logs to Garmin's own apps (Garmin Pilot and flyGarmin). From there, each flight takes a few taps to reach Engine Pulse.")
+                    .font(.subheadline)
+            }
+            Section {
+                GuideStep(n: 1, text: "Before the flight, open Garmin Pilot and connect it to the Flight Stream 510 (Connext). Keep it open, in the foreground or background, for the whole flight.")
+                GuideStep(n: 2, text: "After landing, in Garmin Pilot: More > Logbook > Entries, and open the flight.")
+                GuideStep(n: 3, text: "Tap the Share icon, choose CSV, then choose Engine Pulse. (If Engine Pulse isn't in the row of apps, tap More and add it.)")
+                GuideStep(n: 4, text: "Engine Pulse opens and adds the flight. Its report and the health score update straight away.")
+            } header: {
+                Text("Flight Stream 510: from Garmin Pilot on the iPad")
+            } footer: {
+                Text("Garmin lists Flight Stream 510 engine logs for the G1000 NXi, TXi and GI 275 EIS. If the logbook entry has no engine data, use the data card or flyGarmin.")
+            }
+            Section {
+                GuideStep(n: 1, text: "On a computer, sign in at flyGarmin.com and open Logbook. With a GDL 60 the flight appears a few minutes after shutdown; with a Flight Stream 510, after Garmin Pilot syncs.")
+                GuideStep(n: 2, text: "Open the flight, click Download, and choose Original CSV.")
+                GuideStep(n: 3, text: "Go to enginepulse.net/upload (or use Email me an upload link in AIRCRAFT > Documents and uploads), sign in, and drop the file on Engine monitor log files.")
+                GuideStep(n: 4, text: "Open Engine Pulse on the iPad: the flight is imported automatically.")
+            } header: {
+                Text("GDL 60 or Flight Stream 510: from flyGarmin on a computer")
+            }
+            Section {
+                Text("We plan to receive flights through Garmin's flyGarmin sharing program, the way FlySto and Savvy do. Once Garmin approves Engine Pulse, you switch on sharing in flyGarmin once and every flight arrives on its own.")
+                    .font(.subheadline)
+            } header: {
+                Text("Planned: automatic")
+            }
+            Section {
+                Text("If a file won't import, email it to sales@enginepulse.net and we'll add support for it.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .navigationTitle("Flights from Garmin")
+    }
+}
+
+private struct GuideStep: View {
+    let n: Int
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Text("\(n)")
+                .font(.caption.bold())
+                .frame(width: 22, height: 22)
+                .background(Color.accentColor.opacity(0.15), in: Circle())
+            Text(text).font(.subheadline)
+        }
+        .padding(.vertical, 2)
     }
 }
 
