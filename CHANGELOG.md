@@ -1,5 +1,12 @@
 # Engine Pulse changelog
 
+## 0.8.6 (2026-10-20)
+- Aircraft transfer for a sale. The owner enters the buyer's email and cell number (ACCOUNT > Aircraft ownership, or AIRCRAFT), types the tail number to confirm, and the app texts the buyer a transfer code and emails the steps. The buyer signs in with that email and accepts with the code and their cell number (ACCOUNT > Accept a transfer). Flights and engine analysis, the locked profile, maintenance, issue reviews, event markers and uploaded documents move to the buyer's account.
+- The code expires after 14 days, only its hash is stored, and five wrong tries cancel the transfer. The seller can cancel until the buyer accepts.
+- After the sale the seller's devices pause syncing and offer to remove the aircraft, ready for the next one.
+- Database: new aircraft_transfers table and accept function; file rules now follow row ownership, and rows can only point at files in the owner's own folder. Run schema.sql again in Supabase to switch it on.
+- Version 0.8.6 (31).
+
 ## 0.8.5 (2026-10-20)
 - New "Flights from Garmin" guide for GDL 60 and Flight Stream 510 owners (including Perspective+): share a flight from the Garmin Pilot logbook as CSV straight to Engine Pulse, or download Original CSV from flyGarmin and drop it on enginepulse.net/upload.
 - The data-path advice for GDL 60 and Flight Stream 510 now gives these steps, with a data-card fallback note for Perspective+ over Flight Stream 510. The guide is also linked from Import Logs.

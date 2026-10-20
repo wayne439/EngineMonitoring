@@ -143,6 +143,8 @@ struct AccountView: View {
             Text("New logs and profile changes upload automatically while you are signed in.")
         }
 
+        AircraftOwnershipSection()
+
         Section {
             Button("Sign out") {
                 cloud.signOut()

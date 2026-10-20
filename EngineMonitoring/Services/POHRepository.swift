@@ -90,6 +90,15 @@ final class POHRepository: ObservableObject {
         }
     }
 
+    /// Removes every POH and manual read on this device (after the aircraft is sold).
+    func removeAll() async {
+        try? FileManager.default.removeItem(at: Self.folder)
+        manifest = []
+        index = nil
+        manuals = []
+        await load()
+    }
+
     /// Indexes a PDF picked from Files.
     func installFromFiles(_ url: URL) async {
         let scoped = url.startAccessingSecurityScopedResource()

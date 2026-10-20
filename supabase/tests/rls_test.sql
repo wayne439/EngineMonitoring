@@ -24,7 +24,7 @@ update public.inbox_uploads set status = 'stored', processed_at = now() where ca
 do $$ begin
     if (select status from public.inbox_uploads where category = 'poh-limits') <> 'stored' then raise exception 'owner could not update status'; end if;
     begin
-        insert into public.inbox_uploads (original_filename, storage_path, category) values ('a.pdf', 'x', 'bogus');
+        insert into public.inbox_uploads (original_filename, storage_path, category) values ('a.pdf', '00000000-0000-0000-0000-00000000000a/inbox/a.pdf', 'bogus');
         raise exception 'category check did not fire';
     exception when check_violation then null;
     end;
@@ -73,9 +73,16 @@ do $$ begin
     exception when insufficient_privilege then null;
     end;
     begin
-        insert into public.inbox_uploads (original_filename, storage_path, status) values ('a.csv', 'x', 'bogus');
+        insert into public.inbox_uploads (original_filename, storage_path, status) values ('a.csv', '00000000-0000-0000-0000-00000000000b/inbox/a.csv', 'bogus');
         raise exception 'status check did not fire';
     exception when check_violation then null;
+    end;
+    -- B cannot point a row at A's file to read it.
+    begin
+        insert into public.inbox_uploads (original_filename, storage_path, status)
+        values ('steal.csv', '00000000-0000-0000-0000-00000000000a/11111111-1111-1111-1111-111111111111/log1.csv', 'received');
+        raise exception 'B pointed a row at A''s file';
+    exception when insufficient_privilege then null;
     end;
 end $$;
 

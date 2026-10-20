@@ -138,6 +138,19 @@ struct CloudAPI: Sendable {
         _ = try await send("POST", "rest/v1/rpc/\(function)", query: [], json: [String: Any](), token: token)
     }
 
+    /// Calls a database function with named parameters and returns its JSON result.
+    func rpc(_ function: String, params: [String: Any], token: String) async throws -> Any {
+        let data = try await send("POST", "rest/v1/rpc/\(function)", query: [], json: params, token: token)
+        return try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
+    }
+
+    /// Inserts rows and returns them as stored (with their ids and defaults).
+    func insert(table: String, rows: [[String: Any]], token: String) async throws -> [[String: Any]] {
+        let data = try await send("POST", "rest/v1/\(table)", query: [], json: rows, token: token,
+                                  extraHeaders: ["Prefer": "return=representation"])
+        return (try JSONSerialization.jsonObject(with: data) as? [[String: Any]]) ?? []
+    }
+
     // MARK: Files
 
     func uploadFile(path: String, data: Data, contentType: String, token: String) async throws {
@@ -378,6 +391,11 @@ final class CloudStore: ObservableObject {
     @Published var pendingConfirmationEmail: String?
     /// Documents and files in the cloud inbox (everything except logs already turned into flights).
     @Published private(set) var inboxItems: [InboxItem] = []
+    /// A transfer of this aircraft to a buyer that is waiting for them to accept.
+    @Published private(set) var outgoingTransfer: AircraftTransfer?
+    /// Set when this device's aircraft has been transferred to its new owner (sold). Syncing stops until
+    /// the pilot removes it from this device.
+    @Published private(set) var soldAircraft: AircraftTransfer?
 
     let api: CloudAPI?
     /// Cloud id of this device's aircraft (one aircraft per account for now). Adopts the account's
@@ -586,7 +604,7 @@ final class CloudStore: ObservableObject {
 
     /// Uploads the aircraft profile, then every log not uploaded yet. Safe to call often.
     func sync(profile: AircraftProfile, logs: FlightLogStore) async {
-        guard isConfigured, isSignedIn, !isBusy else { return }
+        guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil else { return }
         isBusy = true
         defer { isBusy = false }
         do {
@@ -623,6 +641,7 @@ final class CloudStore: ObservableObject {
     func uploadToInbox(fileURL: URL, source: String = "share", category: String = "logs") async -> String {
         guard isConfigured else { return "This file type can't be analyzed yet. Cloud storage isn't set up in this build, so it wasn't saved." }
         guard isSignedIn else { return "This file type can't be analyzed yet. Sign in (ACCOUNT) and share it again to save it to your account for when support arrives." }
+        guard soldAircraft == nil else { return "\(soldAircraft?.tailNumber ?? "This aircraft") now belongs to its new owner. Remove it from this device (ACCOUNT) before adding files." }
         isBusy = true
         defer { isBusy = false }
         let scoped = fileURL.startAccessingSecurityScopedResource()
@@ -687,7 +706,7 @@ final class CloudStore: ObservableObject {
     /// Brings uploads from the website into the app: engine log CSVs become flights, documents are kept
     /// in Documents. Runs when the app opens or comes back to the foreground.
     func pullInbox(logs: FlightLogStore) async {
-        guard isConfigured, isSignedIn, !isBusy else { return }
+        guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil else { return }
         await refreshInbox()
         let waiting = inboxItems.filter { $0.status == "received" }
         guard !waiting.isEmpty else { return }
@@ -750,6 +769,8 @@ final class CloudStore: ObservableObject {
     /// unless this device has a newer locked one, and downloads every flight not on this device yet.
     func restore(aircraft: AircraftProfileStore, logs: FlightLogStore) async {
         guard isConfigured, isSignedIn, !isBusy else { return }
+        await refreshTransfer()
+        guard soldAircraft == nil else { return }
         isBusy = true
         defer { isBusy = false }
         do {
@@ -760,8 +781,13 @@ final class CloudStore: ObservableObject {
                                               token: s.accessToken)
             // One aircraft per account: every device uses the account's first aircraft, so a device that
             // uploaded before restoring doesn't end up with its own copy.
-            if let newest = planes.first, let rawID = newest["id"] as? String, let cloudID = UUID(uuidString: rawID) {
-                if aircraftID != cloudID {
+            // This device's aircraft if the account has it (for example one just received by transfer), else the first.
+            let current = aircraftID.uuidString.lowercased()
+            let chosen = planes.first { ($0["id"] as? String)?.lowercased() == current } ?? planes.first
+            if let newest = chosen, let rawID = newest["id"] as? String, let cloudID = UUID(uuidString: rawID) {
+                // Switching to another aircraft (a new device, or a transfer accepted on another device): its profile wins.
+                let adopting = aircraftID != cloudID
+                if adopting {
                     aircraftID = cloudID
                     defaults.set(cloudID.uuidString, forKey: Self.aircraftIDKey)
                 }
@@ -772,7 +798,7 @@ final class CloudStore: ObservableObject {
                     // device may already have filled a few values from the POH). After that, the newer one wins.
                     let firstKey = "EM.cloud.profileRestored.\(s.userID.lowercased())"
                     let first = !defaults.bool(forKey: firstKey)
-                    if first || cloud.updatedAt > local.updatedAt {
+                    if first || adopting || cloud.updatedAt > local.updatedAt {
                         var merged = cloud
                         merged.documentsAppliedFrom = nil   // re-read this device's POH copy against the restored profile
                         aircraft.profile = merged
@@ -813,7 +839,7 @@ final class CloudStore: ObservableObject {
     /// Pulls the account's saved app state, takes each part that is newer than this device's, and uploads
     /// the parts this device changed more recently. Each part is last-change-wins as a whole.
     func syncAppState(maintenance: MaintenanceStore, issues: IssueStore, events: DiagnosticEventStore) async {
-        guard isConfigured, isSignedIn, !stateSyncing else { return }
+        guard isConfigured, isSignedIn, !stateSyncing, soldAircraft == nil else { return }
         stateSyncing = true
         defer { stateSyncing = false }
         do {
@@ -849,6 +875,10 @@ final class CloudStore: ObservableObject {
                                          issueRecords: issues.records, eventsModified: events.modifiedAt, events: events.events)
                 let data = try EventPersistence.encoder.encode(state)
                 try await api.uploadFile(path: path, data: data, contentType: "application/json", token: s.accessToken)
+                // While a sale is pending, the buyer's copy follows the seller's latest records.
+                if let snapshot = outgoingTransfer?.statePath {
+                    try? await api.uploadFile(path: snapshot, data: data, contentType: "application/json", token: s.accessToken)
+                }
             }
         } catch {
             lastError = "Could not sync maintenance and notes: \(error.localizedDescription)"
@@ -900,5 +930,229 @@ final class CloudStore: ObservableObject {
             lastError = "Account was not deleted: \(error.localizedDescription)"
             return false
         }
+    }
+}
+
+// MARK: - Aircraft transfer (sale)
+
+/// A transfer of an aircraft and everything recorded for it to a buyer's account.
+struct AircraftTransfer: Equatable, Sendable, Identifiable {
+    let id: String
+    let tailNumber: String
+    let toEmail: String
+    let toPhone: String
+    let status: String
+    let statePath: String?
+    let expiresAt: Date?
+    let acceptedAt: Date?
+
+    init?(row: [String: Any]) {
+        guard let id = row["id"] as? String else { return nil }
+        self.id = id
+        tailNumber = row["tail_number"] as? String ?? ""
+        toEmail = row["to_email"] as? String ?? ""
+        toPhone = row["to_phone"] as? String ?? ""
+        status = row["status"] as? String ?? "pending"
+        statePath = row["state_path"] as? String
+        expiresAt = (row["expires_at"] as? String).flatMap { CloudAPI.parseDate($0) }
+        acceptedAt = (row["accepted_at"] as? String).flatMap { CloudAPI.parseDate($0) }
+    }
+
+    var phoneLast4: String { String(toPhone.suffix(4)) }
+}
+
+/// The one-time code the seller texts to the buyer. Only its hash is stored in the cloud.
+enum TransferCode {
+    /// No 0/O, 1/I/L, so it reads cleanly in a text message.
+    private static let alphabet = Array("ABCDEFGHJKMNPQRSTUVWXYZ23456789")
+
+    static func make() -> String {
+        var generator = SystemRandomNumberGenerator()
+        return String((0..<8).map { _ in alphabet[Int(generator.next() % UInt64(alphabet.count))] })
+    }
+
+    /// Upper-case letters and digits only, as the database compares it.
+    static func normalize(_ code: String) -> String {
+        String(code.uppercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) && $0.isASCII }.map(Character.init))
+    }
+
+    static func hash(_ code: String) -> String { CloudAPI.sha256(normalize(code)) }
+
+    /// ABCD-2345
+    static func display(_ code: String) -> String {
+        let n = normalize(code)
+        guard n.count == 8 else { return n }
+        return String(n.prefix(4)) + "-" + String(n.suffix(4))
+    }
+
+    /// The seller's device keeps the code while the transfer is pending, so it can be texted again.
+    static func remember(_ code: String?, for transferID: String?) {
+        guard let transferID else { return }
+        let key = "EM.transferCode.\(transferID)"
+        if let code { UserDefaults.standard.set(code, forKey: key) } else { UserDefaults.standard.removeObject(forKey: key) }
+    }
+
+    static func remembered(for transferID: String) -> String? {
+        UserDefaults.standard.string(forKey: "EM.transferCode.\(transferID)")
+    }
+}
+
+enum TransferAcceptOutcome {
+    case accepted(tail: String, state: AppSyncState?)
+    case failed(String)
+}
+
+extension CloudStore {
+    /// Maintenance, issue reviews and event markers as one file (the same shape as the account's app state).
+    static func appState(maintenance: MaintenanceStore, issues: IssueStore, events: DiagnosticEventStore) -> AppSyncState {
+        AppSyncState(maintenanceModified: maintenance.modifiedAt, maintenanceItems: maintenance.items,
+                     maintenanceEntries: maintenance.entries, issuesModified: issues.modifiedAt,
+                     issueRecords: issues.records, eventsModified: events.modifiedAt, events: events.events)
+    }
+
+    /// Reads this aircraft's latest transfer started from this account: pending (waiting for the buyer)
+    /// or accepted (sold).
+    func refreshTransfer() async {
+        guard isConfigured, isSignedIn else { return }
+        do {
+            let (api, s) = try await token()
+            let rows = try await api.select(table: "aircraft_transfers", query: [
+                URLQueryItem(name: "select", value: "id,tail_number,to_email,to_phone,status,state_path,expires_at,accepted_at"),
+                URLQueryItem(name: "aircraft_id", value: "eq.\(aircraftID.uuidString.lowercased())"),
+                URLQueryItem(name: "from_owner", value: "eq.\(s.userID.lowercased())"),
+                URLQueryItem(name: "order", value: "created_at.desc"),
+                URLQueryItem(name: "limit", value: "1"),
+            ], token: s.accessToken)
+            let latest = rows.first.flatMap(AircraftTransfer.init(row:))
+            let live = latest.map { $0.status == "pending" && ($0.expiresAt ?? .distantFuture) > Date() } ?? false
+            outgoingTransfer = live ? latest : nil
+            soldAircraft = latest?.status == "accepted" ? latest : nil
+        } catch {
+            // Older databases without the transfers table, or offline: nothing to show.
+        }
+    }
+
+    /// Seller: uploads every flight and a copy of the maintenance records, then starts a transfer to the
+    /// buyer's email and cell. Returns the code to text the buyer, or nil (see lastError).
+    func startTransfer(email: String, phone: String, profile: AircraftProfile, logs: FlightLogStore, state: AppSyncState) async -> String? {
+        lastError = nil
+        await sync(profile: profile, logs: logs)
+        if let error = lastError {
+            lastError = "Your flights must be uploaded before the transfer. \(error)"
+            return nil
+        }
+        guard !isBusy else { lastError = "Still syncing. Try again in a moment."; return nil }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let (api, s) = try await token()
+            let uid = s.userID.lowercased()
+            let aid = aircraftID.uuidString.lowercased()
+            let statePath = "\(uid)/\(aid)/transfer-state.json"
+            try await api.uploadFile(path: statePath, data: EventPersistence.encoder.encode(state),
+                                     contentType: "application/json", token: s.accessToken)
+            let code = TransferCode.make()
+            let row: [String: Any] = [
+                "aircraft_id": aid,
+                "tail_number": profile.tailNumber,
+                "to_email": email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+                "to_phone": phone.filter(\.isASCII).filter(\.isNumber),
+                "code_hash": TransferCode.hash(code),
+                "state_path": statePath,
+            ]
+            let rows = try await api.insert(table: "aircraft_transfers", rows: [row], token: s.accessToken)
+            outgoingTransfer = rows.first.flatMap(AircraftTransfer.init(row:))
+            TransferCode.remember(code, for: outgoingTransfer?.id)
+            status = "Transfer started. Send the buyer the code."
+            return code
+        } catch CloudError.server(let code, let body) where code == 409 || body.contains("aircraft_transfers_one_pending") {
+            lastError = "A transfer for this aircraft is already waiting. Cancel it first to start a new one."
+            await refreshTransfer()
+            return nil
+        } catch {
+            lastError = "The transfer could not be started: \(error.localizedDescription)"
+            return nil
+        }
+    }
+
+    /// Seller: cancels the pending transfer (the code stops working).
+    func cancelTransfer() async {
+        guard let t = outgoingTransfer else { return }
+        do {
+            let (api, s) = try await token()
+            try await api.update(table: "aircraft_transfers", filter: ["id": "eq.\(t.id)"], values: ["status": "cancelled"], token: s.accessToken)
+            TransferCode.remember(nil, for: t.id)
+            outgoingTransfer = nil
+            status = "Transfer cancelled."
+        } catch {
+            lastError = "Could not cancel the transfer: \(error.localizedDescription)"
+        }
+    }
+
+    /// Buyer: accepts with the texted code and their cell number. On success this device switches to the
+    /// transferred aircraft; the caller applies the returned records and then runs restore.
+    func acceptTransfer(code: String, phone: String) async -> TransferAcceptOutcome {
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let (api, s) = try await token()
+            let result = try await api.rpc("accept_aircraft_transfer",
+                                           params: ["transfer_code": TransferCode.normalize(code), "phone": phone],
+                                           token: s.accessToken)
+            guard let r = result as? [String: Any] else { return .failed("Unexpected answer from the server.") }
+            guard (r["ok"] as? Bool) == true, let raw = r["aircraft_id"] as? String, let id = UUID(uuidString: raw) else {
+                return .failed(Self.acceptMessage(reason: r["reason"] as? String, tail: r["tail_number"] as? String, email: s.email))
+            }
+            aircraftID = id
+            defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
+            defaults.removeObject(forKey: "EM.cloud.profileRestored.\(s.userID.lowercased())")
+            uploadedLogs = []
+            defaults.removeObject(forKey: Self.uploadedKey)
+            outgoingTransfer = nil
+            soldAircraft = nil
+            var state: AppSyncState?
+            if let path = r["state_path"] as? String, !path.isEmpty,
+               let data = try? await api.downloadFile(path: path, token: s.accessToken) {
+                state = try? EventPersistence.decoder.decode(AppSyncState.self, from: data)
+            }
+            return .accepted(tail: r["tail_number"] as? String ?? "", state: state)
+        } catch CloudError.server(let code, let body) where code == 404 && body.contains("accept_aircraft_transfer") {
+            return .failed("Aircraft transfers aren't switched on for this account yet. Contact sales@enginepulse.net.")
+        } catch {
+            return .failed("The transfer could not be accepted: \(error.localizedDescription)")
+        }
+    }
+
+    static func acceptMessage(reason: String?, tail: String?, email: String?) -> String {
+        switch reason {
+        case "unconfirmed":
+            return "Confirm your email address first (the code we emailed when you registered), then try again."
+        case "none":
+            return "No transfer is waiting for \(email ?? "this account"). Check the seller used this exact email address and that it is less than 14 days old. If you signed in with Apple and hid your email, register with your email instead."
+        case "mismatch":
+            return "The code or the cell number doesn't match. Use the code from the seller's text and the cell number it was sent to. After 5 wrong tries the transfer is cancelled."
+        case "locked":
+            return "Too many wrong tries, so the transfer was cancelled. Ask the seller to start a new one."
+        case "self":
+            return "This transfer was started from this account. Sign in with the buyer's account to accept it."
+        case "has_aircraft":
+            return "Your account already has \(tail.map { $0.isEmpty ? "an aircraft" : $0 } ?? "an aircraft") with flights or documents. Engine Pulse keeps one aircraft per account for now: transfer that one first, or register a new account and ask the seller to send the transfer to that email."
+        default:
+            return "The transfer could not be accepted."
+        }
+    }
+
+    /// Seller, after the sale: this device starts fresh with a new aircraft id (the caller clears the records).
+    func forgetSoldAircraft() {
+        let id = UUID()
+        aircraftID = id
+        defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
+        uploadedLogs = []
+        defaults.removeObject(forKey: Self.uploadedKey)
+        if let t = soldAircraft { TransferCode.remember(nil, for: t.id) }
+        soldAircraft = nil
+        outgoingTransfer = nil
+        inboxItems = []
+        status = "The sold aircraft was removed from this device. Set up your next aircraft in AIRCRAFT."
     }
 }

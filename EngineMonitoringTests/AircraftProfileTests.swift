@@ -68,6 +68,18 @@ final class AircraftProfileTests: XCTestCase {
         XCTAssertFalse(DataPathAdvice.advise(monitor: .garminPerspective, link: .flightStream510, make: "Cirrus").automatic)
     }
 
+    // MARK: - Aircraft transfer code
+
+    func testTransferCodeIsReadableAndHashesLikeTheDatabase() {
+        let code = TransferCode.make()
+        XCTAssertEqual(code.count, 8)
+        XCTAssertTrue(code.allSatisfy { "ABCDEFGHJKMNPQRSTUVWXYZ23456789".contains($0) })
+        XCTAssertEqual(TransferCode.display("abcd2345"), "ABCD-2345")
+        XCTAssertEqual(TransferCode.normalize(" abcd-2345 "), "ABCD2345")
+        // Same value as encode(sha256('ABCD2345'), 'hex') in Postgres.
+        XCTAssertEqual(TransferCode.hash("abcd-2345"), "a00d76646eba91b057841554d5c8334f498dc592ed744bce404f21fe271cd36e")
+    }
+
     func testGarminLinksShowTheGarminGuide() {
         let plus = DataPathAdvice.advise(monitor: .garminPerspectivePlus, link: .flightStream510, make: "Cirrus")
         XCTAssertTrue(plus.showsGarminGuide)
