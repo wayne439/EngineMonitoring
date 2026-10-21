@@ -90,6 +90,18 @@ final class POHRepository: ObservableObject {
         }
     }
 
+    /// Removes one uploaded POH or manual from this device (after the upload is deleted).
+    func remove(sourceID: String) async {
+        guard let entry = manifest.first(where: { $0.sourceID == sourceID }) else { return }
+        try? FileManager.default.removeItem(at: Self.folder.appendingPathComponent(entry.filename))
+        try? FileManager.default.removeItem(at: Self.folder.appendingPathComponent(sourceID + ".json"))
+        manifest.removeAll { $0.sourceID == sourceID }
+        try? JSONEncoder().encode(manifest).write(to: Self.manifestURL, options: .atomic)
+        index = nil
+        manuals = []
+        await load()
+    }
+
     /// Removes every POH and manual read on this device (after the aircraft is sold).
     func removeAll() async {
         try? FileManager.default.removeItem(at: Self.folder)

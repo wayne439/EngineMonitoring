@@ -172,6 +172,12 @@ struct CloudAPI: Sendable {
                            json: values, token: token, extraHeaders: ["Prefer": "return=minimal"])
     }
 
+    /// Deletes rows matching `filter` (PostgREST, e.g. ["id": "eq.<uuid>"]).
+    func delete(table: String, filter: [String: String], token: String) async throws {
+        _ = try await send("DELETE", "rest/v1/\(table)", query: filter.map { URLQueryItem(name: $0.key, value: $0.value) },
+                           json: nil, token: token, extraHeaders: ["Prefer": "return=minimal"])
+    }
+
     func deleteFiles(paths: [String], token: String) async throws {
         guard !paths.isEmpty else { return }
         _ = try await send("DELETE", "storage/v1/object/\(Self.bucket)", query: [], json: ["prefixes": paths], token: token)
@@ -646,6 +652,10 @@ final class CloudStore: ObservableObject {
         defer { isBusy = false }
         let scoped = fileURL.startAccessingSecurityScopedResource()
         defer { if scoped { fileURL.stopAccessingSecurityScopedResource() } }
+        // The same document twice (for example the POH uploaded again) only adds a duplicate.
+        if inboxItems.contains(where: { $0.filename == fileURL.lastPathComponent && $0.category == category && $0.status != "failed" }) {
+            return "\(fileURL.lastPathComponent) is already in your uploads. Delete the old one first (swipe left on it) to replace it."
+        }
         do {
             let (api, s) = try await token()
             let data = try Data(contentsOf: fileURL)
@@ -750,6 +760,22 @@ final class CloudStore: ObservableObject {
             lastError = "Could not bring in your uploads: \(error.localizedDescription)"
         }
         await refreshInbox()
+    }
+
+    /// Deletes an uploaded file and its row (for example a POH uploaded twice). Flights already imported from
+    /// it stay. Returns false and sets lastError if it couldn't be deleted.
+    func deleteUpload(_ item: InboxItem) async -> Bool {
+        do {
+            let (api, s) = try await token()
+            try? await api.deleteFiles(paths: [item.storagePath], token: s.accessToken)
+            try await api.delete(table: "inbox_uploads", filter: ["id": "eq.\(item.id)"], token: s.accessToken)
+            inboxItems.removeAll { $0.id == item.id }
+            status = "\(item.filename) was deleted."
+            return true
+        } catch {
+            lastError = "Could not delete \(item.filename): \(error.localizedDescription)"
+            return false
+        }
     }
 
     /// Downloads one inbox file to a temporary place for viewing.
@@ -1155,5 +1181,67 @@ extension CloudStore {
         outgoingTransfer = nil
         inboxItems = []
         status = "The sold aircraft was removed from this device. Set up your next aircraft in AIRCRAFT."
+    }
+}
+
+// MARK: - Beta tester status (admins only)
+
+/// One account as the admin status function reports it (counts only).
+struct TesterStatus: Identifiable, Sendable {
+    let email: String
+    let name: String?
+    let signedUp: Date?
+    let confirmed: Bool
+    let lastSignIn: Date?
+    let tailNumber: String?
+    let aircraft: String?
+    let monitor: String?
+    let flights: Int
+    let lastFlight: Date?
+    let uploads: Int
+    let waiting: Int
+    let failed: Int
+    let documents: String?
+
+    var id: String { email }
+
+    init?(row: [String: Any]) {
+        guard let email = row["email"] as? String else { return nil }
+        func date(_ k: String) -> Date? { (row[k] as? String).flatMap { CloudAPI.parseDate($0) } }
+        func int(_ k: String) -> Int { (row[k] as? Int) ?? (row[k] as? NSNumber)?.intValue ?? 0 }
+        func text(_ k: String) -> String? { (row[k] as? String).flatMap { $0.isEmpty ? nil : $0 } }
+        self.email = email
+        name = text("full_name")
+        signedUp = date("signed_up")
+        confirmed = (row["confirmed"] as? Bool) ?? false
+        lastSignIn = date("last_sign_in")
+        tailNumber = text("tail_number")
+        aircraft = text("aircraft")
+        monitor = text("monitor")
+        flights = int("flights")
+        lastFlight = date("last_flight")
+        uploads = int("uploads")
+        waiting = int("uploads_waiting")
+        failed = int("uploads_failed")
+        documents = text("documents")
+    }
+}
+
+extension CloudStore {
+    /// True when this account is listed in app_admins (false on older databases or when signed out).
+    func checkAdmin() async -> Bool {
+        guard isConfigured, isSignedIn else { return false }
+        do {
+            let (api, s) = try await token()
+            return (try await api.rpc("is_app_admin", params: [:], token: s.accessToken) as? Bool) ?? false
+        } catch {
+            return false
+        }
+    }
+
+    func testerStatus() async throws -> [TesterStatus] {
+        let (api, s) = try await token()
+        let rows = try await api.rpc("admin_tester_status", params: [:], token: s.accessToken) as? [[String: Any]] ?? []
+        return rows.compactMap(TesterStatus.init(row:))
     }
 }

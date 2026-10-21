@@ -182,7 +182,7 @@ struct RegisterView: View {
     @State private var name = ""
     @State private var email = ""
     @State private var password = ""
-    @State private var confirm = ""
+    @State private var showPassword = false
     @State private var agreed = false
     @State private var done = false
 
@@ -190,7 +190,6 @@ struct RegisterView: View {
         if name.trimmingCharacters(in: .whitespaces).isEmpty { return "Enter your name." }
         if !email.contains("@") || !email.contains(".") { return "Enter a valid email address." }
         if password.count < 8 { return "Use at least 8 characters for the password." }
-        if password != confirm { return "The passwords do not match." }
         if aircraftID.isEmpty { return "Choose your aircraft." }
         if tailNumber.trimmingCharacters(in: .whitespaces).isEmpty { return "Enter your tail number." }
         if !agreed { return "Please accept the advisory notice." }
@@ -212,12 +211,22 @@ struct RegisterView: View {
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                SecureField("Password (8+ characters)", text: $password)
-                    .textContentType(.newPassword)
-                SecureField("Confirm password", text: $confirm)
-                    .textContentType(.newPassword)
+                Group {
+                    if showPassword {
+                        TextField("Password (8+ characters)", text: $password)
+                    } else {
+                        SecureField("Password (8+ characters)", text: $password)
+                    }
+                }
+                .textContentType(.newPassword)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                Toggle("Show password", isOn: $showPassword)
+                    .font(.footnote)
             } header: {
-                Text("1. Create your account")
+                Text("1. Your account")
+            } footer: {
+                Text("Use this email and password on every iPad and iPhone, and on enginepulse.net/upload.")
             }
             Section {
                 Picker("Make", selection: $make) {
@@ -241,28 +250,15 @@ struct RegisterView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
-            } header: {
-                Text("2. Your aircraft")
-            } footer: {
-                Text("Pick the make and model, or Other if it isn't listed. Models are split by year where the factory avionics changed.")
-            }
-            Section {
                 Picker("Avionics / engine monitor", selection: $monitor) {
                     ForEach(EngineMonitorType.allCases) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.menu)
-                Picker("Wireless data link", selection: $link) {
-                    ForEach(DataLink.allCases) { Text($0.rawValue).tag($0) }
-                }
-                .pickerStyle(.menu)
-                DataPathAdviceView(advice: DataPathAdvice.advise(monitor: monitor, link: link, make: selected?.make ?? ""))
             } header: {
-                Text("3. Avionics and how your data gets to us")
+                Text("2. Your aircraft")
             } footer: {
-                Text("Not sure? Check the avionics name on the startup screen, or ask your avionics shop. You can change this later in Aircraft Profile.")
+                Text("Pick the make and model (or Other). The usual avionics fill in; change them if yours differ. Everything else, like how your data gets here, is set up after you register.")
             }
-            DataChecklistSection(turbo: selected?.turbo ?? false, monitor: monitor,
-                                 header: "4. Data to have ready")
             Section {
                 Toggle("I understand Engine Pulse is advisory only and does not replace my POH/AFM, engine monitor or A&P.", isOn: $agreed)
                     .font(.footnote)
