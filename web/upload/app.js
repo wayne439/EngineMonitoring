@@ -58,18 +58,59 @@
   function formatOf(name) {
     const ext = name.split(".").pop().toLowerCase();
     if (ext === "csv") return "garmin-csv";
-    if (ext === "jpi") return "jpi";
+    if (ext === "jpi" || ext === "dat") return "jpi";
     if (ext === "pdf") return "pdf";
     if (["jpg", "jpeg", "png", "heic"].includes(ext)) return "image";
     return "unknown";
   }
   function when(ts) { return ts ? new Date(ts).toLocaleString() : ""; }
-  function li(text, right) {
+  function li(text, right, upload) {
     const el = document.createElement("li");
     const a = document.createElement("span"); a.textContent = text;
     const b = document.createElement("span"); b.className = "muted"; b.textContent = right || "";
     el.append(a, b);
+    if (upload) {
+      const del = document.createElement("button");
+      del.type = "button"; del.className = "ghost"; del.textContent = "Delete";
+      del.style.marginLeft = "8px"; del.style.padding = "2px 8px";
+      del.addEventListener("click", () => removeUpload(upload));
+      b.append(" ", del);
+    }
     return el;
+  }
+  const LOG_EXT = ["csv", "jpi", "dat"];
+  const DOC_EXT = ["pdf", "jpg", "jpeg", "png", "heic", "txt"];
+  function ext(name) { return name.includes(".") ? name.split(".").pop().toLowerCase() : ""; }
+  function isLog(name) { return LOG_EXT.includes(ext(name)); }
+
+  // Every file in a dropped folder (an SD card's data_log folder, a USB stick), one level of nesting or more.
+  async function filesFrom(dataTransfer) {
+    const entries = Array.from(dataTransfer.items || []).map((i) => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+    if (!entries.length || entries.every((e) => e.isFile)) return Array.from(dataTransfer.files);
+    const out = [];
+    async function walk(entry) {
+      if (entry.isFile) {
+        if (entry.name.startsWith(".")) return;
+        out.push(await new Promise((res, rej) => entry.file(res, rej)));
+      } else if (entry.isDirectory) {
+        const reader = entry.createReader();
+        let batch;
+        do {
+          batch = await new Promise((res, rej) => reader.readEntries(res, rej));
+          for (const e of batch) await walk(e);
+        } while (batch.length);
+      }
+    }
+    for (const e of entries) await walk(e);
+    return out.filter((f) => isLog(f.name) || DOC_EXT.includes(ext(f.name)));
+  }
+
+  async function removeUpload(u) {
+    if (!confirm("Delete " + u.original_filename + "? Flights already imported from it stay in the app.")) return;
+    if (u.storage_path) await sb.storage.from(BUCKET).remove([u.storage_path]);
+    const { error } = await sb.from("inbox_uploads").delete().eq("id", u.id);
+    if (error) { alert("Could not delete: " + error.message); return; }
+    await loadUploads();
   }
 
   // ---------- auth
@@ -155,32 +196,40 @@
 
   async function loadUploads() {
     const { data, error } = await sb.from("inbox_uploads")
-      .select("id, category, original_filename, status, received_at")
+      .select("id, category, original_filename, status, received_at, storage_path, size_bytes")
       .order("received_at", { ascending: false });
     uploads = error ? [] : data || [];
     renderChecklist();
     const all = $("all-files");
     all.innerHTML = "";
     if (!uploads.length) all.append(li("Nothing uploaded yet."));
-    uploads.forEach((u) => all.append(li(u.original_filename, (STATUS[u.status] || u.status) + " · " + when(u.received_at))));
+    uploads.forEach((u) => all.append(li(u.original_filename, (STATUS[u.status] || u.status) + " · " + when(u.received_at), u)));
   }
 
-  async function upload(category, files) {
-    let done = 0;
+  async function upload(boxCategory, files) {
+    let done = 0, skipped = 0, total = files.length;
+    const category = boxCategory;
     for (const file of files) {
-      note(category, "Uploading " + file.name + "…");
+      // Engine logs always go to the logs box, whichever box they were dropped on.
+      const cat = isLog(file.name) ? "logs" : (boxCategory === "logs" ? "other" : boxCategory);
+      // The same file again (same name and size) only makes a duplicate.
+      if (uploads.some((u) => u.original_filename === file.name && u.category === cat && u.status !== "failed"
+                             && (!u.size_bytes || u.size_bytes === file.size))) { skipped += 1; continue; }
+      if (total > 1) note(category, "Uploading " + (done + skipped + 1) + " of " + total + ": " + file.name + "…");
       const path = user.id + "/inbox/" + Date.now() + "-" + safeName(file.name);
       const up = await sb.storage.from(BUCKET).upload(path, file, { upsert: true, contentType: file.type || "application/octet-stream" });
       if (up.error) { note(category, file.name + ": " + up.error.message, "err"); continue; }
       const row = {
-        aircraft_id: aircraftId, source: "web", category, original_filename: file.name, storage_path: path,
+        aircraft_id: aircraftId, source: "web", category: cat, original_filename: file.name, storage_path: path,
         size_bytes: file.size, format: formatOf(file.name), status: "received",
       };
       const ins = await sb.from("inbox_uploads").insert(row);
       if (ins.error) { note(category, file.name + ": " + ins.error.message, "err"); continue; }
       done += 1;
     }
-    if (done) note(category, done + " file" + (done === 1 ? "" : "s") + " uploaded. Open the app to bring them in.", "ok");
+    const skippedText = skipped ? " " + skipped + " already uploaded, skipped." : "";
+    if (done) note(category, done + " file" + (done === 1 ? "" : "s") + " uploaded. Open the app on your iPad or iPhone to bring them in." + skippedText, "ok");
+    else if (skipped) note(category, "Already uploaded: nothing new." + skippedText, "ok");
     await loadUploads();
   }
 
@@ -213,20 +262,23 @@
       input.addEventListener("change", () => { if (input.files.length) upload(item.id, Array.from(input.files)); });
       const drop = document.createElement("div");
       drop.className = "drop";
-      drop.textContent = "Drop files here or click to choose";
+      drop.textContent = item.id === "logs" ? "Drop the files or the whole data_log folder here, or click to choose" : "Drop files here or click to choose";
       drop.addEventListener("click", () => input.click());
       drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
       drop.addEventListener("dragleave", () => drop.classList.remove("over"));
       drop.addEventListener("drop", (e) => {
         e.preventDefault(); drop.classList.remove("over");
-        if (e.dataTransfer.files.length) upload(item.id, Array.from(e.dataTransfer.files));
+        filesFrom(e.dataTransfer).then((files) => {
+          if (files.length) upload(item.id, files);
+          else note(item.id, "No engine logs or documents found in what was dropped.", "err");
+        });
       });
       const status = document.createElement("div");
       status.className = "msg";
       if (notes[item.id]) msg(status, notes[item.id].text, notes[item.id].kind);
       const list = document.createElement("ul");
       list.className = "files";
-      mine.slice(0, 8).forEach((u) => list.append(li(u.original_filename, STATUS[u.status] || u.status)));
+      mine.slice(0, 8).forEach((u) => list.append(li(u.original_filename, STATUS[u.status] || u.status, u)));
       card.append(input, drop, status, list);
       root.append(card);
     });

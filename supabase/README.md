@@ -42,6 +42,10 @@ Supabase's built-in email sender is only for testing: it sends a few emails per 
 
 | `aircraft_transfers` table | Sales: the seller's transfer of an aircraft to a buyer's email and cell, with the hash of the texted code (never the code itself) |
 
+## Beta tester status (admins)
+
+`admin_tester_status()` shows, for each account, whether it confirmed its email and signed in, its aircraft, and how many flights and uploads it has (counts only). Only accounts whose email is in the `app_admins` table can call it; it appears in the app as ACCOUNT > Beta testers. To add an admin, run `insert into public.app_admins (email) values ('name@example.com');` in the SQL Editor. Don't add the App Review demo account.
+
 ## Aircraft transfers (selling the airplane)
 
 The seller starts a transfer in ACCOUNT (or AIRCRAFT) with the buyer's email and cell number. The app uploads any flights not in the cloud yet and a copy of the maintenance, issue reviews and event markers, then texts the buyer an 8-character code and emails the steps. The buyer signs in to Engine Pulse with that email (confirmed), goes to ACCOUNT → Accept a transfer and enters the code and their cell number. `accept_aircraft_transfer()` then moves the aircraft, its flight logs and its documents to the buyer. The raw files stay in the seller's folder: the storage rules let whoever owns the rows read them, and stop the seller changing or deleting them. Codes expire after 14 days, and five wrong tries cancel the transfer. The buyer's account may hold no other aircraft with flights (one aircraft per account for now).
@@ -66,6 +70,6 @@ createdb emtransfer
 psql -d emtransfer -f tests/supabase_stub.sql -f schema.sql -f tests/transfer_test.sql
 ```
 
-and end with `ALL TRANSFER TESTS PASSED`. The tests check that:
+and end with `ALL TRANSFER TESTS PASSED`. `tests/admin_test.sql` runs the same way and ends with `ALL ADMIN TESTS PASSED`. The tests check that:
 - one pilot can't see, change, delete or attach to another pilot's aircraft, logs or files;
 - account deletion removes only that pilot's data.

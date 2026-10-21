@@ -12,6 +12,7 @@ struct AccountView: View {
     @AppStorage("EM.exploreWithoutAccount") private var exploring = false
     @State private var showPaywall = false
     @State private var showManage = false
+    @State private var isAdmin = false
 
     var body: some View {
         List {
@@ -43,6 +44,7 @@ struct AccountView: View {
             }
         }
         .navigationTitle("ACCOUNT")
+        .task(id: cloud.session?.userID) { isAdmin = await cloud.checkAdmin() }
         .sheet(isPresented: $showPaywall) {
             NavigationStack { PaywallView() }
         }
@@ -144,6 +146,20 @@ struct AccountView: View {
         }
 
         AircraftOwnershipSection()
+
+        if isAdmin {
+            Section {
+                NavigationLink {
+                    AdminTestersView()
+                } label: {
+                    Label("Beta testers", systemImage: "person.3")
+                }
+            } header: {
+                Text("Admin")
+            } footer: {
+                Text("Who has signed in, set up an aircraft and uploaded data. Only admin accounts see this.")
+            }
+        }
 
         Section {
             Button("Sign out") {

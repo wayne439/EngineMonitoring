@@ -24,6 +24,7 @@ struct DocumentsView: View {
     @State private var picking = false
     @State private var message: String?
     @State private var preview: URL?
+    @State private var deleting: InboxItem?
 
     var body: some View {
         Form {
@@ -111,6 +112,12 @@ struct DocumentsView: View {
                             }
                         }
                     }
+                    .swipeActions {
+                        Button("Delete", role: .destructive) { deleting = item }
+                    }
+                    .contextMenu {
+                        Button("Delete", systemImage: "trash", role: .destructive) { deleting = item }
+                    }
                 }
             } header: {
                 HStack {
@@ -120,6 +127,10 @@ struct DocumentsView: View {
                         Button("Refresh") { Task { await cloud.pullInbox(logs: logs) } }
                             .font(.caption)
                     }
+                }
+            } footer: {
+                if !cloud.inboxItems.isEmpty {
+                    Text("Uploaded something twice, or the wrong file? Swipe left on it (or touch and hold) to delete it.")
                 }
             }
         }
@@ -147,6 +158,20 @@ struct DocumentsView: View {
             }
         }
         .quickLookPreview($preview)
+        .confirmationDialog("Delete \(deleting?.filename ?? "this file")?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                guard let item = deleting else { return }
+                deleting = nil
+                Task {
+                    if await cloud.deleteUpload(item) {
+                        await poh.remove(sourceID: item.id)
+                        message = "\(item.filename) was deleted."
+                    }
+                }
+            }
+        } message: {
+            Text("It's removed from your account and this iPad. Flights already imported from it stay.")
+        }
     }
 
     private var requirements: [DocumentRequirement] {

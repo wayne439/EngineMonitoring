@@ -1,5 +1,14 @@
 # Engine Pulse changelog
 
+## 0.9.1 (2026-10-21)
+- Simpler Register screen: one password field (with Show password), make, model, tail and avionics. Data link and the data checklist are set up after registering.
+- Delete uploads: in AIRCRAFT > Documents and uploads, swipe left on a file (or touch and hold) to delete it, for example a POH uploaded twice. The POH copy read on the iPad goes too.
+- Uploading the same document again is refused with a note, so duplicates don't pile up.
+- Admin: ACCOUNT > Beta testers lists every account with sign-in, aircraft, flight and upload counts (accounts listed in app_admins only; counts, never file contents).
+- Website: sign-up page is now three steps (get the app from TestFlight with a QR code, register in the app, add flights); creating the account on the website is optional. The upload page takes a whole data_log folder, files engine logs into the logs box wherever they're dropped, skips files already uploaded, and has Delete on each file.
+- Database: run schema.sql again for Beta testers (admin functions).
+- Version 0.9.1 (34).
+
 ## 0.9.0 (2026-10-20)
 - Engine monitors beyond Garmin. Every import is converted to the Garmin layout the analysis uses, so every monitor gets the same reports, early warning and cloud sync:
   - J.P. Instruments EDM downloads (.JPI and older .DAT): every flight in the file is added. Checked value for value against JPI's own export of a sample EDM-830 download.

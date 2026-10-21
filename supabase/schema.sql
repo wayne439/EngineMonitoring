@@ -388,3 +388,53 @@ $$;
 
 revoke all on function public.accept_aircraft_transfer(text, text) from public, anon;
 grant execute on function public.accept_aircraft_transfer(text, text) to authenticated;
+
+-- ---------------------------------------------------------------- beta tester status (admins only)
+-- Row-level security keeps every pilot's data private, including from the app's owner. These two
+-- functions let the people listed in app_admins see, in the app (ACCOUNT > Beta testers), whether each
+-- tester has signed in, set up an aircraft and uploaded flights and documents. Counts only, no file contents.
+create table if not exists public.app_admins (email text primary key check (email = lower(email)));
+alter table public.app_admins enable row level security;     -- no policies: not readable through the API
+revoke all on public.app_admins from anon, authenticated;
+insert into public.app_admins (email) values ('wayne@fueledconsulting.com') on conflict do nothing;
+
+create or replace function public.is_app_admin() returns boolean
+language sql stable security definer set search_path = public, auth
+as $$
+    select exists (select 1 from public.app_admins a join auth.users u on lower(u.email) = a.email where u.id = auth.uid())
+$$;
+
+create or replace function public.admin_tester_status()
+returns table (email text, full_name text, signed_up timestamptz, confirmed boolean, last_sign_in timestamptz,
+               tail_number text, aircraft text, monitor text, flights bigint, last_flight timestamptz,
+               uploads bigint, uploads_waiting bigint, uploads_failed bigint, documents text)
+language plpgsql stable security definer set search_path = public, auth
+as $$
+begin
+    if not public.is_app_admin() then
+        raise exception 'not allowed' using errcode = '42501';
+    end if;
+    return query
+    select u.email::text,
+           (u.raw_user_meta_data ->> 'full_name')::text,
+           u.created_at,
+           u.email_confirmed_at is not null,
+           u.last_sign_in_at,
+           a.tail_number,
+           nullif(btrim(coalesce(a.make, '') || ' ' || coalesce(a.model, '')), ''),
+           a.monitor,
+           (select count(*) from public.flight_logs f where f.owner_id = u.id),
+           (select max(f.started_at) from public.flight_logs f where f.owner_id = u.id),
+           (select count(*) from public.inbox_uploads i where i.owner_id = u.id),
+           (select count(*) from public.inbox_uploads i where i.owner_id = u.id and i.status in ('received', 'unsupported')),
+           (select count(*) from public.inbox_uploads i where i.owner_id = u.id and i.status = 'failed'),
+           (select string_agg(x.c, ', ' order by x.c) from (
+                select i.category || ' x' || count(*) as c from public.inbox_uploads i where i.owner_id = u.id group by i.category) x)
+    from auth.users u
+    left join lateral (select * from public.aircraft ac where ac.owner_id = u.id order by ac.created_at limit 1) a on true
+    order by u.created_at desc;
+end;
+$$;
+
+revoke all on function public.is_app_admin(), public.admin_tester_status() from public, anon;
+grant execute on function public.is_app_admin(), public.admin_tester_status() to authenticated;

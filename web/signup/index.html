@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sign up · Engine Pulse</title>
-<meta name="description" content="Create your Engine Pulse account and join the iPad and iPhone beta.">
+<meta name="description" content="Join the Engine Pulse beta on iPad and iPhone in three steps.">
 <meta name="theme-color" content="#050b16">
 <link rel="canonical" href="https://enginepulse.net/signup/">
 <link rel="icon" href="../logo.png">
@@ -35,14 +35,18 @@
 <main id="main" class="wrap signup">
   <div class="signup-intro">
     <span class="eyebrow">Join the beta</span>
-    <h1>Create your Engine Pulse account.</h1>
-    <p class="lede">Sign up here, then install the iPad and iPhone beta straight away through Apple's TestFlight. Use the same email and password in the app and on the upload page.</p>
-    <ol class="signup-steps" aria-label="What happens next">
-      <li><b>Create your account</b><span>Your name, email, a password and your aircraft.</span></li>
-      <li><b>Confirm your email</b><span>Enter the 6-digit code we email you.</span></li>
-      <li><b>Get the app</b><span>Open our TestFlight beta link on your iPad or iPhone. The beta is free until launch.</span></li>
+    <h1>Get Engine Pulse in three steps.</h1>
+    <p class="lede">Everything happens on your iPad or iPhone. The beta is free until launch.</p>
+    <ol class="signup-steps" aria-label="How to join">
+      <li><b>Get the app</b><span>On your iPad or iPhone, install <b>TestFlight</b> from the App Store, then open our beta link and tap <b>Accept</b>, then <b>Install</b>. No Apple developer account needed.</span></li>
+      <li><b>Register in the app</b><span>Open Engine Pulse and tap <b>Register</b>: your name, email, a password and your aircraft, on one screen.</span></li>
+      <li><b>Add your flights</b><span>Plug the SD card or USB stick into the iPad with a card reader, or upload from a computer at <a href="../upload/">enginepulse.net/upload</a>.</span></li>
     </ol>
-    <p class="fine">Already have an account, or prefer Sign in with Apple? Skip sign-up: on your iPad or iPhone open <a href="https://testflight.apple.com/join/V9XX24Ca">the TestFlight beta link</a> and sign in in the app.</p>
+    <div class="ctas"><a class="btn btn-primary" href="https://testflight.apple.com/join/V9XX24Ca">Get the beta in TestFlight</a></div>
+    <div class="qr">
+      <img src="../assets/testflight-qr.svg" alt="QR code for the Engine Pulse TestFlight beta link" width="132" height="132">
+      <p class="fine">Reading this on a computer? Point your iPad or iPhone camera at the code, or open <b>testflight.apple.com/join/V9XX24Ca</b> on it (type it exactly, capitals included).</p>
+    </div>
   </div>
 
   <div class="form-card" aria-live="polite">
@@ -50,7 +54,8 @@
 
     <!-- Step 1: account details -->
     <form id="step-account" novalidate>
-      <h2 class="form-title">Your account</h2>
+      <h2 class="form-title">Or create your account here</h2>
+      <p class="fine">Optional, if you'd rather type on a computer. Then install the app (step 1) and log in with the same email and password. You don't need to do both.</p>
       <div class="field">
         <label for="name">Full name</label>
         <input id="name" name="name" type="text" autocomplete="name" required>
