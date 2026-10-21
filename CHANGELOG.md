@@ -1,5 +1,13 @@
 # Engine Pulse changelog
 
+## 0.9.2 (2026-10-21)
+- Fix: flights uploaded on the website reached only the first device that opened the app, and were never saved to the account, so a pilot's other iPad or iPhone (or a reinstall) showed no flights. Every device now brings in every uploaded engine log, and new flights are saved to the account straight after they come in.
+- Fix: when a different account signs in on a device, the previous account's flights and records are cleared from the device first, so two pilots' data can never mix or upload into the wrong account.
+- Deleting a flight in DIAGNOSTICS > Flight Logs now deletes it from the account too, so it isn't restored again.
+- MY FLYING: speeds are graded against each aircraft's own POH speeds (AIRCRAFT > Technique speeds; SR22s start with SR22 POH 4-3 values). Without them, only sink, bank, float and takeoff power are graded. Before, every aircraft was judged against SR22 speeds.
+- MY FLYING shows why it's empty: no flights yet (with the signed-in email and a "Check for uploaded flights now" button), or flights from an engine-only monitor that records no airspeed or altitude.
+- Version 0.9.2 (35).
+
 ## 0.9.1 (2026-10-21)
 - Simpler Register screen: one password field (with Show password), make, model, tail and avionics. Data link and the data checklist are set up after registering.
 - Delete uploads: in AIRCRAFT > Documents and uploads, swipe left on a file (or touch and hold) to delete it, for example a POH uploaded twice. The POH copy read on the iPad goes too.

@@ -382,6 +382,7 @@ struct DiagnosticEventDetail: View {
 }
 
 struct FlightLogsView: View {
+    @EnvironmentObject private var cloud: CloudStore
     @EnvironmentObject private var logStore: FlightLogStore
     @State private var importing = false
     /// What the file picker is choosing: the SD card's data_log folder, or individual log files.
@@ -454,7 +455,9 @@ struct FlightLogsView: View {
                     }
                 }
                 .onDelete { offsets in
-                    for entry in offsets.map({ logStore.entries[$0] }) { logStore.delete(entry) }
+                    let gone = offsets.map { logStore.entries[$0] }
+                    for entry in gone { logStore.delete(entry) }
+                    Task { for entry in gone { await cloud.deleteFlight(filename: entry.filename) } }
                 }
             }
         }

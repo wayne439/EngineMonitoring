@@ -716,13 +716,22 @@ final class CloudStore: ObservableObject {
     /// Brings uploads from the website into the app: engine log CSVs become flights, documents are kept
     /// in Documents. Runs when the app opens or comes back to the foreground.
     func pullInbox(logs: FlightLogStore) async {
-        guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil else { return }
+        guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil, let uid = session?.userID.lowercased() else { return }
         await refreshInbox()
-        // New uploads, and engine logs saved earlier in a format this version can now read (JPI, EI, Dynon).
-        let waiting = inboxItems.filter { $0.status == "received" || ($0.status == "unsupported" && $0.isLog) }
+        // Every device brings in every uploaded engine log once (not only the first device to open the app),
+        // plus new documents. Logs saved earlier in a format this version can now read are retried too.
+        let doneKey = "EM.inboxDone.\(uid)"
+        var done = Set(defaults.stringArray(forKey: doneKey) ?? [])
+        let haveNames = Set(logs.entries.map { $0.originalFilename.lowercased() })
+        let waiting = inboxItems.filter { item in
+            if item.isLog {
+                return !done.contains(item.id) && !haveNames.contains(item.filename.lowercased())
+                    && ["received", "unsupported", "imported", "processing"].contains(item.status)
+            }
+            return item.status == "received"
+        }
         guard !waiting.isEmpty else { return }
         isBusy = true
-        defer { isBusy = false }
         var imported = 0
         do {
             let (api, s) = try await token()
@@ -733,6 +742,7 @@ final class CloudStore: ObservableObject {
                 var newStatus = "stored"
                 var detail: Any = NSNull()
                 if item.isLog {
+                    status = "Bringing in \(item.filename)…"
                     let data = try await api.downloadFile(path: item.storagePath, token: s.accessToken)
                     let file = folder.appendingPathComponent(item.filename)
                     try data.write(to: file)
@@ -746,20 +756,67 @@ final class CloudStore: ObservableObject {
                         newStatus = "imported"
                         imported += 1
                     }
+                    done.insert(item.id)
+                    defaults.set(Array(done), forKey: doneKey)
                 } else if item.category == "logs" {
                     newStatus = "unsupported"
                 }
-                try await api.update(table: "inbox_uploads", filter: ["id": "eq.\(item.id)"],
-                                     values: ["status": newStatus, "detail": detail,
-                                              "processed_at": CloudAPI.isoFormatter.string(from: Date())],
-                                     token: s.accessToken)
+                // Another device may already have imported it; only new uploads change status.
+                if item.status != "imported" || newStatus == "failed" {
+                    try await api.update(table: "inbox_uploads", filter: ["id": "eq.\(item.id)"],
+                                         values: ["status": newStatus, "detail": detail,
+                                                  "processed_at": CloudAPI.isoFormatter.string(from: Date())],
+                                         token: s.accessToken)
+                }
             }
             status = imported > 0 ? "Added \(imported) flight\(imported == 1 ? "" : "s") from your uploads." : "Your uploads are up to date."
             lastError = nil
         } catch {
             lastError = "Could not bring in your uploads: \(error.localizedDescription)"
         }
+        isBusy = false
         await refreshInbox()
+        // The new flights go to the account straight away, so every other device (and a reinstall) gets them.
+        // (Sync is skipped while busy, so the import above couldn't start it.)
+        if imported > 0 { await sync(profile: AircraftProfileSnapshot.shared.profile, logs: logs) }
+    }
+
+    /// Deletes a flight from the account too, so it isn't restored again on this or another device.
+    func deleteFlight(filename: String) async {
+        guard isConfigured, isSignedIn else { return }
+        do {
+            let (api, s) = try await token()
+            let rows = try await api.select(table: "flight_logs", query: [
+                URLQueryItem(name: "select", value: "id,storage_path"),
+                URLQueryItem(name: "filename", value: "eq.\(filename)"),
+            ], token: s.accessToken)
+            let paths = rows.compactMap { $0["storage_path"] as? String }
+            try? await api.deleteFiles(paths: paths, token: s.accessToken)
+            try await api.delete(table: "flight_logs", filter: ["filename": "eq.\(filename)"], token: s.accessToken)
+            uploadedLogs.remove(filename)
+            defaults.set(Array(uploadedLogs), forKey: Self.uploadedKey)
+        } catch {
+            lastError = "The flight was removed from this iPad but not from your account: \(error.localizedDescription)"
+        }
+    }
+
+    /// The account whose data this device holds (nil until someone signs in here).
+    var deviceOwner: String? {
+        get { defaults.string(forKey: "EM.deviceOwner") }
+        set { defaults.set(newValue, forKey: "EM.deviceOwner") }
+    }
+
+    /// Another account signed in on this device: start from a clean slate so the two accounts' flights and
+    /// records never mix (the previous account's data is in its own cloud account). The caller clears the stores.
+    func resetForAccountSwitch() {
+        let id = UUID()
+        aircraftID = id
+        defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
+        uploadedLogs = []
+        defaults.removeObject(forKey: Self.uploadedKey)
+        outgoingTransfer = nil
+        soldAircraft = nil
+        inboxItems = []
     }
 
     /// Deletes an uploaded file and its row (for example a POH uploaded twice). Flights already imported from

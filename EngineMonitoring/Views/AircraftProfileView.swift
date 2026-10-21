@@ -147,6 +147,8 @@ struct AircraftProfileView: View {
             } header: {
                 Text("Maintenance")
             }
+
+            TechniqueSpeedsSection()
         }
         .navigationTitle("Aircraft Profile")
         .onDisappear { store.touch() }
@@ -312,5 +314,69 @@ private struct OptionalNumberRow: View {
         NumberRow(label: label, unit: unit, value: Binding(
             get: { value ?? 0 },
             set: { value = $0 > 0 ? $0 : nil }))
+    }
+}
+
+/// Approach and climb speeds from POH Section 4, used by MY FLYING to grade takeoffs and landings.
+struct TechniqueSpeedsSection: View {
+    @EnvironmentObject private var store: AircraftProfileStore
+    @State private var draft = TechniqueSpeeds(approachLow: 0, approachHigh: 0, vref: 0, rotate: 0, vy: 0, climbLow: 0, climbHigh: 0)
+    @State private var editing = false
+
+    var body: some View {
+        Section {
+            if let current = store.profile.effectiveTechniqueSpeeds, !editing {
+                LabeledContent("Final approach (flaps full)", value: "\(Int(current.speeds.approachLow))-\(Int(current.speeds.approachHigh)) KIAS")
+                LabeledContent("Vref / short field", value: "\(Int(current.speeds.vref)) KIAS")
+                LabeledContent("Rotate", value: "\(Int(current.speeds.rotate)) KIAS")
+                LabeledContent("Vy", value: "\(Int(current.speeds.vy)) KIAS")
+                LabeledContent("Normal climb", value: "\(Int(current.speeds.climbLow))-\(Int(current.speeds.climbHigh)) KIAS")
+                Button("Edit speeds") { draft = current.speeds; editing = true }
+            } else if !editing {
+                Text("Not set: MY FLYING grades sink rate, bank, float and takeoff power, but not speeds.")
+                    .font(.footnote)
+                Button("Enter speeds from my POH") { editing = true }
+            } else {
+                speedField("Final approach, low", \.approachLow)
+                speedField("Final approach, high", \.approachHigh)
+                speedField("Vref / short field", \.vref)
+                speedField("Rotate", \.rotate)
+                speedField("Vy (best rate of climb)", \.vy)
+                speedField("Normal climb, low", \.climbLow)
+                speedField("Normal climb, high", \.climbHigh)
+                Button("Save") {
+                    store.profile.techniqueSpeeds = draft
+                    store.touch()
+                    editing = false
+                }
+                .disabled(!draft.isSensible)
+                Button("Cancel", role: .cancel) { editing = false }
+                if store.profile.techniqueSpeeds != nil {
+                    Button("Remove my speeds", role: .destructive) {
+                        store.profile.techniqueSpeeds = nil
+                        store.touch()
+                        editing = false
+                    }
+                }
+            }
+        } header: {
+            Text("Technique speeds (MY FLYING)")
+        } footer: {
+            Text(store.profile.techniqueSpeeds == nil && store.profile.effectiveTechniqueSpeeds != nil
+                 ? "SR22 POH Section 4 values. Edit them if your POH differs. Coaching targets, not limits."
+                 : "From your POH Section 4 (normal procedures), in knots indicated. Coaching targets, not limits.")
+        }
+    }
+
+    private func speedField(_ label: String, _ key: WritableKeyPath<TechniqueSpeeds, Double>) -> some View {
+        HStack {
+            Text(label)
+            Spacer()
+            TextField("KIAS", value: Binding(get: { draft[keyPath: key] == 0 ? nil : draft[keyPath: key] },
+                                             set: { draft[keyPath: key] = $0 ?? 0 }), format: .number)
+                .keyboardType(.numberPad)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 80)
+        }
     }
 }

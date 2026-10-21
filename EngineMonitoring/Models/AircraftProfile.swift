@@ -114,6 +114,28 @@ enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
     }
 }
 
+/// Normal-procedure speeds from the POH (KIAS) that takeoffs and landings are compared with.
+struct TechniqueSpeeds: Codable, Equatable, Sendable {
+    /// Final approach, flaps full (POH range, e.g. 80-85).
+    var approachLow: Double
+    var approachHigh: Double
+    /// Short-field / threshold speed.
+    var vref: Double
+    var rotate: Double
+    /// Best rate of climb.
+    var vy: Double
+    /// Normal (cruise) climb range.
+    var climbLow: Double
+    var climbHigh: Double
+
+    static let sr22 = TechniqueSpeeds(approachLow: 80, approachHigh: 85, vref: 77, rotate: 70, vy: 101, climbLow: 110, climbHigh: 120)
+
+    var isSensible: Bool {
+        [approachLow, approachHigh, vref, rotate, vy, climbLow, climbHigh].allSatisfy { $0 >= 30 && $0 <= 250 }
+            && approachLow <= approachHigh && climbLow <= climbHigh
+    }
+}
+
 /// Engine limits and pilot references for one aircraft. Values come from the owner's POH/AFM;
 /// the app never treats a template as approved data until the owner confirms it.
 struct EngineLimitSettings: Codable, Equatable, Sendable {
@@ -194,6 +216,15 @@ struct AircraftProfile: Codable, Equatable, Sendable {
     var documentsAppliedFrom: String? = nil
     /// POH vs supplement comparison from the last read.
     var limitCrossChecks: [LimitCrossCheck]? = nil
+    /// Approach and climb speeds (POH Section 4) for MY FLYING. nil: SR22 POH values for SR22s, otherwise not graded.
+    var techniqueSpeeds: TechniqueSpeeds? = nil
+
+    /// The speeds MY FLYING grades against, and where they come from.
+    var effectiveTechniqueSpeeds: (speeds: TechniqueSpeeds, source: String)? {
+        if let techniqueSpeeds { return (techniqueSpeeds, "your POH speeds (AIRCRAFT > Technique speeds)") }
+        if model.uppercased().contains("SR22") { return (.sr22, "SR22 POH 4-3") }
+        return nil
+    }
 
     var isLocked: Bool { lockedAt != nil }
 

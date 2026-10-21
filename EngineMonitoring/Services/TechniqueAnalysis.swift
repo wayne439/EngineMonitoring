@@ -1,32 +1,47 @@
 import Foundation
 
 /// Takeoff and landing quality from the engine data card (1 Hz, baro altitude).
-/// Speeds are from POH 4-3 (APPROVED). The stabilized-approach gates are a common training standard (TRAINING),
-/// to review with a CFII. Recorded values only; this is a coaching aid, not a grade of airmanship.
+/// Speeds come from the aircraft's POH (AIRCRAFT > Technique speeds; SR22 POH 4-3 values for SR22s). Without
+/// them, only sink, bank, float and power are graded. The stabilized-approach gates are a common training standard
+/// (TRAINING), to review with a CFII. Recorded values only; a coaching aid, not a grade of airmanship.
 enum TechniqueStandards {
-    // POH 4-3 Airspeeds for Normal Operation
-    static let finalFlaps100 = 80.0...85.0      // Normal approach, flaps 100%
-    static let vref = 77.0                      // Short field, flaps 100%
-    static let rotate = 70.0                    // Normal takeoff rotation, flaps 50%
-    static let climbNormal = 110.0...120.0      // Enroute climb, flaps up
-    static let vy = 101.0                       // Best rate of climb, SL
-    static let maxRPM = 2700.0                  // POH 2-6
+    private static var current: (speeds: TechniqueSpeeds, source: String)? {
+        AircraftProfileSnapshot.shared.profile.effectiveTechniqueSpeeds
+    }
+    /// False when this aircraft's speeds aren't known: speed checks are then not graded.
+    static var hasSpeeds: Bool { current != nil }
+    private static var s: TechniqueSpeeds { current?.speeds ?? .sr22 }
+
+    static var finalFlaps100: ClosedRange<Double> { s.approachLow...s.approachHigh }
+    static var vref: Double { s.vref }
+    static var rotate: Double { s.rotate }
+    static var climbNormal: ClosedRange<Double> { s.climbLow...s.climbHigh }
+    static var vy: Double { s.vy }
+    static var maxRPM: Double {
+        let r = AircraftProfileSnapshot.shared.profile.limits.rpmMax
+        return r >= 1_000 ? r : 2_700
+    }
 
     /// Speed over the threshold (50 ft) counted "on speed": Vref to 5 kt above the POH final speed.
-    static let onSpeedAt50 = 77.0...90.0
+    static var onSpeedAt50: ClosedRange<Double> { s.vref...(s.approachHigh + 5) }
     /// Stable at 300 ft AGL: speed, sink and bank.
-    static let stableSpeed = 75.0...95.0
+    static var stableSpeed: ClosedRange<Double> { (s.vref - 2)...(s.approachHigh + 10) }
     static let maxSink = 1000.0
     static let maxBankLow = 15.0
     /// 500 ft AGL: speed and sink only (in a VFR pattern you may still be turning final).
-    static let stableSpeed500 = 75.0...100.0
+    static var stableSpeed500: ClosedRange<Double> { (s.vref - 2)...(s.approachHigh + 15) }
     /// More than this from 50 ft to touchdown is a long float.
     static let maxFloatSeconds = 10
     /// Initial climb 100-1,000 ft AGL: between Vy and the top of the normal climb band.
-    static let initialClimb = 95.0...125.0
-    static let fullPowerRPM = 2650.0
+    static var initialClimb: ClosedRange<Double> { (s.vy - 6)...(s.climbHigh + 5) }
+    static var fullPowerRPM: Double { maxRPM - 50 }
 
-    static let source = "Speeds: POH 4-3 (APPROVED). Stable-approach gates: training standard (TRAINING) - review with your CFII."
+    static func kt(_ r: ClosedRange<Double>) -> String { "\(Int(r.lowerBound))-\(Int(r.upperBound)) KIAS" }
+
+    static var source: String {
+        (current.map { "Speeds: \($0.source)." } ?? "Speeds aren't graded until your approach and climb speeds are entered (AIRCRAFT > Technique speeds).")
+            + " Stable-approach gates: training standard (TRAINING) - review with your CFII."
+    }
 }
 
 /// One sample of an approach or departure profile (rounded to keep the bundled history small).
@@ -67,14 +82,19 @@ struct LandingRecord: Codable, Hashable, Sendable, Identifiable {
     let oat: Double?
     let profile: [ProfilePoint]
 
-    var onSpeedAt50: Bool? { ias50.map { TechniqueStandards.onSpeedAt50.contains($0) } }
+    var onSpeedAt50: Bool? {
+        guard TechniqueStandards.hasSpeeds else { return nil }
+        return ias50.map { TechniqueStandards.onSpeedAt50.contains($0) }
+    }
     var stableAt300: Bool? {
         guard let s = ias300, let v = sink300, let b = bank300 else { return nil }
-        return TechniqueStandards.stableSpeed.contains(s) && -v <= TechniqueStandards.maxSink && abs(b) <= TechniqueStandards.maxBankLow
+        let speedOK = !TechniqueStandards.hasSpeeds || TechniqueStandards.stableSpeed.contains(s)
+        return speedOK && -v <= TechniqueStandards.maxSink && abs(b) <= TechniqueStandards.maxBankLow
     }
     var stableAt500: Bool? {
         guard let s = ias500, let v = sink500 else { return nil }
-        return TechniqueStandards.stableSpeed500.contains(s) && -v <= TechniqueStandards.maxSink
+        let speedOK = !TechniqueStandards.hasSpeeds || TechniqueStandards.stableSpeed500.contains(s)
+        return speedOK && -v <= TechniqueStandards.maxSink
     }
     var noLongFloat: Bool? { secondsFrom50.map { $0 <= TechniqueStandards.maxFloatSeconds } }
 
@@ -83,12 +103,17 @@ struct LandingRecord: Codable, Hashable, Sendable, Identifiable {
         func fpm(_ v: Double?) -> String { v.map { String(format: "%.0f fpm", -$0) } ?? "-" }
         func deg(_ v: Double?) -> String { v.map { String(format: "%.0f°", abs($0)) } ?? "-" }
         var c: [TechniqueCheck] = [
-            TechniqueCheck(name: "500 ft: speed and sink", value: "\(kt(ias500)), \(fpm(sink500))", target: "75-100 KIAS, sink 1,000 fpm or less", pass: stableAt500),
-            TechniqueCheck(name: "300 ft: stable", value: "\(kt(ias300)), \(fpm(sink300)), bank \(deg(bank300))", target: "75-95 KIAS, sink 1,000 or less, bank 15° or less", pass: stableAt300),
-            TechniqueCheck(name: "50 ft: over the fence", value: kt(ias50), target: "80-85 KIAS (POH 4-3); 77-90 counted on speed", pass: onSpeedAt50),
+            TechniqueCheck(name: "500 ft: speed and sink", value: "\(kt(ias500)), \(fpm(sink500))",
+                           target: (TechniqueStandards.hasSpeeds ? TechniqueStandards.kt(TechniqueStandards.stableSpeed500) + ", " : "") + "sink 1,000 fpm or less", pass: stableAt500),
+            TechniqueCheck(name: "300 ft: stable", value: "\(kt(ias300)), \(fpm(sink300)), bank \(deg(bank300))",
+                           target: (TechniqueStandards.hasSpeeds ? TechniqueStandards.kt(TechniqueStandards.stableSpeed) + ", " : "") + "sink 1,000 or less, bank 15° or less", pass: stableAt300),
+            TechniqueCheck(name: "50 ft: over the fence", value: kt(ias50),
+                           target: TechniqueStandards.hasSpeeds
+                               ? "\(TechniqueStandards.kt(TechniqueStandards.finalFlaps100)) (POH); \(TechniqueStandards.kt(TechniqueStandards.onSpeedAt50)) counted on speed"
+                               : "Enter your approach speed (AIRCRAFT > Technique speeds) to grade", pass: onSpeedAt50),
             TechniqueCheck(name: "Flare: 50 ft to touchdown", value: secondsFrom50.map { "\($0) s" } ?? "-", target: "10 s or less (no long float)", pass: noLongFloat),
         ]
-        c.append(TechniqueCheck(name: "Touchdown speed (approx.)", value: kt(iasTouchdown), target: "Power off, mains first (POH 4-20)", pass: nil))
+        c.append(TechniqueCheck(name: "Touchdown speed (approx.)", value: kt(iasTouchdown), target: "Power off, mains first", pass: nil))
         return c
     }
 
@@ -119,18 +144,22 @@ struct TakeoffRecord: Codable, Hashable, Sendable, Identifiable {
     let profile: [ProfilePoint]
 
     var fullPower: Bool? { maxRPM.map { $0 >= TechniqueStandards.fullPowerRPM && $0 <= TechniqueStandards.maxRPM + 10 } }
-    var climbOnSpeed: Bool? { climbIAS.map { TechniqueStandards.initialClimb.contains($0) } }
+    var climbOnSpeed: Bool? {
+        guard TechniqueStandards.hasSpeeds else { return nil }
+        return climbIAS.map { TechniqueStandards.initialClimb.contains($0) }
+    }
 
     var checks: [TechniqueCheck] {
         [
             TechniqueCheck(name: "Takeoff power", value: [maxRPM.map { String(format: "%.0f RPM", $0) }, maxMAP.map { String(format: "%.1f in", $0) }]
-                .compactMap { $0 }.joined(separator: ", "), target: "Full power, 2,650-2,710 RPM (POH 2-6 max 2,700)", pass: fullPower),
+                .compactMap { $0 }.joined(separator: ", "), target: "Full power, \(Int(TechniqueStandards.fullPowerRPM))-\(Int(TechniqueStandards.maxRPM) + 10) RPM (POH max \(Int(TechniqueStandards.maxRPM)))", pass: fullPower),
             TechniqueCheck(name: "Fuel flow at takeoff", value: maxFuelFlow.map { String(format: "%.1f gph", $0) } ?? "-",
                            target: "Per your POH/AFM or turbo supplement", pass: nil),
             TechniqueCheck(name: "Speed passing ~20 ft", value: iasLiftoff.map { String(format: "%.0f KIAS", $0) } ?? "-",
-                           target: "Rotate 70 KIAS flaps 50% (POH 4-3)", pass: nil),
+                           target: TechniqueStandards.hasSpeeds ? "Rotate \(Int(TechniqueStandards.rotate)) KIAS (POH)" : "Information", pass: nil),
             TechniqueCheck(name: "Initial climb 100-1,000 ft", value: [climbIAS.map { String(format: "%.0f KIAS", $0) }, climbRate.map { String(format: "%.0f fpm", $0) }]
-                .compactMap { $0 }.joined(separator: ", "), target: "Vy 101 to 110-120 KIAS normal (POH 4-3)", pass: climbOnSpeed),
+                .compactMap { $0 }.joined(separator: ", "),
+                           target: TechniqueStandards.hasSpeeds ? "Vy \(Int(TechniqueStandards.vy)) to \(TechniqueStandards.kt(TechniqueStandards.climbNormal)) normal (POH)" : "Enter your climb speeds (AIRCRAFT > Technique speeds) to grade", pass: climbOnSpeed),
             TechniqueCheck(name: "Time to 1,000 ft above field", value: secondsTo1000.map { "\($0) s" } ?? "-", target: "Information", pass: nil),
         ]
     }
