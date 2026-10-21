@@ -58,6 +58,9 @@ struct MyFlyingView: View {
     var body: some View {
         let index = TechniqueIndex(Array(logStore.summaries.values))
         List {
+            if index.landings.isEmpty && index.takeoffs.isEmpty {
+                MyFlyingEmptySection(flights: logStore.entries.count)
+            }
             summarySection(index)
             landingCharts(index)
             takeoffChart(index)
@@ -132,25 +135,29 @@ struct MyFlyingView: View {
         if pts.count >= 2 {
             Section {
                 Chart {
-                    RectangleMark(yStart: .value("Low", TechniqueStandards.finalFlaps100.lowerBound),
-                                  yEnd: .value("High", TechniqueStandards.finalFlaps100.upperBound))
-                        .foregroundStyle(Color.green.opacity(0.15))
-                    RuleMark(y: .value("Vref", TechniqueStandards.vref))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
-                        .foregroundStyle(.secondary)
-                        .annotation(position: .bottom, alignment: .leading) { Text("Vref 77").font(.caption2).foregroundStyle(.secondary) }
+                    if TechniqueStandards.hasSpeeds {
+                        RectangleMark(yStart: .value("Low", TechniqueStandards.finalFlaps100.lowerBound),
+                                      yEnd: .value("High", TechniqueStandards.finalFlaps100.upperBound))
+                            .foregroundStyle(Color.green.opacity(0.15))
+                        RuleMark(y: .value("Vref", TechniqueStandards.vref))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                            .foregroundStyle(.secondary)
+                            .annotation(position: .bottom, alignment: .leading) { Text("Vref \(Int(TechniqueStandards.vref))").font(.caption2).foregroundStyle(.secondary) }
+                    }
                     ForEach(pts) { p in
                         PointMark(x: .value("Date", p.date), y: .value("KIAS", p.value))
                             .foregroundStyle(p.ok ? Color.green : Color.orange)
                             .symbolSize(30)
                     }
                 }
-                .chartYScale(domain: 65...105)
+                .chartYScale(domain: max(30, (pts.map(\.value).min() ?? 65) - 10)...((pts.map(\.value).max() ?? 105) + 10))
                 .frame(height: 190)
             } header: {
                 Text("Speed Over The Fence (50 ft)")
             } footer: {
-                Text("Green band: POH 4-3 final with full flaps, 80-85 KIAS. Orange: outside 77-90 KIAS.")
+                Text(TechniqueStandards.hasSpeeds
+                     ? "Green band: POH final approach \(TechniqueStandards.kt(TechniqueStandards.finalFlaps100)). Orange: outside \(TechniqueStandards.kt(TechniqueStandards.onSpeedAt50))."
+                     : "Enter your approach speeds in AIRCRAFT > Technique speeds to grade these.")
             }
         }
         let months = monthly(index.landings.map(\.record))
@@ -189,13 +196,15 @@ struct MyFlyingView: View {
         if pts.count >= 2 {
             Section {
                 Chart {
-                    RectangleMark(yStart: .value("Low", TechniqueStandards.climbNormal.lowerBound),
-                                  yEnd: .value("High", TechniqueStandards.climbNormal.upperBound))
-                        .foregroundStyle(Color.green.opacity(0.15))
-                    RuleMark(y: .value("Vy", TechniqueStandards.vy))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
-                        .foregroundStyle(.secondary)
-                        .annotation(position: .bottom, alignment: .leading) { Text("Vy 101").font(.caption2).foregroundStyle(.secondary) }
+                    if TechniqueStandards.hasSpeeds {
+                        RectangleMark(yStart: .value("Low", TechniqueStandards.climbNormal.lowerBound),
+                                      yEnd: .value("High", TechniqueStandards.climbNormal.upperBound))
+                            .foregroundStyle(Color.green.opacity(0.15))
+                        RuleMark(y: .value("Vy", TechniqueStandards.vy))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                            .foregroundStyle(.secondary)
+                            .annotation(position: .bottom, alignment: .leading) { Text("Vy \(Int(TechniqueStandards.vy))").font(.caption2).foregroundStyle(.secondary) }
+                    }
                     ForEach(pts) { p in
                         PointMark(x: .value("Date", p.date), y: .value("KIAS", p.value))
                             .foregroundStyle(p.ok ? Color.green : Color.orange)
@@ -207,7 +216,9 @@ struct MyFlyingView: View {
             } header: {
                 Text("Initial Climb Speed (100-1,000 ft)")
             } footer: {
-                Text("Green band: POH 4-3 normal climb 110-120 KIAS. Vy 101 KIAS at sea level.")
+                Text(TechniqueStandards.hasSpeeds
+                     ? "Green band: POH normal climb \(TechniqueStandards.kt(TechniqueStandards.climbNormal)). Vy \(Int(TechniqueStandards.vy)) KIAS at sea level."
+                     : "Enter your climb speeds in AIRCRAFT > Technique speeds to grade these.")
             }
         }
     }
@@ -332,16 +343,20 @@ struct LandingDetailView: View {
                     }
                 }
                 Section {
-                    profileChart(\.ias, label: "KIAS", domain: 60.0...120.0) {
-                        RectangleMark(yStart: .value("Low", TechniqueStandards.finalFlaps100.lowerBound),
-                                      yEnd: .value("High", TechniqueStandards.finalFlaps100.upperBound))
-                            .foregroundStyle(Color.green.opacity(0.15))
-                        RuleMark(y: .value("Vref", TechniqueStandards.vref)).lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    profileChart(\.ias, label: "KIAS", domain: max(30.0, TechniqueStandards.vref - 30)...(TechniqueStandards.finalFlaps100.upperBound + 40)) {
+                        if TechniqueStandards.hasSpeeds {
+                            RectangleMark(yStart: .value("Low", TechniqueStandards.finalFlaps100.lowerBound),
+                                          yEnd: .value("High", TechniqueStandards.finalFlaps100.upperBound))
+                                .foregroundStyle(Color.green.opacity(0.15))
+                            RuleMark(y: .value("Vref", TechniqueStandards.vref)).lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        }
                     }
                 } header: {
                     Text("Airspeed")
                 } footer: {
-                    Text("Green band 80-85 KIAS (POH 4-3, flaps 100%); dashed line Vref 77.")
+                    Text(TechniqueStandards.hasSpeeds
+                         ? "Green band \(TechniqueStandards.kt(TechniqueStandards.finalFlaps100)) (POH final approach); dashed line Vref \(Int(TechniqueStandards.vref))."
+                         : "Enter your approach speeds in AIRCRAFT > Technique speeds to see the target band.")
                 }
                 Section {
                     profileChart(\.vs, label: "fpm") {
@@ -426,11 +441,13 @@ struct TakeoffDetailView: View {
             if takeoff.profile.count >= 5 {
                 Section {
                     Chart {
-                        RuleMark(y: .value("Rotate", TechniqueStandards.rotate)).lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
-                            .annotation(position: .bottom, alignment: .leading) { Text("Rotate 70").font(.caption2) }
-                        RectangleMark(yStart: .value("Low", TechniqueStandards.climbNormal.lowerBound),
-                                      yEnd: .value("High", TechniqueStandards.climbNormal.upperBound))
-                            .foregroundStyle(Color.green.opacity(0.15))
+                        if TechniqueStandards.hasSpeeds {
+                            RuleMark(y: .value("Rotate", TechniqueStandards.rotate)).lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                                .annotation(position: .bottom, alignment: .leading) { Text("Rotate \(Int(TechniqueStandards.rotate))").font(.caption2) }
+                            RectangleMark(yStart: .value("Low", TechniqueStandards.climbNormal.lowerBound),
+                                          yEnd: .value("High", TechniqueStandards.climbNormal.upperBound))
+                                .foregroundStyle(Color.green.opacity(0.15))
+                        }
                         ForEach(takeoff.profile, id: \.t) { p in
                             LineMark(x: .value("Seconds", Double(p.t)), y: .value("KIAS", Double(p.ias)))
                         }
@@ -440,7 +457,9 @@ struct TakeoffDetailView: View {
                 } header: {
                     Text("Airspeed")
                 } footer: {
-                    Text("Dashed: rotate 70 KIAS (flaps 50%). Green band: normal climb 110-120 KIAS (POH 4-3).")
+                    Text(TechniqueStandards.hasSpeeds
+                         ? "Dashed: rotate \(Int(TechniqueStandards.rotate)) KIAS. Green band: normal climb \(TechniqueStandards.kt(TechniqueStandards.climbNormal)) (POH)."
+                         : "Enter your rotate and climb speeds in AIRCRAFT > Technique speeds to see the targets.")
                 }
                 Section("Height Above The Field") {
                     Chart(takeoff.profile, id: \.t) { p in
@@ -470,6 +489,45 @@ struct FlightTechniqueSection: View {
                     NavigationLink { LandingDetailView(landing: l, airport: l.airport) } label: { LandingRow(landing: l, airport: l.airport) }
                 }
             }
+        }
+    }
+}
+
+/// Why MY FLYING is empty, and what to do.
+private struct MyFlyingEmptySection: View {
+    let flights: Int
+    @EnvironmentObject private var cloud: CloudStore
+    @EnvironmentObject private var logs: FlightLogStore
+    @EnvironmentObject private var aircraft: AircraftProfileStore
+
+    var body: some View {
+        Section {
+            if flights == 0 {
+                Label("No flights on this device yet.", systemImage: "airplane.departure").font(.headline)
+                Text("Import your engine logs in DIAGNOSTICS > Flight Logs, or upload them from a computer at enginepulse.net/upload. Uploads come in when the app opens while you're signed in with the same email.")
+                    .font(.subheadline)
+                if cloud.isSignedIn {
+                    LabeledContent("Signed in as", value: cloud.session?.email ?? "Apple ID (email hidden)")
+                    Button("Check for uploaded flights now") {
+                        Task {
+                            await cloud.restore(aircraft: aircraft, logs: logs)
+                            await cloud.pullInbox(logs: logs)
+                        }
+                    }
+                    .disabled(cloud.isBusy)
+                    if let status = cloud.status { Text(status).font(.footnote).foregroundStyle(.secondary) }
+                    if let error = cloud.lastError { Text(error).font(.footnote).foregroundStyle(.red) }
+                } else {
+                    Text("Sign in (ACCOUNT) with the email you used on the website to bring in your uploads.")
+                        .font(.footnote).foregroundStyle(.orange)
+                }
+            } else {
+                Label("\(flights) flight\(flights == 1 ? "" : "s"), but no takeoffs or landings found.", systemImage: "info.circle").font(.headline)
+                Text("Takeoffs and landings need airspeed and altitude in the log (Garmin glass records both). Engine-only monitors such as JPI and most EI units don't, so this page stays empty for them; engine health, reports and early warning still work.")
+                    .font(.subheadline)
+            }
+        } header: {
+            Text("Getting started")
         }
     }
 }

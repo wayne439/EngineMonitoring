@@ -420,3 +420,19 @@ enum SoldAircraftCleanup {
         await cloud.syncAppState(maintenance: maintenance, issues: issues, events: events)
     }
 }
+
+/// Another account signed in on this device: clear the previous account's local copy (it stays in that account).
+enum AccountSwitchCleanup {
+    @MainActor
+    static func run(cloud: CloudStore, aircraft: AircraftProfileStore, logs: FlightLogStore, maintenance: MaintenanceStore,
+                    issues: IssueStore, events: DiagnosticEventStore, poh: POHRepository) async {
+        for entry in logs.entries { logs.delete(entry) }
+        // Dated long ago, so the new account's saved records win when they sync.
+        maintenance.replaceFromCloud(items: MaintenanceSchedule.defaults, entries: [], modified: .distantPast)
+        await issues.replaceFromCloud(records: [:], modified: .distantPast)
+        events.replaceFromCloud(events: [], modified: .distantPast)
+        await poh.removeAll()
+        cloud.resetForAccountSwitch()
+        aircraft.profile = AircraftProfile.sr22TurboTemplate
+    }
+}
