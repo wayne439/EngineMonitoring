@@ -119,10 +119,6 @@ struct DocumentsView: View {
                         Button("Delete", systemImage: "trash", role: .destructive) { deleting = item }
                     }
                 }
-            } footer: {
-                if !cloud.inboxItems.isEmpty {
-                    Text("Uploaded something twice, or the wrong file? Swipe left on it (or touch and hold) to delete it.")
-                }
             } header: {
                 HStack {
                     Text("Your uploads")
@@ -131,6 +127,10 @@ struct DocumentsView: View {
                         Button("Refresh") { Task { await cloud.pullInbox(logs: logs) } }
                             .font(.caption)
                     }
+                }
+            } footer: {
+                if !cloud.inboxItems.isEmpty {
+                    Text("Uploaded something twice, or the wrong file? Swipe left on it (or touch and hold) to delete it.")
                 }
             }
         }
