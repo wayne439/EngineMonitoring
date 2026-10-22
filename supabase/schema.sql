@@ -396,7 +396,7 @@ grant execute on function public.accept_aircraft_transfer(text, text) to authent
 create table if not exists public.app_admins (email text primary key check (email = lower(email)));
 alter table public.app_admins enable row level security;     -- no policies: not readable through the API
 revoke all on public.app_admins from anon, authenticated;
-insert into public.app_admins (email) values ('wayne@fueledconsulting.com') on conflict do nothing;
+insert into public.app_admins (email) values ('waynedickert@gmail.com'), ('wayne@fueledconsulting.com') on conflict do nothing;
 
 create or replace function public.is_app_admin() returns boolean
 language sql stable security definer set search_path = public, auth
