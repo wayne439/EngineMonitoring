@@ -136,6 +136,14 @@ final class AircraftProfileTests: XCTestCase {
         XCTAssertEqual(phases[110], .ground)
     }
 
+    func testG7BatteryNoteOnlyForG7() {
+        var p = AircraftProfile.sr22TurboTemplate
+        p.make = "Cirrus"; p.model = "SR22T G7"; p.monitor = .garminPerspectiveTouchPlus
+        XCTAssertTrue(p.batteryNote?.contains("lithium-ion") ?? false)
+        p.model = "SR22T G6"; p.monitor = .garminPerspectivePlus
+        XCTAssertNil(p.batteryNote)
+    }
+
     func testGarminLinksShowTheGarminGuide() {
         let plus = DataPathAdvice.advise(monitor: .garminPerspectivePlus, link: .flightStream510, make: "Cirrus")
         XCTAssertTrue(plus.showsGarminGuide)

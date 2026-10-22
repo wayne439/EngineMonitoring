@@ -363,7 +363,7 @@ enum EarlyWarning {
         }
         for b in ["volt1", "volt2"] {
             if let s = by[b] {
-                add(nil, "Bus \(b.suffix(1)) voltage declining (alternator, regulator, battery, connections)", "Have the alternator output, regulator and battery checked.", [s])
+                add(nil, "Bus \(b.suffix(1)) voltage declining (alternator, regulator, battery, connections)", "Have the alternator output, regulator and battery checked." + (AircraftProfileSnapshot.shared.profile.batteryNote.map { " " + $0 } ?? ""), [s])
             }
         }
         return out

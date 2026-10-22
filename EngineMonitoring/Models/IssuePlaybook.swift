@@ -5,7 +5,17 @@ import Foundation
 /// PROCEDURES for the exact wording. "To resolve" lists ground checks for the pilot and the A&P
 /// (TRAINING / shop guidance, not a diagnosis). Update with the shop's findings as items are closed.
 enum IssuePlaybook {
+    /// The guide for an issue, with notes for this aircraft added (for example the G7's lithium-ion battery 1).
     static func guide(for kind: String) -> IssueGuide {
+        let g = baseGuide(for: kind)
+        let profile = AircraftProfileSnapshot.shared.profile
+        guard let note = profile.batteryNote,
+              (g.toResolve + [g.meaning]).contains(where: { $0.lowercased().contains("battery") }) else { return g }
+        return IssueGuide(title: g.title, meaning: g.meaning, pohProcedureID: g.pohProcedureID, pohReference: g.pohReference,
+                          inFlight: g.inFlight, toResolve: g.toResolve + [note], copaTopic: g.copaTopic)
+    }
+
+    private static func baseGuide(for kind: String) -> IssueGuide {
         if let g = guides[kind] { return g }
         if let r = recordIssues.first(where: { $0.issue.kind == kind }) { return r.guide }
         if kind.hasPrefix("trend.") { return trendGuide(kind) }
@@ -35,8 +45,8 @@ enum IssuePlaybook {
             ],
             toResolve: [
                 "Note engine temperature, OAT and how long since shutdown for each event - a hot-start pattern points to technique, a cold one to priming.",
-                "Compare your hot-start technique with a CFII (TAT turbonormalized engines are known for hard hot starts).",
-                "If it happens with correct technique: ask the A&P to check the fuel injector nozzles (shown 35 hr past due on the Nov 2025 status sheet), fuel servo/mixture rigging and the boost pump.",
+                "Compare your hot-start technique with a CFII (fuel-injected engines, especially turbocharged and turbonormalized ones, can be hard to start hot).",
+                "If it happens with correct technique: ask the A&P to check the fuel injector nozzles, fuel servo/mixture rigging and the boost pump.",
                 "Check cranking voltage in Engine / Start history; low values point at the battery, starter or connections.",
             ],
             copaTopic: "Engine catches and then dies during start"),
@@ -179,7 +189,7 @@ enum IssuePlaybook {
         ],
         toResolve: [
             "On the ground the POH says correct before flight.",
-            "Ask the A&P to check the propeller governor setting and the governor oil leak noted at the Nov 2025 prebuy.",
+            "Ask the A&P to check the propeller governor setting, and for oil leaks at the governor.",
         ],
         copaTopic: "RPM above 2,710 on takeoff or climb")
 
@@ -192,7 +202,7 @@ enum IssuePlaybook {
             "Low or high: power REDUCE to minimum for sustained flight; land as soon as possible; prepare for engine failure.",
         ],
         toResolve: [
-            "Check oil quantity before the next flight and look for leaks (turbo wastegate and prop governor leaks were noted at the Nov 2025 prebuy).",
+            "Check oil quantity before the next flight and look for leaks (on turbo engines, also around the wastegate; and at the prop governor).",
             "Ask the A&P to check the sender and pressure relief valve; compare with the oil analysis.",
             "If it only happens in the flare or landing roll with the power at idle and hot oil, it is the same pattern as Low Idle Oil Pressure (POH 3A-6) - show the occurrences to the A&P.",
         ],
@@ -209,8 +219,8 @@ enum IssuePlaybook {
         ],
         toResolve: [
             "Find which cylinder: see Engine / In Flight history.",
-            "Ask the A&P to check that cylinder's baffles, injector nozzle (past due Nov 2025) and probe.",
-            "Climb technique: shallower climb / more airspeed, mixture per the TAT supplement.",
+            "Ask the A&P to check that cylinder's baffles, injector nozzle and probe.",
+            "Climb technique: shallower climb / more airspeed, mixture per your POH/AFM and supplements.",
         ],
         copaTopic: "CHT above 420 F")
 
@@ -233,7 +243,6 @@ enum IssuePlaybook {
                 "If the valve looks good, have the cylinder \(cyl) EGT probe, clamp and wiring checked.",
                 "Compare with the oil analysis: nickel was 11 ppm in Apr 2026 (guide 5) and 6 ppm in Aug 2026; nickel is often linked to valve-train wear.",
                 "Caught early, a leaking exhaust valve can sometimes be lapped in place instead of removing the cylinder; ask the A&P about options.",
-                "Fuel injector nozzles were shown past due on the Nov 2025 status sheet; worth doing at the same visit.",
             ],
             copaTopic: "EGT on one cylinder cycling about once a minute in cruise (possible exhaust valve)")
     }
@@ -400,7 +409,7 @@ enum IssuePlaybook {
             title: "Technique: " + (label.components(separatedBy: " (").first ?? label),
             meaning: "\(label). This is an operating-technique reference (Jim Barker flight profile), not a POH limit.",
             pohProcedureID: nil, pohReference: nil,
-            inFlight: ["Climb: add airspeed, use boost pump per the TAT supplement, or enrich - as your CFII taught."],
+            inFlight: ["Climb: add airspeed, use the boost pump per your POH/AFM supplement, or enrich - as your CFII taught."],
             toResolve: ["Review your climb profile with a CFI familiar with your aircraft type.",
                         "Approved TIT limits come from your POH/AFM or turbo supplement."],
             copaTopic: "Turbo engine climb CHT and TIT technique")
@@ -421,9 +430,9 @@ enum IssuePlaybook {
             checks.insert("Check oil quantity and for leaks.", at: 0)
         case .chtMax?, .cht1?, .cht2?, .cht3?, .cht4?, .cht5?, .cht6?: poh = ("3-high-cylinder-head-temperature", "POH 3-20 if CHT annunciation")
             checks.insert("Compared with this aircraft's flights at a similar outside air temperature. Check that cylinder's baffles, injector nozzle and probe.", at: 0)
-        case .egtSpread?: checks.insert("A widening EGT spread can come from an injector, intake leak or probe: ask the A&P about a fuel spread check and nozzle cleaning (past due Nov 2025).", at: 0)
+        case .egtSpread?: checks.insert("A widening EGT spread can come from an injector, intake leak or probe: ask the A&P about a fuel spread check and nozzle cleaning.", at: 0)
         case .volt1?, .volt2?: poh = ("3a-low-voltage-on-main-bus-1", "POH 3A-10 if M BUS caution")
-            checks.insert("Have the battery and alternator output checked.", at: 0)
+            checks.insert("Have the battery and alternator output checked." + (AircraftProfileSnapshot.shared.profile.batteryNote.map { " " + $0 } ?? ""), at: 0)
         default: break
         }
         return IssueGuide(

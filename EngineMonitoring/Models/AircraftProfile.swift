@@ -290,6 +290,15 @@ struct AircraftProfile: Codable, Equatable, Sendable {
 
     var isCirrus: Bool { make.lowercased().contains("cirrus") }
 
+    /// Cirrus G7 (Perspective Touch+): battery 1 is lithium-ion and sits inside the instrument panel.
+    var isCirrusG7: Bool { monitor == .garminPerspectiveTouchPlus || (isCirrus && model.uppercased().contains("G7")) }
+
+    /// Added to battery advice where this aircraft's battery differs from the usual engine-bay lead-acid battery.
+    var batteryNote: String? {
+        guard isCirrusG7 else { return nil }
+        return "On the G7, battery 1 is a lithium-ion battery mounted inside the instrument panel, not in the engine compartment. Have it checked per the Cirrus maintenance manual and the battery maker's instructions: lead-acid capacity tests and chargers don't apply."
+    }
+
     /// Starting point for a turbonormalized Cirrus SR22 (the aircraft the app was first built for).
     /// Values are the basic SR22 POH Section 2 numbers; the owner must confirm them for their own aircraft.
     static let sr22TurboTemplate = AircraftProfile(
