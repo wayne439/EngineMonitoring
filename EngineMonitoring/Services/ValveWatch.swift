@@ -26,10 +26,10 @@ struct ValveWatchResult: Codable, Hashable, Sendable {
     var checked: Bool { steadyWindows > 0 }
 }
 
-/// Looks for the early exhaust-valve signature published by Savvy Aviation for FEVA (AOPA, Aug 2014):
+/// Looks for the early exhaust-valve signature described in published engine-monitoring literature:
 /// a slow, rhythmic EGT oscillation on ONE cylinder, about one cycle per minute, 30-100 °F, in steady cruise.
 /// A valve that is not seating fully leaks some exhaust; as the valve rotator turns it the leak comes and goes,
-/// and that cylinder's EGT swings slowly. Built from that description (not Savvy's model).
+/// and that cylinder's EGT swings slowly. Engine Pulse's own implementation of that description.
 /// Same method as the reference implementation. Advisory (TRAINING): a flag means "ask the A&P to borescope".
 enum ValveWatch {
     static let windowSeconds = 480          // 8 minutes
@@ -45,7 +45,7 @@ enum ValveWatch {
     static let flightShare = 0.25, flightMinHits = 2
     /// Share of a window that must be classified as cruise.
     static let minCruiseShare = 0.8
-    static let source = "Signature published by Savvy Aviation (FEVA), AOPA Aug 2014"
+    static let source = "Engine Pulse valve watch"
 
     static func analyze(_ log: PerspectiveLog, phases: [FlightPhase]) -> ValveWatchResult {
         let n = log.sampleCount

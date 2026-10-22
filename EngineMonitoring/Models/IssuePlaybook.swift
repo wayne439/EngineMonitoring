@@ -220,7 +220,7 @@ enum IssuePlaybook {
         return IssueGuide(
             title: "Cylinder \(cyl) EGT cycling in cruise (valve watch)",
             meaning: "In steady cruise, cylinder \(cyl)'s EGT swung up and down on its own, about once a minute, while the other cylinders stayed steady. "
-                + "Savvy Aviation's FEVA associates this pattern with an exhaust valve that is starting to leak (not seating fully), often well before it burns. "
+                + "This pattern is associated with an exhaust valve that is starting to leak (not seating fully), often well before it burns. "
                 + "A loose EGT probe or connector, or a partly blocked injector on that cylinder, can look similar. Not a diagnosis.",
             pohProcedureID: nil, pohReference: nil,
             inFlight: [
@@ -312,22 +312,22 @@ enum IssuePlaybook {
         }
     }
 
-    /// GAMI lean test (GAMICheck).
+    /// lean test (GAMICheck).
     private static func gamiGuide(_ kind: String) -> IssueGuide {
         IssueGuide(
-            title: "GAMI spread (fuel distribution)",
-            meaning: "In a slow lean sweep, the cylinders reached peak EGT at fuel flows spread by 0.5 gph or more. GAMI's guidance: 0.5 gph or less runs smoothly lean of peak; about 1.0 gph or more means mismatched injectors, so the leanest cylinder goes lean of peak long before the richest one does.",
+            title: "Fuel spread (fuel distribution)",
+            meaning: "In a slow lean sweep, the cylinders reached peak EGT at fuel flows spread by 0.5 gph or more. As a rule of thumb, 0.5 gph or less runs smoothly lean of peak; about 1.0 gph or more means mismatched injectors, so the leanest cylinder goes lean of peak long before the richest one does.",
             pohProcedureID: nil, pohReference: nil,
             inFlight: [
                 "If the engine runs rough lean of peak, enrichen to smooth operation; run rich of peak per the POH until the spread is fixed.",
                 "Stay within the POH/AFM and supplement limits for CHT and TIT at all times.",
             ],
             toResolve: [
-                "Repeat the guided lean test once to confirm (DIAGNOSTICS > GAMI Lean Test).",
+                "Repeat the guided lean test once to confirm (DIAGNOSTICS > Lean Test).",
                 "Ask the A&P to clean and flow-check the injectors; check the intake couplers and gaskets on the leanest cylinder.",
-                "If the spread stays near 1 gph, consider a matched (GAMIjector) set from GAMI.",
+                "If the spread stays near 1 gph, consider a matched set of balanced injectors.",
             ],
-            copaTopic: "GAMI spread over 0.5 gph")
+            copaTopic: "Fuel spread over 0.5 gph")
     }
 
     /// Turbonormalizer and induction checks (TurboCheck).
@@ -370,7 +370,7 @@ enum IssuePlaybook {
         let advice: String
         switch metric?.group {
         case .cylinders?: advice = "Check baffles and seals near this cylinder and its CHT probe; compare with the oil analysis. If its EGT is also moving away from the others, suspect the injector, an intake leak or timing."
-        case .balance?: advice = "Check that cylinder's injector (clean/flow) and intake coupling; a GAMI lean test shows fuel distribution. If Probes & Wiring flagged the probe, fix that first."
+        case .balance?: advice = "Check that cylinder's injector (clean/flow) and intake coupling; a lean test shows fuel distribution. If Probes & Wiring flagged the probe, fix that first."
         case .valves?: advice = "Ask the A&P to borescope the exhaust valve of this cylinder."
         case .oil?: advice = id == "oilp" ? "Check oil quantity and leaks, then the pressure relief setting and sender; watch iron and copper in the oil analysis." : "Check the oil cooler and its baffles/winterization plate; compare with the oil analysis."
         case .turbo?: advice = "Inspect the exhaust and turbo system (leaks, wastegate) and both TIT probes."
@@ -421,7 +421,7 @@ enum IssuePlaybook {
             checks.insert("Check oil quantity and for leaks.", at: 0)
         case .chtMax?, .cht1?, .cht2?, .cht3?, .cht4?, .cht5?, .cht6?: poh = ("3-high-cylinder-head-temperature", "POH 3-20 if CHT annunciation")
             checks.insert("Compared with this aircraft's flights at a similar outside air temperature. Check that cylinder's baffles, injector nozzle and probe.", at: 0)
-        case .egtSpread?: checks.insert("A widening EGT spread can come from an injector, intake leak or probe: ask the A&P about a GAMI spread check and nozzle cleaning (past due Nov 2025).", at: 0)
+        case .egtSpread?: checks.insert("A widening EGT spread can come from an injector, intake leak or probe: ask the A&P about a fuel spread check and nozzle cleaning (past due Nov 2025).", at: 0)
         case .volt1?, .volt2?: poh = ("3a-low-voltage-on-main-bus-1", "POH 3A-10 if M BUS caution")
             checks.insert("Have the battery and alternator output checked.", at: 0)
         default: break

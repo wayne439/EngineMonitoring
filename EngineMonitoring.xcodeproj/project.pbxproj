@@ -72,6 +72,7 @@
 		0000000000000000000001AF /* AircraftTransferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001AE /* AircraftTransferView.swift */; };
 		0000000000000000000001B3 /* AdminTestersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001B2 /* AdminTestersView.swift */; };
 		0000000000000000000001B5 /* GetStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001B4 /* GetStartedView.swift */; };
+		0000000000000000000001B7 /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001B6 /* AcknowledgementsView.swift */; };
 		000000000000000000000194 /* AircraftProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000193 /* AircraftProfile.swift */; };
 		000000000000000000000196 /* AircraftProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000195 /* AircraftProfileView.swift */; };
 		00000000000000000000018C /* EngineChecks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000018B /* EngineChecks.swift */; };
@@ -163,6 +164,7 @@
 		0000000000000000000001AE /* AircraftTransferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftTransferView.swift; path = Views/AircraftTransferView.swift; sourceTree = "<group>"; };
 		0000000000000000000001B2 /* AdminTestersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AdminTestersView.swift; path = Views/AdminTestersView.swift; sourceTree = "<group>"; };
 		0000000000000000000001B4 /* GetStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GetStartedView.swift; path = Views/GetStartedView.swift; sourceTree = "<group>"; };
+		0000000000000000000001B6 /* AcknowledgementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AcknowledgementsView.swift; path = Views/AcknowledgementsView.swift; sourceTree = "<group>"; };
 		000000000000000000000193 /* AircraftProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftProfile.swift; path = Models/AircraftProfile.swift; sourceTree = "<group>"; };
 		000000000000000000000195 /* AircraftProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AircraftProfileView.swift; path = Views/AircraftProfileView.swift; sourceTree = "<group>"; };
 		00000000000000000000018B /* EngineChecks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineChecks.swift; path = Services/EngineChecks.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				0000000000000000000001AE /* AircraftTransferView.swift */,
 				0000000000000000000001B2 /* AdminTestersView.swift */,
 				0000000000000000000001B4 /* GetStartedView.swift */,
+				0000000000000000000001B6 /* AcknowledgementsView.swift */,
 				000000000000000000000193 /* AircraftProfile.swift */,
 				000000000000000000000195 /* AircraftProfileView.swift */,
 				00000000000000000000018B /* EngineChecks.swift */,
@@ -448,6 +451,7 @@
 				0000000000000000000001AF /* AircraftTransferView.swift in Sources */,
 				0000000000000000000001B3 /* AdminTestersView.swift in Sources */,
 				0000000000000000000001B5 /* GetStartedView.swift in Sources */,
+				0000000000000000000001B7 /* AcknowledgementsView.swift in Sources */,
 				000000000000000000000194 /* AircraftProfile.swift in Sources */,
 				000000000000000000000196 /* AircraftProfileView.swift in Sources */,
 				00000000000000000000018C /* EngineChecks.swift in Sources */,
@@ -537,7 +541,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 37;
+				CURRENT_PROJECT_VERSION = 38;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -546,7 +550,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.4;
+				MARKETING_VERSION = 0.9.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = EnginePulse;
@@ -560,7 +564,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 37;
+				CURRENT_PROJECT_VERSION = 38;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -569,7 +573,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.4;
+				MARKETING_VERSION = 0.9.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = EnginePulse;
@@ -583,10 +587,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 37;
+				CURRENT_PROJECT_VERSION = 38;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.9.4;
+				MARKETING_VERSION = 0.9.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -601,10 +605,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 37;
+				CURRENT_PROJECT_VERSION = 38;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.9.4;
+				MARKETING_VERSION = 0.9.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

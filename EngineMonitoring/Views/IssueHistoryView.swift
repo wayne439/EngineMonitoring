@@ -253,13 +253,12 @@ struct IssueDetailView: View {
                     about: guide.copaTopic,
                     details: "\(group.occurrences.count) occurrence(s); latest: \(group.latest.detail).")
                 copied = true
-                if let url = URL(string: "https://commander.copa.fyi") { openURL(url) }
             } label: {
-                Label(copied ? "Question copied - paste it in COPA Commander" : "Ask COPA Commander (copies a question)",
+                Label(copied ? "Question copied - paste it in an email or message to your A&P" : "Copy a question for your A&P",
                       systemImage: "questionmark.bubble")
             }
         } footer: {
-            Text("Needs internet. Community answers are not approved data.")
+            Text("Your A&P and the POH/AFM are the authority.")
         }
     }
 

@@ -93,6 +93,9 @@ struct LandingView: View {
                         Text("Engine Pulse is built by Engine Pulse LLC in Cave Creek, Arizona. It started as the tool we built to watch the engine on our own airplane after every flight, and we are now opening it to every owner whose avionics record engine data.")
                         Text("We are pilots and owners first. Questions or ideas: sales@enginepulse.net")
                             .foregroundStyle(.secondary)
+                        Text("\u{00A9} 2026 Engine Pulse LLC. All rights reserved.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                     Text("Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")
                         .font(.footnote)
@@ -456,7 +459,7 @@ struct DataPathAdviceView: View {
     }
 }
 
-/// How to bring flights from a GDL 60 or Flight Stream 510 into Engine Pulse, until flyGarmin sharing is approved.
+/// How to bring flights from a GDL 60 or Flight Stream 510 into Engine Pulse.
 struct GarminImportGuideView: View {
     var body: some View {
         List {
@@ -481,12 +484,6 @@ struct GarminImportGuideView: View {
                 GuideStep(n: 4, text: "Open Engine Pulse on the iPad: the flight is imported automatically.")
             } header: {
                 Text("GDL 60 or Flight Stream 510: from flyGarmin on a computer")
-            }
-            Section {
-                Text("We plan to receive flights through Garmin's flyGarmin sharing program, the way FlySto and Savvy do. Once Garmin approves Engine Pulse, you switch on sharing in flyGarmin once and every flight arrives on its own.")
-                    .font(.subheadline)
-            } header: {
-                Text("Planned: automatic")
             }
             Section {
                 Text("If a file won't import, email it to sales@enginepulse.net and we'll add support for it.")

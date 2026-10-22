@@ -1,6 +1,9 @@
 # Engine Pulse changelog
 
-## Unreleased
+## 0.9.5 (2026-10-22)
+- No references to other companies' services: removed Savvy, FlySto, COPA (resources and "Ask COPA Commander", now "Copy a question for your A&P"), GAMI and GAMIjector (now "Lean test" and "fuel spread"), EzTrends, and the planned flyGarmin and AirSync partnership claims (AirSync is no longer offered as a data link). Avionics and engine-monitor brand names remain only to describe compatibility.
+- Copyright: "© 2026 Engine Pulse LLC. All rights reserved." in the app (About, ACCOUNT) and on every website page, with a trademark notice. New ACCOUNT > Acknowledgements holds the open-source notices the JPI decoder's sources require. The repository has a proprietary LICENSE and THIRD-PARTY-NOTICES.md.
+- Version 0.9.5 (38).
 - Company name: Engine Pulse LLC (was Fueled Consulting LLC) in the app's About text and across the website (footers, Terms and Privacy Policy, effective October 22, 2026). Bundle and product IDs keep their com.fueledconsulting prefix: App Store Connect can't change them.
 
 ## 0.9.4 (2026-10-22)

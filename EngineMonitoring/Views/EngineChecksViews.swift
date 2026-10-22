@@ -4,7 +4,7 @@ import UIKit
 
 // MARK: - Post-flight report sections
 
-/// Run-up mag check and GAMI lean test for one flight (post-flight report and bundled-flight summary).
+/// Run-up mag check and lean test for one flight (post-flight report and bundled-flight summary).
 struct EngineChecksSection: View {
     let result: EngineCheckResult?
     let timeZone: TimeZone
@@ -30,7 +30,7 @@ struct EngineChecksSection: View {
                 }
                 ForEach(result.gami, id: \.self) { t in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(String(format: "GAMI spread %.1f gph: %@", t.spread, GAMICheck.rating(t.spread))).font(.subheadline)
+                        Text(String(format: "fuel spread %.1f gph: %@", t.spread, GAMICheck.rating(t.spread))).font(.subheadline)
                         Text(GAMICheck.describe(t)).font(.caption).foregroundStyle(.secondary)
                     }
                 }
@@ -240,7 +240,7 @@ struct MagCheckHistoryView: View {
     }
 }
 
-// MARK: - GAMI lean test
+// MARK: - lean test
 
 struct GAMIView: View {
     @EnvironmentObject private var logStore: FlightLogStore
@@ -270,9 +270,9 @@ struct GAMIView: View {
                         .foregroundStyle(.secondary)
                 }
             } header: {
-                Text("GAMI Spread")
+                Text("Fuel Spread")
             } footer: {
-                Text("Fuel flow at which each cylinder reaches peak EGT. Spread 0.5 gph or less: well balanced, smooth lean of peak. About 1.0 gph or more: mismatched injectors (clean/flow them, or matched GAMIjectors).")
+                Text("Fuel flow at which each cylinder reaches peak EGT. Spread 0.5 gph or less: well balanced, smooth lean of peak. About 1.0 gph or more: mismatched injectors (clean/flow them, or fit a matched injector set).")
             }
 
             Section {
@@ -294,7 +294,7 @@ struct GAMIView: View {
                 }
             }
         }
-        .navigationTitle("GAMI Lean Test")
+        .navigationTitle("Lean Test")
     }
 }
 
@@ -547,7 +547,7 @@ struct EngineChecksRows: View {
                     Text("Fly the test").foregroundStyle(.secondary)
                 }
             } label: {
-                Label("GAMI Lean Test", systemImage: "drop.halffull")
+                Label("Lean Test", systemImage: "drop.halffull")
             }
         }
         NavigationLink {

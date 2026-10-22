@@ -200,10 +200,13 @@ enum DataLink: String, Codable, CaseIterable, Identifiable, Sendable {
     case flightStream510 = "Garmin Flight Stream 510"
     case flightStream210 = "Garmin Flight Stream 210"
     case cirrusIQ = "Cirrus IQ data sync (2020+ Cirrus)"
-    case airSync = "AirSync box"
+    case airSync = "AirSync box"   // kept so saved profiles decode; not offered (no Engine Pulse support)
     case notSure = "None / not sure"
 
     var id: String { rawValue }
+
+    /// Shown in pickers.
+    static var offered: [DataLink] { allCases.filter { $0 != .airSync } }
 }
 
 /// The best way for this aircraft's engine data to reach the app, with honest notes on what works today.
@@ -216,7 +219,6 @@ struct DataPathAdvice: Equatable, Sendable {
 
     static let garminPilotShare = "After landing, in Garmin Pilot: More > Logbook > Entries, open the flight, tap Share, choose CSV, then Engine Pulse."
     static let flyGarminDownload = "Or on a computer: flyGarmin.com > Logbook, open the flight, Download > Original CSV, and drop it on enginepulse.net/upload."
-    static let flyGarminComing = "Planned: fully automatic through Garmin's flyGarmin sharing program, once Garmin approves Engine Pulse. You would switch on sharing in flyGarmin once and every flight would arrive by itself."
 
     static let sdCardSteps = [
         "After the flight, take the data card out of the avionics (on the ground, per your POH/avionics guide).",
@@ -243,7 +245,6 @@ struct DataPathAdvice: Equatable, Sendable {
                 steps: [
                     "The GDL 60 uploads each flight's engine log to flyGarmin over LTE or Wi-Fi once you shut down (PlaneSync subscription).",
                     "Today: on flyGarmin.com > Logbook, open the flight, Download > Original CSV, and drop it on enginepulse.net/upload (or share the file to Engine Pulse on the iPad). It appears in the app with the full analysis.",
-                    flyGarminComing,
                 ],
                 showsGarminGuide: true)
         case .flightStream510 where monitor.flightStream510CarriesEngineData || monitor.isPerspectivePlusFamily:
@@ -251,7 +252,6 @@ struct DataPathAdvice: Equatable, Sendable {
                 "Keep Garmin Pilot open on the iPad for the whole flight, connected to the Flight Stream 510. It receives the engine log over Bluetooth.",
                 garminPilotShare,
                 flyGarminDownload,
-                flyGarminComing,
             ]
             if monitor.isPerspectivePlusFamily {
                 steps.insert("Garmin doesn't list \(monitor == .garminPerspectiveTouchPlus ? "Perspective Touch+" : "Perspective+") engine logs over Flight Stream 510. If the Garmin Pilot logbook entry has no engine data, use the data card: " + sdCardSteps[2], at: 3)
@@ -272,7 +272,7 @@ struct DataPathAdvice: Equatable, Sendable {
                 automatic: false,
                 steps: ["The Flight Stream 210 streams weather, traffic, GPS and attitude to your iPad, not engine logs."]
                     + sdCardSteps
-                    + ["Hands-free options: an AirSync box, or a Flight Stream 510 if you have a G1000 NXi or TXi."])
+                    + ["Hands-free option: a Flight Stream 510 if you have a G1000 NXi or TXi."])
         case .cirrusIQ:
             return DataPathAdvice(
                 title: "Share from the Cirrus IQ app",
@@ -284,19 +284,18 @@ struct DataPathAdvice: Equatable, Sendable {
                 ])
         case .airSync:
             return DataPathAdvice(
-                title: "Automatic with AirSync",
-                automatic: true,
+                title: "AirSync box",
+                automatic: false,
                 steps: [
-                    "AirSync uploads your flights over LTE after shutdown.",
-                    "We are working with AirSync to add Engine Pulse as an upload destination. Until then, use the data card: " + sdCardSteps[2],
+                    "AirSync can't send flights to Engine Pulse. Use the data card: " + sdCardSteps[2],
                 ])
         case .notSure:
             return DataPathAdvice(
                 title: "Use the data card (about 2 minutes after each flight)",
                 automatic: false,
                 steps: sdCardSteps + [isCirrus
-                    ? "Hands-free options: Cirrus IQ data sync on 2020+ Cirrus, or an AirSync box."
-                    : "Hands-free option: an AirSync box, or a Garmin GDL 60 / Flight Stream 510 where your avionics support it."])
+                    ? "Hands-free option: Cirrus IQ data sync on 2020+ Cirrus."
+                    : "Hands-free option: a Garmin GDL 60 or Flight Stream 510 where your avionics support it."])
         }
     }
 }

@@ -46,7 +46,7 @@ struct MagRunup: Codable, Hashable, Sendable {
     func drop(_ mag: String) -> Double? { mags.first { $0.mag == mag }?.drop }
 }
 
-/// One lean sweep found in the log (a GAMI lean test).
+/// One lean sweep found in the log (a lean test).
 struct GAMITest: Codable, Hashable, Sendable {
     let time: Date
     let seconds: Int
@@ -159,7 +159,7 @@ enum EngineChecks {
         for t in r.gami where t.spread >= GAMICheck.goodSpread {
             out.append(FlightIssue(kind: "gami.spread", system: .engine, severity: t.spread >= GAMICheck.poorSpread ? .watch : .info,
                                    origin: .engineData, source: log.filename, time: t.time,
-                                   title: String(format: "GAMI spread %.1f gph (cylinder %ld richest, %ld leanest)", t.spread, t.richest, t.leanest),
+                                   title: String(format: "Fuel spread %.1f gph (cylinder %ld richest, %ld leanest)", t.spread, t.richest, t.leanest),
                                    detail: GAMICheck.describe(t)))
         }
         return out
@@ -173,7 +173,7 @@ enum EngineChecks {
             md += "- " + MagCheck.describe(u, timeZone: timeZone) + "\n"
             for f in u.findings { md += "  - **\(MagCheck.severity(f).rawValue):** " + MagCheck.describe(f) + "\n" }
         }
-        md += "\n### GAMI lean test\n\n"
+        md += "\n### lean test\n\n"
         if r.gami.isEmpty { md += "No slow lean sweep in this log (a big-mixture-pull lean is too fast to measure the spread).\n\n" }
         for t in r.gami { md += "- " + GAMICheck.describe(t) + "\n" }
         return md + "\n"
@@ -335,9 +335,9 @@ enum MagCheck {
     }
 }
 
-// MARK: - GAMI lean test
+// MARK: - lean test
 
-/// GAMI spread: lean slowly at constant RPM and MAP until every cylinder passes peak EGT; the fuel flow at each
+/// fuel spread: lean slowly at constant RPM and MAP until every cylinder passes peak EGT; the fuel flow at each
 /// cylinder's peak shows how evenly the injectors feed the cylinders. Spread = richest-peaking minus leanest-peaking
 /// cylinder's fuel flow. GAMI: 0.5 gph or less is well balanced; about 1.0 gph or more means mismatched injectors.
 /// Found automatically when the log holds a slow enough lean (no faster than about 0.1 gph per second through the
@@ -466,7 +466,7 @@ enum GAMICheck {
 
     static func describe(_ t: GAMITest) -> String {
         let peaks = t.peakFlow.enumerated().compactMap { i, f in f.map { String(format: "%ld: %.1f", i + 1, $0) } }.joined(separator: ", ")
-        return String(format: "Lean sweep %.1f to %.1f gph over %ld s: GAMI spread %.1f gph (%@); cylinder %ld peaks richest, %ld leanest. Peak fuel flow by cylinder: %@.",
+        return String(format: "Lean sweep %.1f to %.1f gph over %ld s: fuel spread %.1f gph (%@); cylinder %ld peaks richest, %ld leanest. Peak fuel flow by cylinder: %@.",
                       t.ffStart, t.ffEnd, t.seconds, t.spread, rating(t.spread), t.richest, t.leanest, peaks)
     }
 
@@ -482,7 +482,7 @@ enum GAMICheck {
         "Lean SLOWLY and steadily, about 0.1 gph every second or slower (roughly 1 gph per 10-15 s), watching the EGTs climb.",
         "Keep leaning through peak until every cylinder has peaked and its EGT has fallen 30-50 °F (lean of peak). Don't stop at the first peak.",
         "Keep RPM and MAP unchanged during the sweep. Then set your normal cruise mixture.",
-        "After the flight, import the log: the app finds the sweep, the fuel flow at each cylinder's peak and the GAMI spread.",
+        "After the flight, import the log: the app finds the sweep, the fuel flow at each cylinder's peak and the fuel spread.",
         "Watch CHTs and TIT throughout; abandon the test if anything approaches a limit or the engine runs rough.",
     ]
 }

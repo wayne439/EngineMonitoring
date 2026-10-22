@@ -125,7 +125,7 @@ struct OnlineResourcesSection: View {
         } header: {
             Text("Online Resources")
         } footer: {
-            Text("Need internet, so not available in flight. COPA content is community and training material, not approved data.")
+            Text("Need internet, so not available in flight.")
         }
         }
     }
@@ -413,13 +413,12 @@ struct FlightReportView: View {
             Button {
                 UIPasteboard.general.string = copaQuestion(report)
                 copied = true
-                if let url = URL(string: "https://commander.copa.fyi") { openURL(url) }
             } label: {
-                Label(copied ? "Question copied - paste it in COPA Commander" : "Ask COPA Commander (copies a question)",
+                Label(copied ? "Question copied - paste it in an email or message to your A&P" : "Copy a question for your A&P",
                       systemImage: "bubble.left.and.text.bubble.right")
             }
         } header: {
-            Text("Get a Second Opinion (Online)")
+            Text("Ask Your A&P")
         } footer: {
             Text("Share the report with your A&P or another pilot. Community answers are not approved data.")
         }

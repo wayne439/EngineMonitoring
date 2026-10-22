@@ -65,7 +65,7 @@ struct AircraftProfileView: View {
                 }
                 Picker("Wireless data link", selection: Binding(get: { store.profile.dataLink ?? .notSure },
                                                                 set: { store.profile.dataLink = $0 })) {
-                    ForEach(DataLink.allCases) { Text($0.rawValue).tag($0) }
+                    ForEach(DataLink.offered) { Text($0.rawValue).tag($0) }
                 }
                 DataPathAdviceView(advice: DataPathAdvice.advise(monitor: store.profile.monitor, link: store.profile.dataLink,
                                                                  make: store.profile.make))
