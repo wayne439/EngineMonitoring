@@ -24,7 +24,7 @@ struct RootView: View {
                 LandingView(exploring: $exploring)
             }
         }
-        // Right after a pilot first signs in (usually straight after Register): upload your documents.
+        // Right after a pilot first signs in (usually straight after Register): bring in your flights.
         .onChange(of: cloud.isSignedIn) {
             if cloud.isSignedIn && !documentsPromptShown {
                 documentsPromptShown = true
@@ -33,7 +33,7 @@ struct RootView: View {
         }
         .sheet(isPresented: $showDocuments) {
             NavigationStack {
-                DocumentsView()
+                GetStartedView()
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) { Button("Done") { showDocuments = false } }
                     }
