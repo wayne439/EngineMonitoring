@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beta setup · Engine Pulse</title>
+<meta name="description" content="Set up the Engine Pulse beta on your iPad or iPhone in four steps.">
+<meta name="theme-color" content="#050b16">
+<link rel="canonical" href="https://enginepulse.net/start/">
+<link rel="icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="Engine Pulse home"><img src="../logo.png" alt=""><span>Engine <b>Pulse</b></span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav class="menu" id="menu" aria-label="Main">
+      <a href="../#how">How it works</a>
+      <a href="../#features">Features</a>
+      <a href="../#pricing">Pricing</a>
+      <a href="../demo/">Demo</a>
+      <a href="../support/">Support</a>
+      <a href="../upload/">Upload</a>
+      <a class="btn btn-primary btn-sm" href="../signup/">Sign up</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="doc-head">
+    <div class="wrap">
+      <span class="eyebrow">Beta testers</span>
+      <h1>Set up Engine Pulse in 10 minutes</h1>
+      <p class="lede">Four steps on your iPad or iPhone. Keep this page open and follow along. Questions: <a href="mailto:sales@enginepulse.net">sales@enginepulse.net</a>.</p>
+    </div>
+  </div>
+
+  <div class="wrap doc">
+    <nav class="toc" aria-label="On this page">
+      <b>Steps</b>
+      <a href="#app">1. Install the app</a>
+      <a href="#register">2. Register</a>
+      <a href="#flights">3. Bring in your flights</a>
+      <a href="#poh">4. Upload your POH</a>
+      <a href="#help">If something goes wrong</a>
+    </nav>
+
+    <article class="prose">
+      <h2 id="app">1. Install the app</h2>
+      <ol>
+        <li>On your iPad or iPhone, install <strong>TestFlight</strong> from the App Store (it's Apple's free app for beta software).</li>
+        <li>On the same device, open the Engine Pulse beta link and tap <strong>Accept</strong>, then <strong>Install</strong>.</li>
+      </ol>
+      <p><a class="btn btn-primary" href="https://testflight.apple.com/join/V9XX24Ca">Open the Engine Pulse beta in TestFlight</a></p>
+      <div class="qr">
+        <img src="../assets/testflight-qr.svg" alt="QR code for the Engine Pulse TestFlight beta link" width="132" height="132">
+        <p class="fine">Reading this on a computer? Point your iPad or iPhone camera at the code. Typing the link instead? It's <b>testflight.apple.com/join/V9XX24Ca</b> with the capitals exactly as shown (V, X, X, C), or it says Not Found.</p>
+      </div>
+      <p>You don't need an Apple developer account. If a page says <em>"Sign in to accept your invitation"</em> from App Store Connect, close it and use the link above.</p>
+
+      <h2 id="register">2. Register</h2>
+      <ol>
+        <li>Open Engine Pulse and tap <strong>Register</strong>.</li>
+        <li>Enter your name, email and a password, then your aircraft: make, model, tail number and avionics (the usual avionics fill in; change them if yours differ).</li>
+        <li>Tap <strong>Register</strong>. If you're asked for a 6-digit code, it's in your email (check spam or junk).</li>
+      </ol>
+      <p><strong>Use one email everywhere.</strong> The same email and password work on every iPad and iPhone and on the upload website. Already registered on this website? Tap <strong>Log in</strong> in the app instead.</p>
+
+      <h2 id="flights">3. Bring in your flights</h2>
+      <p>After you register, the app opens <strong>Get started</strong> (it's also on HOME until your first flight arrives). Pick the way that suits you:</p>
+      <h3>From a computer (easiest)</h3>
+      <ol>
+        <li>Put your avionics' SD card or your engine monitor's USB stick in the computer.</li>
+        <li>Go to <a href="../upload/">enginepulse.net/upload</a> and log in with the same email and password as the app.</li>
+        <li>Drag the whole <code>data_log</code> folder (Garmin), the <code>.JPI</code> file (JPI EDM) or your monitor's CSV files onto <strong>Engine monitor log files</strong>.</li>
+        <li>Open Engine Pulse and tap <strong>Check for my flights</strong>. They also come in by themselves whenever the app opens.</li>
+      </ol>
+      <h3>Straight into the iPad</h3>
+      <ol>
+        <li>Plug the SD card or USB stick into the iPad with a USB-C card reader.</li>
+        <li>In Get started, tap <strong>Choose the card's folder</strong> and pick the <code>data_log</code> folder (or the folder on the stick). Every flight is added.</li>
+      </ol>
+      <h3>Where the files are</h3>
+      <ul>
+        <li><strong>Garmin G1000 / NXi, Cirrus Perspective, Perspective+ and Touch+:</strong> the SD card in the top slot of the MFD, folder <code>data_log</code>. Take it out on the ground and put it back before you fly.</li>
+        <li><strong>Garmin G3X, TXi, GI 275:</strong> the SD card in the display, folder <code>data_log</code>.</li>
+        <li><strong>J.P. Instruments EDM:</strong> USB stick in the EDM, hold STEP and LF for 5 seconds, tap STEP to DUMP?, choose NEW or ALL, tap STEP. The file is named like <code>U241015.JPI</code>.</li>
+        <li><strong>Electronics International, Dynon, Avidyne R9 and others:</strong> export the flight data log to a USB stick as CSV (see your monitor's manual).</li>
+        <li><strong>Garmin GDL 60 or Flight Stream 510:</strong> in the app, Get started &gt; <em>My flights are in Garmin's apps</em> shows the Garmin Pilot and flyGarmin steps.</li>
+      </ul>
+      <p>The last 20 or more flights give the best baseline.</p>
+
+      <h2 id="poh">4. Upload your POH</h2>
+      <p>Upload your POH / AFM as one PDF, including the Section 9 supplements: on <a href="../upload/">enginepulse.net/upload</a> (POH box) or in the app under AIRCRAFT &gt; Documents and uploads. Engine Pulse reads your engine limits from it and locks your aircraft profile. Uploaded it twice? Swipe left on one in Documents and uploads to delete it.</p>
+      <p>That's it. HOME now shows your engine's health score, every flight is checked against your limits, and early warning watches the trends.</p>
+
+      <h2 id="help">If something goes wrong</h2>
+      <ul>
+        <li><strong>The TestFlight link says Not Found:</strong> the capitals matter. Tap the button above instead of typing it.</li>
+        <li><strong>"Sign in to accept your invitation" (App Store Connect):</strong> that's not for testers. Close it and use the TestFlight link.</li>
+        <li><strong>No code email:</strong> check spam or junk, wait a few minutes, then tap Resend in the app.</li>
+        <li><strong>Uploaded, but no flights in the app:</strong> check that the app is signed in (ACCOUNT) with the same email you used on the website, then tap <strong>Check for my flights</strong> in Get started.</li>
+        <li><strong>A file won't import:</strong> email it to <a href="mailto:sales@enginepulse.net">sales@enginepulse.net</a> with your tail number and we'll add support for it.</li>
+      </ul>
+      <p>Anything else: <a href="mailto:sales@enginepulse.net?subject=Engine%20Pulse%20beta%20help">email us</a> with your tail number and a screenshot. A real person answers, usually the same day.</p>
+    </article>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="../" style="font-size:20px"><img src="../logo.png" alt="" style="width:28px;height:28px"><span>Engine <b>Pulse</b></span></a>
+      <p style="margin-top:12px">Advisory only. Engine Pulse is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&amp;P.</p>
+      <p style="margin-top:12px">© <span id="year">2026</span> Engine Pulse, Cave Creek, Arizona</p>
+    </div>
+    <div>
+      <h4>Product</h4>
+      <ul>
+        <li><a href="../#features">Features</a></li>
+        <li><a href="../#pricing">Pricing</a></li>
+        <li><a href="../demo/">Interactive demo</a></li>
+        <li><a href="../signup/">Sign up</a></li>
+        <li><a href="../upload/">Upload data</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Help and legal</h4>
+      <ul>
+        <li><a href="../support/">Support</a></li>
+        <li><a href="../privacy/">Privacy Policy</a></li>
+        <li><a href="../terms/">Terms of Use</a></li>
+        <li><a href="mailto:sales@enginepulse.net">sales@enginepulse.net</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>
