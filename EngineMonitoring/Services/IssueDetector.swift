@@ -53,7 +53,7 @@ enum IssueDetector {
                     issues.append(FlightIssue(
                         kind: "start.oil-pressure", system: .engineStart, severity: .caution, origin: .engineData, source: file, time: s.time,
                         title: "Oil pressure below 10 psi 30 s after start",
-                        detail: String(format: "Highest %.0f psi in the first 30 s after the start at %@ (POH 4-10)", peak, t.string(from: s.time))))
+                        detail: String(format: "Highest %.0f psi in the first 30 s after the start at %@ (\(POHRef.page("4-10")))", peak, t.string(from: s.time))))
                 }
             }
         }
@@ -79,7 +79,10 @@ enum IssueDetector {
     static func exceedances(log: PerspectiveLog, phases: [FlightPhase],
                             limits: [AircraftKnowledge.EngineLimit] = AircraftKnowledge.limits) -> [Exceedance] {
         var exceedances: [Exceedance] = []
-        for limit in limits {
+        // 28-volt bus limits on a 14-volt aircraft would flag every flight; halve them when the bus normally runs below 18 V.
+        let busScale = ElectricalSystem.scale(medianVolts: medianRunningVolts(log))
+        for original in limits {
+            let limit = busScale < 1 ? scaledForBus(original, busScale) : original
             var seconds = 0
             var first: Date?
             var extreme: Double?
@@ -122,6 +125,28 @@ enum IssueDetector {
                 $0.limit.kind == .warning && $0.limit.metric == e.limit.metric && ($0.limit.high != nil) == (e.limit.high != nil)
             })
         }
+    }
+
+    /// Median bus 1 voltage while the engine runs above 1,500 RPM (nil without voltage data).
+    static func medianRunningVolts(_ log: PerspectiveLog) -> Double? {
+        var v: [Double] = []
+        for i in 0..<log.sampleCount where (log.value(PerspectiveChannel.rpm, at: i) ?? 0) > 1500 {
+            if let x = FlightMetric.volt1.value(in: log, at: i), x > 0 { v.append(x) }
+        }
+        guard !v.isEmpty else { return nil }
+        v.sort()
+        return v[v.count / 2]
+    }
+
+    /// A voltage limit rescaled for a 14-volt electrical system; other limits unchanged.
+    static func scaledForBus(_ l: AircraftKnowledge.EngineLimit, _ scale: Double) -> AircraftKnowledge.EngineLimit {
+        guard l.metric == .volt1 || l.metric == .volt2 else { return l }
+        var s = AircraftKnowledge.EngineLimit(id: l.id, metric: l.metric, label: l.label + " (14 V system)",
+                                              low: l.low.map { $0 * scale }, high: l.high.map { $0 * scale }, kind: l.kind,
+                                              minRPM: l.minRPM, phases: l.phases, authority: l.authority, source: l.source)
+        s.minDuration = l.minDuration
+        s.startGrace = l.startGrace
+        return s
     }
 
     static func system(for metric: FlightMetric) -> DiagnosticSystem {

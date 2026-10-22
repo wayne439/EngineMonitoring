@@ -79,11 +79,13 @@ struct TrendMetric: Hashable, Identifiable, Sendable {
     let group: Group
     let cylinder: Int?
 
-    static let all: [TrendMetric] = {
+    /// Metrics with thresholds from this aircraft's limits. busScale 0.5 for a 14-volt electrical system.
+    static func all(busScale: Double = 1) -> [TrendMetric] {
+        let lim = AircraftProfileSnapshot.shared.profile.limits
         var m: [TrendMetric] = []
         for c in 1...6 {
             m.append(TrendMetric(id: "cht\(c)", label: "Cylinder \(c) CHT in cruise", unit: "°F", badDirection: 1, threshold: 400,
-                                 thresholdSource: "400 °F cruise CHT (engine-monitor practice; POH caution 420 °F)",
+                                 thresholdSource: "400 °F cruise CHT (engine-monitor practice; caution \(Int(lim.chtCaution)) °F)",
                                  corrected: true, group: .cylinders, cylinder: c))
         }
         for c in 1...6 {
@@ -100,19 +102,19 @@ struct TrendMetric: Hashable, Identifiable, Sendable {
                         thresholdSource: "100 °F hottest-to-coolest CHT (engine-monitor practice)", corrected: true, group: .balance, cylinder: nil),
             TrendMetric(id: "egtspread", label: "EGT spread in cruise", unit: "°F", badDirection: 1, threshold: nil,
                         thresholdSource: nil, corrected: true, group: .balance, cylinder: nil),
-            TrendMetric(id: "oilt", label: "Oil temperature in cruise", unit: "°F", badDirection: 1, threshold: 240,
-                        thresholdSource: "240 °F POH limit", corrected: true, group: .oil, cylinder: nil),
-            TrendMetric(id: "oilp", label: "Oil pressure in cruise", unit: "psi", badDirection: -1, threshold: 30,
-                        thresholdSource: "30 psi POH caution", corrected: true, group: .oil, cylinder: nil),
+            TrendMetric(id: "oilt", label: "Oil temperature in cruise", unit: "°F", badDirection: 1, threshold: lim.oilTempMax,
+                        thresholdSource: "\(Int(lim.oilTempMax)) °F oil temperature limit", corrected: true, group: .oil, cylinder: nil),
+            TrendMetric(id: "oilp", label: "Oil pressure in cruise", unit: "psi", badDirection: -1, threshold: lim.oilPressureCautionBelow,
+                        thresholdSource: "\(Int(lim.oilPressureCautionBelow)) psi oil pressure caution", corrected: true, group: .oil, cylinder: nil),
             TrendMetric(id: "titgap", label: "Gap between TIT 1 and TIT 2 in cruise", unit: "°F", badDirection: 1, threshold: nil,
                         thresholdSource: nil, corrected: true, group: .turbo, cylinder: nil),
-            TrendMetric(id: "volt1", label: "Bus 1 voltage in cruise", unit: "V", badDirection: -1, threshold: 24.5,
-                        thresholdSource: "24.5 V M BUS 1 caution (POH 2-9)", corrected: false, group: .electrical, cylinder: nil),
-            TrendMetric(id: "volt2", label: "Bus 2 voltage in cruise", unit: "V", badDirection: -1, threshold: 24.5,
-                        thresholdSource: "24.5 V M BUS 2 caution (POH 2-9)", corrected: false, group: .electrical, cylinder: nil),
+            TrendMetric(id: "volt1", label: "Bus 1 voltage in cruise", unit: "V", badDirection: -1, threshold: lim.busVoltsLow * busScale,
+                        thresholdSource: "\(String(format: "%.1f", lim.busVoltsLow * busScale)) V bus 1 low-voltage limit\(busScale < 1 ? " (14 V system)" : "")", corrected: false, group: .electrical, cylinder: nil),
+            TrendMetric(id: "volt2", label: "Bus 2 voltage in cruise", unit: "V", badDirection: -1, threshold: lim.busVoltsLow * busScale,
+                        thresholdSource: "\(String(format: "%.1f", lim.busVoltsLow * busScale)) V bus 2 low-voltage limit\(busScale < 1 ? " (14 V system)" : "")", corrected: false, group: .electrical, cylinder: nil),
         ]
         return m
-    }()
+    }
 
     static func named(_ id: String) -> TrendMetric? { all.first { $0.id == id } }
 
@@ -243,7 +245,7 @@ enum EarlyWarning {
             flights.append(Flight(summary: s, hours: cum))
         }
         let usable = flights.filter { ($0.summary.engineTrend?.steadySeconds ?? 0) >= minSteadySeconds }
-        let analyses = TrendMetric.all.compactMap { evaluate($0, usable) }
+        let analyses = TrendMetric.all(busScale: ElectricalSystem.scale(summaries)).compactMap { evaluate($0, usable) }
         return EarlyWarningReport(flightsUsed: usable.count, hoursCovered: cum, analyses: analyses,
                                   patterns: patterns(analyses.filter { $0.level != nil }), newestFlight: usable.last?.summary)
     }

@@ -19,7 +19,7 @@ struct EngineChecksSection: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(MagCheck.describe(u, timeZone: timeZone)).font(.subheadline)
                         if u.findings.isEmpty {
-                            Text("Within POH 4-14: drops under 150 RPM, difference under 75 RPM, every cylinder's EGT rose.")
+                            Text("Within \(POHRef.page("4-14")): drops under 150 RPM, difference under 75 RPM, every cylinder's EGT rose.")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                         ForEach(u.findings, id: \.self) { f in
@@ -41,7 +41,7 @@ struct EngineChecksSection: View {
         } header: {
             Text("Run-Up Mag Check")
         } footer: {
-            Text("POH 4-14: at 1,700 RPM, R then L; drop no more than 150 RPM, difference no more than 75 RPM. Each cylinder's EGT should rise on each mag; one that stays flat is not firing on that mag.")
+            Text("\(POHRef.page("4-14")): at 1,700 RPM, R then L; drop no more than 150 RPM, difference no more than 75 RPM. Each cylinder's EGT should rise on each mag; one that stays flat is not firing on that mag.")
         }
     }
 }
@@ -193,7 +193,7 @@ struct MagCheckHistoryView: View {
             } header: {
                 Text("Mag Drops")
             } footer: {
-                Text("Dashed line: the POH 150 RPM limit. The run-up is found automatically (on the ground, 1,600-2,150 RPM held 20 s or more); a dip counts as a mag check when the EGTs rise together.")
+                Text("Dashed line: the 150 RPM drop limit\(POHRef.isSR22 ? " (POH 4-14)" : " (check your POH)"). The run-up is found automatically (on the ground, 1,600-2,150 RPM held 20 s or more); a dip counts as a mag check when the EGTs rise together.")
             }
 
             if !history.isEmpty {
@@ -351,7 +351,7 @@ struct TurboChecksView: View {
             } header: {
                 Text("Takeoff Power")
             } footer: {
-                Text("Full power from 20 s before lift-off to 60 s after. POH 4-16: about 2,700 RPM. Low fuel flow means less cooling fuel; low MAP points at the turbonormalizer or a leak.")
+                Text("Full power from 20 s before lift-off to 60 s after. \(POHRef.page("4-16")): about 2,700 RPM. Low fuel flow means less cooling fuel; low MAP points at the turbonormalizer or a leak.")
             }
 
             Section {

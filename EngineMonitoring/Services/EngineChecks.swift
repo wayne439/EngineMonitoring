@@ -151,7 +151,7 @@ enum EngineChecks {
                 case .oneMag:
                     out.append(FlightIssue(kind: "mag.one", system: .engineStart, severity: .info, origin: .engineData, source: log.filename,
                                            time: u.time, title: "Run-up: only one mag drop recorded",
-                                           detail: "One drop of \(Int(f.value)) RPM in a \(u.seconds) s run-up. No drop on the other mag can mean a P-lead grounding fault or advanced timing (POH 4-14); usually the check was quick or under 25 RPM. "
+                                           detail: "One drop of \(Int(f.value)) RPM in a \(u.seconds) s run-up. No drop on the other mag can mean a P-lead grounding fault or advanced timing (\(POHRef.page("4-14"))); usually the check was quick or under 25 RPM. "
                                                + MagCheck.describe(u)))
                 }
             }
@@ -292,9 +292,9 @@ enum MagCheck {
 
     static func describe(_ f: MagFinding) -> String {
         switch f.kind {
-        case .drop: return "\(f.mag ?? "") mag drop \(Int(f.value)) RPM, over the POH 150 RPM limit (POH 4-14)."
-        case .split: return "Drops \(Int(f.value)) (R) and \(Int(f.other ?? 0)) (L) RPM differ by \(Int(abs(f.value - (f.other ?? 0)))), over the POH 75 RPM limit (POH 4-14)."
-        case .oneMag: return "Only one mag drop (\(Int(f.value)) RPM) recorded. An absence of drop can mean faulty grounding or advanced timing (POH 4-14); repeat the check slowly if unsure."
+        case .drop: return "\(f.mag ?? "") mag drop \(Int(f.value)) RPM, over \(POHRef.isSR22 ? "the POH 150 RPM limit" : "150 RPM (a common limit; check your POH)") (\(POHRef.page("4-14")))."
+        case .split: return "Drops \(Int(f.value)) (R) and \(Int(f.other ?? 0)) (L) RPM differ by \(Int(abs(f.value - (f.other ?? 0)))), over \(POHRef.isSR22 ? "the POH 75 RPM limit" : "75 RPM (a common limit; check your POH)") (\(POHRef.page("4-14")))."
+        case .oneMag: return "Only one mag drop (\(Int(f.value)) RPM) recorded. An absence of drop can mean faulty grounding or advanced timing (\(POHRef.page("4-14"))); repeat the check slowly if unsure."
         case .coldCylinder:
             return String(format: "Cylinder %ld EGT %+.0f °F on the %@ mag while the others rose %.0f °F: that cylinder is likely not firing on that mag (plug, lead or mag).",
                           f.cylinder ?? 0, f.value, f.mag ?? "", f.other ?? 0)

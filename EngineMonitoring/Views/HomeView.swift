@@ -38,6 +38,7 @@ struct HomeView: View {
     /// Engine health from the recent flights themselves (not from what is waiting for review).
     @State private var engineHealth = EngineHealth(score: nil, status: .noData, flights: [], deductions: [], slopePerFlight: nil)
     @State private var earlyWarning: EarlyWarningReport?
+    @State private var batteryWatch: BatteryWatchReport?
 
     var body: some View {
         ScrollView {
@@ -48,6 +49,7 @@ struct HomeView: View {
                 if let last = flights.first { lastFlightCard(last) }
                 if !flights.isEmpty { EarlyWarningCard(report: earlyWarning, flights: flights, attention: attention) }
                 if flights.count >= 2 { trendCard }
+                if !flights.isEmpty { BatteryStartCard(report: batteryWatch) }
                 attentionCard
                 setupCard
                 quickActions
@@ -67,6 +69,7 @@ struct HomeView: View {
             let all = Array(logs.summaries.values)
             engineHealth = EngineHealth.compute(all)
             earlyWarning = EarlyWarning.analyze(all)
+            batteryWatch = BatteryWatch.analyze(all)
         }
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -1014,5 +1017,69 @@ private struct CountChip: View {
         .padding(.horizontal, 10).padding(.vertical, 5)
         .background((count > 0 ? color : Color.secondary).opacity(0.15), in: Capsule())
         .foregroundStyle(count > 0 ? color : Color.secondary)
+    }
+}
+
+/// HOME's battery panel: the lowest bus 1 voltage on each engine start, compared with this battery's own normal.
+struct BatteryStartCard: View {
+    let report: BatteryWatchReport?
+
+    private var chip: (String, Color) {
+        switch report?.level {
+        case .watch?: ("Check battery", .orange)
+        case .normal?: ("Normal", .green)
+        case .learning?: ("Learning", .blue)
+        default: ("No data", .secondary)
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Battery at engine start", systemImage: "battery.75percent").font(.headline)
+                Spacer()
+                Text(chip.0).font(.caption.bold()).padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(chip.1.opacity(0.15), in: Capsule()).foregroundStyle(chip.1)
+            }
+            if let report {
+                let pts = Array(report.points.prefix(20))
+                if pts.count >= 2 {
+                    Chart {
+                        ForEach(pts) { p in
+                            LineMark(x: .value("Start", p.time), y: .value("Lowest V", p.lowVolts))
+                            PointMark(x: .value("Start", p.time), y: .value("Lowest V", p.lowVolts))
+                        }
+                        if let b = report.baselineLow {
+                            RuleMark(y: .value("Normal", b)).lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .chartYScale(domain: .automatic(includesZero: false))
+                    .frame(height: 110)
+                }
+                if let last = report.points.first {
+                    Text(lastLine(last)).font(.subheadline)
+                }
+                Text(report.summary).font(.caption).foregroundStyle(.secondary)
+            }
+            NavigationLink { SystemHistoryView(system: .engineStart) } label: {
+                HStack {
+                    Text("All engine starts").font(.subheadline.bold())
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.caption.bold())
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(18)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private func lastLine(_ p: BatteryStartPoint) -> String {
+        var parts = [String(format: "Last start: lowest %.1f V", p.lowVolts)]
+        if let r = p.restVolts, let d = p.drop { parts.append(String(format: "from %.1f V (dip %.1f V)", r, d)) }
+        if let c = p.crankSeconds { parts.append(String(format: "cranked %.0f s", c)) }
+        if let o = p.oat { parts.append(String(format: "OAT %.0f °C", o)) }
+        return parts.joined(separator: " · ")
     }
 }

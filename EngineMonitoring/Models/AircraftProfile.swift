@@ -520,3 +520,28 @@ final class AircraftProfileStore: ObservableObject {
         profile.updatedAt = Date()
     }
 }
+
+/// POH page references in advice text. The built-in pages are from the Cirrus SR22 POH, so they're shown only
+/// for SR22s; every other aircraft is pointed at its own POH/AFM.
+enum POHRef {
+    static var isSR22: Bool { AircraftProfileSnapshot.shared.profile.model.uppercased().contains("SR22") }
+    static var isCirrus: Bool { AircraftProfileSnapshot.shared.profile.isCirrus }
+
+    /// "POH 4-14" for an SR22, otherwise "your POH".
+    static func page(_ p: String) -> String { isSR22 ? "POH \(p)" : "your POH" }
+}
+
+/// 14-volt or 28-volt electrical system, worked out from the logs. Bus-voltage limits default to a 28-volt
+/// system (24.5 V low); on a 14-volt aircraft they're halved unless the POH gave its own values.
+enum ElectricalSystem {
+    /// 0.5 when the bus normally runs below 18 V (a 14-volt system) and the limits are 28-volt values; else 1.
+    static func scale(medianVolts: Double?) -> Double {
+        guard let v = medianVolts, v > 8, v < 18, AircraftProfileSnapshot.shared.profile.limits.busVoltsLow > 18 else { return 1 }
+        return 0.5
+    }
+
+    static func scale(_ summaries: [FlightSummary]) -> Double {
+        let v = summaries.compactMap { $0.stats[.cruise]?[.volt1]?.p50 ?? $0.stats[.climb]?[.volt1]?.p50 }.sorted()
+        return scale(medianVolts: v.isEmpty ? nil : v[v.count / 2])
+    }
+}

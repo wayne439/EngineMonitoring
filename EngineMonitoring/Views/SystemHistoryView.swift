@@ -101,6 +101,20 @@ struct SystemHistoryView: View {
     @ViewBuilder
     private var engineStartHistory: some View {
         let rows = startRows
+        let battery = BatteryWatch.analyze(flights)
+        if battery.level != .noData {
+            Section {
+                Text(battery.summary)
+                if let r = battery.recentDrop, let b = battery.baselineDrop {
+                    Text(String(format: "Voltage dip while cranking: %.1f V recently, %.1f V normally.", r, b))
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Battery Trend At Start")
+            } footer: {
+                Text(battery.notes.joined(separator: " "))
+            }
+        }
         if rows.count >= 2 {
             Section {
                 Chart(rows.filter { $0.record.minVolt1 != nil }) { row in
@@ -138,7 +152,11 @@ struct SystemHistoryView: View {
     private func startDetail(_ r: StartRecord) -> String {
         var parts: [String] = []
         if r.crankingEpisodes > 0 { parts.append("\(r.crankingEpisodes) cranking episode\(r.crankingEpisodes == 1 ? "" : "s") before") }
-        if let v = r.minVolt1 { parts.append(String(format: "low %.1f V", v)) }
+        if let v = r.minVolt1 {
+            if let rest = r.restVolt1 { parts.append(String(format: "%.1f V to %.1f V", rest, v)) } else { parts.append(String(format: "low %.1f V", v)) }
+        }
+        if let c = r.crankSeconds { parts.append(String(format: "cranked %.0f s", c)) }
+        if let o = r.oat { parts.append(String(format: "OAT %.0f °C", o)) }
         if let ff = r.peakFuelFlow { parts.append(String(format: "peak FF %.1f gph", ff)) }
         if let w = r.weakestCylinder { parts.append(String(format: "smallest EGT rise cyl %ld +%.0f °F", w.cylinder, w.rise)) }
         return parts.joined(separator: " · ")
