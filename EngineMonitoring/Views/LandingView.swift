@@ -151,7 +151,7 @@ struct LandingView: View {
             .buttonStyle(.bordered)
             .controlSize(.large)
 
-            if cloud.isConfigured {
+            if cloud.isConfigured && AppleSignIn.enabled {
                 AppleSignInButton()
                     .frame(height: 50)
             }
@@ -378,7 +378,7 @@ struct LoginView: View {
                     Text("Reset your password")
                 }
             }
-            if cloud.isConfigured {
+            if cloud.isConfigured && AppleSignIn.enabled {
                 Section {
                     AppleSignInButton()
                         .frame(height: 48)
@@ -576,6 +576,13 @@ struct DataChecklistView: View {
 }
 
 // MARK: - Shared pieces
+
+/// Sign in with Apple is off during the beta: "Hide My Email" made separate, empty accounts that didn't match
+/// the email used on the upload website. Email and password is the only sign-in, so Apple doesn't require it.
+/// Accounts made with Apple keep working while their session lasts.
+enum AppleSignIn {
+    static let enabled = false
+}
 
 /// Sign in with Apple, using the same nonce handshake as the ACCOUNT screen.
 struct AppleSignInButton: View {
