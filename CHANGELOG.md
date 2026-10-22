@@ -1,5 +1,10 @@
 # Engine Pulse changelog
 
+## 0.9.4 (2026-10-22)
+- Sign in with Apple is off during the beta: "Hide My Email" created separate, empty accounts that didn't match the email used on the upload website. Email and password is the one sign-in everywhere.
+- Website: enginepulse.net/start is a single page of setup steps for testers (install, register, bring in flights, POH, troubleshooting).
+- Version 0.9.4 (37).
+
 ## 0.9.3 (2026-10-22)
 - New Get started screen, shown right after registering and as a card on HOME until the first flight arrives: three ways to bring flights in (from a computer with the upload address, the pilot's own email and a one-click link; from an SD card or USB stick plugged into the iPad; from Garmin Pilot / flyGarmin), the download steps for the pilot's own monitor, a live flight count and a "Check for my flights" button that says exactly what it found.
 - Version 0.9.3 (36).

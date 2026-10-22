@@ -1,7 +1,7 @@
 import SwiftUI
 import AuthenticationServices
 
-/// ACCOUNT: Sign in with Apple, cloud sync status, sign out and account deletion.
+/// ACCOUNT: email sign-in, cloud sync status, sign out and account deletion.
 struct AccountView: View {
     @EnvironmentObject private var cloud: CloudStore
     @EnvironmentObject private var aircraft: AircraftProfileStore
@@ -85,6 +85,7 @@ struct AccountView: View {
         } footer: {
             Text("Use the same email and password on every iPad and iPhone, and on the upload website.")
         }
+        if AppleSignIn.enabled {
         Section {
             SignInWithAppleButton(.signIn) { request in
                 nonce = CloudAPI.randomNonce()
@@ -117,6 +118,7 @@ struct AccountView: View {
             Text("Or Sign In with Apple")
         } footer: {
             Text("Only if you registered with Apple. Choose \"Share My Email\" so it joins your email account; \"Hide My Email\" creates a separate, empty account.")
+        }
         }
     }
 
