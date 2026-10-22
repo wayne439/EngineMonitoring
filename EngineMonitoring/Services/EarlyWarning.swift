@@ -116,7 +116,7 @@ struct TrendMetric: Hashable, Identifiable, Sendable {
         return m
     }
 
-    static func named(_ id: String) -> TrendMetric? { all.first { $0.id == id } }
+    static func named(_ id: String) -> TrendMetric? { all().first { $0.id == id } }
 
     var minimumSigma: Double { unit == "V" ? 0.1 : (unit == "psi" ? 1 : 2) }
     var digits: Int { unit == "V" ? 1 : 0 }
