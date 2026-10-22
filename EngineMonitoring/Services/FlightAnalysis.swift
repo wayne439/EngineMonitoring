@@ -222,6 +222,20 @@ struct StartRecord: Codable, Hashable, Sendable {
     let rpmAfter30s: Double?
     /// EGT rise per cylinder (1-6) in the first 30 s; nil where not recorded.
     let egtRise: [Double?]
+    /// Bus 1 voltage with the master on just before cranking began (resting battery voltage).
+    var restVolt1: Double? = nil
+    /// Seconds from the first cranking RPM to the engine catching (500 RPM).
+    var crankSeconds: Double? = nil
+    /// Outside air temperature at the start, °C (cold batteries sag more).
+    var oat: Double? = nil
+    /// Bus 1 voltage 20-30 s after the start (alternator charging).
+    var afterVolt1: Double? = nil
+
+    /// How far bus 1 voltage fell while cranking, from rest to the lowest point.
+    var voltDrop: Double? {
+        guard let r = restVolt1, let m = minVolt1, r > m else { return nil }
+        return r - m
+    }
 
     var weakestCylinder: (cylinder: Int, rise: Double)? {
         let pairs = egtRise.enumerated().compactMap { i, v in v.map { (i + 1, $0) } }
@@ -239,7 +253,7 @@ struct AFCSChange: Codable, Hashable, Sendable {
 /// per-system history screens are built from these, so logs need not be re-parsed.
 struct FlightSummary: Codable, Hashable, Sendable {
     /// Bumped when the summary gains fields; older summaries are rebuilt from their logs.
-    static let currentVersion = 9
+    static let currentVersion = 10
 
     let version: Int
     let filename: String
@@ -463,7 +477,22 @@ enum FlightSummarizer {
             guard let base = log.value(ch, at: index), let peak = log.samples(ch, in: after).map(\.value).max() else { return nil }
             return peak - base
         }
-        return StartRecord(time: t, crankingEpisodes: episodes, minVolt1: minV, peakFuelFlow: ff, rpmAfter30s: rpm30, egtRise: rise)
+        var record = StartRecord(time: t, crankingEpisodes: episodes, minVolt1: minV, peakFuelFlow: ff, rpmAfter30s: rpm30, egtRise: rise)
+        // Cranking began where RPM first showed (above 30) in the run leading up to the start.
+        var first = index
+        while first > 0, log.times[index].timeIntervalSince(log.times[first - 1]) <= 30,
+              (log.value(PerspectiveChannel.rpm, at: first - 1) ?? 0) > 30 { first -= 1 }
+        if first < index { record.crankSeconds = t.timeIntervalSince(log.times[first]) }
+        let crankStart = log.times[first]
+        let rest = log.samples(PerspectiveChannel.volt1, in: log.indices(from: crankStart.addingTimeInterval(-20), to: crankStart))
+            .filter { ($0.value) > 5 && (log.value(PerspectiveChannel.rpm, at: $0.index) ?? 0) <= 30 }
+            .map(\.value).sorted()
+        if !rest.isEmpty { record.restVolt1 = rest[rest.count / 2] }
+        record.oat = log.samples(PerspectiveChannel.oat, in: around).map(\.value).first
+        let charging = log.samples(PerspectiveChannel.volt1, in: log.indices(from: t.addingTimeInterval(20), to: t.addingTimeInterval(30)))
+            .map(\.value).sorted()
+        if !charging.isEmpty { record.afterVolt1 = charging[charging.count / 2] }
+        return record
     }
 }
 

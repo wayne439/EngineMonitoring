@@ -164,7 +164,7 @@ struct TurboFinding: Identifiable, Hashable, Sendable {
 
     var text: String {
         switch kind {
-        case .takeoffRPM: return String(format: "Takeoff RPM %.0f, below this aircraft's normal %.0f (POH 4-16: about 2,700). Have the prop governor (high-RPM stop) checked.", value, normal)
+        case .takeoffRPM: return String(format: "Takeoff RPM %.0f, below this aircraft's normal %.0f (\(POHRef.page("4-16")): about \(Int(AircraftProfileSnapshot.shared.profile.limits.rpmMax.rounded()))). Have the prop governor (high-RPM stop) checked.", value, normal)
         case .takeoffMAP: return String(format: "Takeoff manifold pressure %.1f inHg, below this aircraft's normal %.1f. Points at the turbonormalizer (wastegate, controller) or an induction or exhaust leak.", value, normal)
         case .takeoffFF: return String(format: "Takeoff fuel flow %.1f gph, below this aircraft's normal %.1f. Less fuel means less cooling at full power: check the mixture rigging, fuel servo, flow divider and injectors (and that the takeoff was not leaned).", value, normal)
         case .deck:
@@ -411,7 +411,7 @@ enum PreShopReport {
         t += "\nPLEASE LOOK AT\n"
         if lookAt.isEmpty { t += "- Nothing specific from the engine data. Routine annual: compressions, borescope, plugs, mags, induction and exhaust.\n" }
         for (i, s) in lookAt.prefix(10).enumerated() { t += "\(i + 1). \(s)\n" }
-        t += "\nMethods: run-up per POH 4-14; fuel spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with this aircraft's own normal. "
+        t += "\nMethods: run-up per \(POHRef.page("4-14")); fuel spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with this aircraft's own normal. "
         t += "Logs: engine monitor data card, 1 sample per second.\n"
         return t
     }

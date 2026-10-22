@@ -7,12 +7,35 @@ import Foundation
 enum IssuePlaybook {
     /// The guide for an issue, with notes for this aircraft added (for example the G7's lithium-ion battery 1).
     static func guide(for kind: String) -> IssueGuide {
-        let g = baseGuide(for: kind)
+        let g = POHRef.isSR22 ? baseGuide(for: kind) : generic(baseGuide(for: kind))
         let profile = AircraftProfileSnapshot.shared.profile
         guard let note = profile.batteryNote,
               (g.toResolve + [g.meaning]).contains(where: { $0.lowercased().contains("battery") }) else { return g }
         return IssueGuide(title: g.title, meaning: g.meaning, pohProcedureID: g.pohProcedureID, pohReference: g.pohReference,
                           inFlight: g.inFlight, toResolve: g.toResolve + [note], copaTopic: g.copaTopic)
+    }
+
+    /// The guides quote the SR22 POH. For any other aircraft, drop SR22 page numbers, procedure links and
+    /// SR22-only annunciator names and point to the pilot's own POH/AFM instead.
+    private static func generic(_ g: IssueGuide) -> IssueGuide {
+        func clean(_ t: String) -> String {
+            var t = t
+            for (a, b) in [(" (M BUS 1 caution range)", ""), (" (M BUS 2 caution range)", ""),
+                           ("M BUS 1", "bus 1"), ("M BUS 2", "bus 2"), ("M BUS", "bus"),
+                           ("below 24.5 V", "below the low-voltage limit"), ("above 32 V", "above the high-voltage limit"),
+                           ("24.5 V", "the low-voltage limit"), ("32 V", "the high-voltage limit")] {
+                t = t.replacingOccurrences(of: a, with: b)
+            }
+            return t
+        }
+        let sr22Only = ["your POH", "M BUS", "ALT 1", "ALT 2", "CAPS", "checklist"]
+        let inFlight = g.inFlight.contains(where: { line in sr22Only.contains { line.contains($0) } })
+            ? ["Follow the abnormal or emergency procedure in your POH/AFM for this indication.",
+               "If it persists or you are unsure: land as soon as practical and have your A&P inspect before the next flight."]
+            : g.inFlight.map(clean)
+        return IssueGuide(title: clean(g.title), meaning: clean(g.meaning), pohProcedureID: nil,
+                          pohReference: g.pohReference.map { _ in "your POH/AFM" }, inFlight: inFlight,
+                          toResolve: g.toResolve.map(clean), copaTopic: clean(g.copaTopic))
     }
 
     private static func baseGuide(for kind: String) -> IssueGuide {
@@ -31,17 +54,17 @@ enum IssuePlaybook {
                           copaTopic: "Recorded issue")
     }
 
-    private static let guides: [String: IssueGuide] = [
+    private static var guides: [String: IssueGuide] { [
         // MARK: Engine start
         "start.stopped": IssueGuide(
             title: "Engine catches, then stops",
             meaning: "RPM rose above 500 and fell back below 100 within 30 seconds, followed by another start.",
-            pohProcedureID: nil, pohReference: "POH 4-10 Starting Engine",
+            pohProcedureID: nil, pohReference: "\(POHRef.page("4-10")) Starting Engine",
             inFlight: [
-                "Warm engine: no priming. First start of the day / cold: prime (POH 4-10).",
-                "Flooded (weak firing, black smoke): fuel pump OFF, mixture full LEAN, power lever full OPEN, crank; when it starts, retard power and slowly go FULL RICH (POH 4-10).",
-                "Under-primed (will not fire): prime more. As soon as it fires, open the power lever slightly to keep it running (POH 4-10).",
-                "Alternators OFF during the start (POH 4-10 caution).",
+                "Warm engine: no priming. First start of the day / cold: prime (\(POHRef.page("4-10"))).",
+                "Flooded (weak firing, black smoke): fuel pump OFF, mixture full LEAN, power lever full OPEN, crank; when it starts, retard power and slowly go FULL RICH (\(POHRef.page("4-10"))).",
+                "Under-primed (will not fire): prime more. As soon as it fires, open the power lever slightly to keep it running (\(POHRef.page("4-10"))).",
+                "Alternators OFF during the start (\(POHRef.page("4-10")) caution).",
             ],
             toResolve: [
                 "Note engine temperature, OAT and how long since shutdown for each event - a hot-start pattern points to technique, a cold one to priming.",
@@ -53,9 +76,9 @@ enum IssuePlaybook {
         "start.extra-cranking": IssueGuide(
             title: "Extra cranking before the engine starts",
             meaning: "The starter turned the engine (RPM 100-500) one or more times without a start before the start that worked.",
-            pohProcedureID: nil, pohReference: "POH 4-10 Starting Engine",
+            pohProcedureID: nil, pohReference: "\(POHRef.page("4-10")) Starting Engine",
             inFlight: [
-                "Follow POH 4-10: prime only when cold; use the flooded-start method if it fires weakly with black smoke.",
+                "Follow \(POHRef.page("4-10")): prime only when cold; use the flooded-start method if it fires weakly with black smoke.",
                 "Do not crank continuously for long periods; let the starter cool between attempts (see starter limits in the POH and your A&P).",
             ],
             toResolve: [
@@ -67,9 +90,9 @@ enum IssuePlaybook {
         "start.oil-pressure": IssueGuide(
             title: "Slow oil pressure after start",
             meaning: "Oil pressure stayed below 10 psi for the first 30 seconds after the engine started.",
-            pohProcedureID: nil, pohReference: "POH 4-10 Starting Engine",
+            pohProcedureID: nil, pohReference: "\(POHRef.page("4-10")) Starting Engine",
             inFlight: [
-                "POH 4-10: if oil pressure does not show within 30 s (warm weather) or about 60 s (very cold), SHUT DOWN and investigate.",
+                "\(POHRef.page("4-10")): if oil pressure does not show within 30 s (warm weather) or about 60 s (very cold), SHUT DOWN and investigate.",
             ],
             toResolve: [
                 "Check oil quantity and recent oil change records.",
@@ -83,7 +106,7 @@ enum IssuePlaybook {
         "limit.oilt-max": IssueGuide(
             title: "Oil temperature above 240 °F",
             meaning: "Oil temperature was above the POH red line.",
-            pohProcedureID: "3-oil-temperature-high", pohReference: "POH 3-19 Oil Temperature High",
+            pohProcedureID: "3-oil-temperature-high", pohReference: "\(POHRef.page("3-19")) Oil Temperature High",
             inFlight: ["Power - REDUCE", "Airspeed - INCREASE", "Oil temperature - MONITOR", "If it remains high: land as soon as possible."],
             toResolve: [
                 "Note the outside air temperature and airport: desert summer days raise oil temperature, but 240 °F is the POH limit regardless of OAT.",
@@ -96,9 +119,9 @@ enum IssuePlaybook {
         "limit.oilp-idle": IssueGuide(
             title: "Low oil pressure at idle on the ground",
             meaning: "OIL PRESS caution range (10-29 psi above 1,000 RPM) while taxiing or at idle, usually with hot oil after landing.",
-            pohProcedureID: "3a-low-idle-oil-pressure", pohReference: "POH 3A-6 Low Idle Oil Pressure",
+            pohProcedureID: "3a-low-idle-oil-pressure", pohReference: "\(POHRef.page("3A-6")) Low Idle Oil Pressure",
             inFlight: [
-                "POH 3A-6: OIL PRESS caution in flight - LAND as soon as practical.",
+                "\(POHRef.page("3A-6")): OIL PRESS caution in flight - LAND as soon as practical.",
                 "On the ground: a little more RPM clears it if pressure rises normally; it should never go below 10 psi.",
             ],
             toResolve: [
@@ -113,10 +136,10 @@ enum IssuePlaybook {
         "limit.volt1-low": IssueGuide(
             title: "Bus 1 voltage low (M BUS 1 caution range)",
             meaning: "Main bus 1 was below 24.5 V for 10 s or more with the engine above 1,500 RPM.",
-            pohProcedureID: "3a-low-voltage-on-main-bus-1", pohReference: "POH 3A-10 / 3A-11",
+            pohProcedureID: "3a-low-voltage-on-main-bus-1", pohReference: "\(POHRef.page("3A-10")) / 3A-11",
             inFlight: [
-                "M BUS 1 caution: perform the ALT 1 Caution (Failure) checklist (POH 3A-10).",
-                "ALT 1 circuit breaker - CHECK & SET; ALT 1 master - CYCLE (POH 3A-11).",
+                "M BUS 1 caution: perform the ALT 1 Caution (Failure) checklist (\(POHRef.page("3A-10"))).",
+                "ALT 1 circuit breaker - CHECK & SET; ALT 1 master - CYCLE (\(POHRef.page("3A-11"))).",
                 "If it does not reset: ALT 1 OFF, reduce non-essential loads, continue avoiding IMC or night as able.",
             ],
             toResolve: [
@@ -127,9 +150,9 @@ enum IssuePlaybook {
         "limit.volt2-low": IssueGuide(
             title: "Bus 2 voltage low (M BUS 2 caution range)",
             meaning: "Main bus 2 was below 24.5 V for 10 s or more with the engine above 1,500 RPM.",
-            pohProcedureID: "3a-low-voltage-on-main-bus-2", pohReference: "POH 3A-10",
+            pohProcedureID: "3a-low-voltage-on-main-bus-2", pohReference: "\(POHRef.page("3A-10"))",
             inFlight: [
-                "M BUS 2 caution: perform the ALT 1 Caution (Failure) and ALT 2 Caution (Failure) checklists (POH 3A-10).",
+                "M BUS 2 caution: perform the ALT 1 Caution (Failure) and ALT 2 Caution (Failure) checklists (\(POHRef.page("3A-10"))).",
                 "If unable to restore an alternator, reduce loads and land as soon as practical.",
             ],
             toResolve: [
@@ -140,15 +163,15 @@ enum IssuePlaybook {
         "limit.volt1-high": IssueGuide(
             title: "Bus 1 voltage above 32 V",
             meaning: "Main bus 1 was above the POH red line.",
-            pohProcedureID: "3-high-voltage-on-main-bus-1", pohReference: "POH 3-23",
+            pohProcedureID: "3-high-voltage-on-main-bus-1", pohReference: "\(POHRef.page("3-23"))",
             inFlight: ["ALT 1 master - CYCLE; M1 voltage - CHECK.", "If still above 32 V: ALT 1 OFF; perform the ALT 1 Caution (Failure) checklist; do not reset the alternator."],
             toResolve: ["Ask the A&P to check the ALT 1 voltage regulator before the next flight."],
             copaTopic: "Main bus 1 overvoltage"),
         "limit.volt2-high": IssueGuide(
             title: "Bus 2 voltage above 32 V",
             meaning: "Main bus 2 was above the POH red line.",
-            pohProcedureID: "3-high-voltage-on-main-bus-2", pohReference: "POH 3-24",
-            inFlight: ["Check M1 first (POH 3-24). If M2 above 32 V: ALT 2 master - CYCLE.", "If still above 32 V: ALT 2 OFF; perform the ALT 2 Caution (Failure) checklist; do not reset the alternator."],
+            pohProcedureID: "3-high-voltage-on-main-bus-2", pohReference: "\(POHRef.page("3-24"))",
+            inFlight: ["Check M1 first (\(POHRef.page("3-24"))). If M2 above 32 V: ALT 2 master - CYCLE.", "If still above 32 V: ALT 2 OFF; perform the ALT 2 Caution (Failure) checklist; do not reset the alternator."],
             toResolve: ["Ask the A&P to check the ALT 2 voltage regulator before the next flight."],
             copaTopic: "Main bus 2 overvoltage"),
 
@@ -156,8 +179,8 @@ enum IssuePlaybook {
         "electrical.voltage-drop": IssueGuide(
             title: "Sudden bus 1 voltage drop",
             meaning: "Bus 1 voltage fell 2 V or more within one second with the engine running.",
-            pohProcedureID: "3a-low-alternator-1-output", pohReference: "POH 3A-11 if ALT 1 caution",
-            inFlight: ["If ALT 1 or M BUS 1 caution: ALT 1 breaker CHECK & SET, ALT 1 master CYCLE (POH 3A-11)."],
+            pohProcedureID: "3a-low-alternator-1-output", pohReference: "\(POHRef.page("3A-11")) if ALT 1 caution",
+            inFlight: ["If ALT 1 or M BUS 1 caution: ALT 1 breaker CHECK & SET, ALT 1 master CYCLE (\(POHRef.page("3A-11")))."],
             toResolve: [
                 "Open the flight: a drop when a large load switched on (landing light, A/C, pitot heat) is expected; a drop with no switching is not.",
                 "Repeated drops: ask the A&P to check alternator 1 connections, the belt and the regulator.",
@@ -176,12 +199,12 @@ enum IssuePlaybook {
                 "If it repeats on different routes: ask the avionics shop to check GPS antennas, coax and the GIA units.",
             ],
             copaTopic: "Perspective GPS fix lost in flight"),
-    ]
+    ] }
 
     private static let rpmGuide = IssueGuide(
         title: "Engine speed high",
-        meaning: "RPM above 2,710 for more than 10 s or above 2,730 for more than 5 s (POH 2-8 annunciation timing).",
-        pohProcedureID: "3-engine-speed-high", pohReference: "POH 3-21",
+        meaning: "RPM above 2,710 for more than 10 s or above 2,730 for more than 5 s (\(POHRef.page("2-8")) annunciation timing).",
+        pohProcedureID: "3-engine-speed-high", pohReference: "\(POHRef.page("3-21"))",
         inFlight: [
             "Tachometer - CHECK. If speed normal in flight: continue, monitor.",
             "If speed high: Propeller Governor Failure checklist - power lever ADJUST to keep RPM in limits, airspeed REDUCE to 90 KIAS, land as soon as practical.",
@@ -196,7 +219,7 @@ enum IssuePlaybook {
     private static let oilPressureGuide = IssueGuide(
         title: "Oil pressure out of range",
         meaning: "Oil pressure outside the POH range (below 30 psi caution / 10 psi warning above 1,000 RPM, or above 100 psi).",
-        pohProcedureID: "3-oil-pressure-out-of-range", pohReference: "POH 3-19",
+        pohProcedureID: "3-oil-pressure-out-of-range", pohReference: "\(POHRef.page("3-19"))",
         inFlight: [
             "Oil pressure gage - CHECK.",
             "Low or high: power REDUCE to minimum for sustained flight; land as soon as possible; prepare for engine failure.",
@@ -204,14 +227,14 @@ enum IssuePlaybook {
         toResolve: [
             "Check oil quantity before the next flight and look for leaks (on turbo engines, also around the wastegate; and at the prop governor).",
             "Ask the A&P to check the sender and pressure relief valve; compare with the oil analysis.",
-            "If it only happens in the flare or landing roll with the power at idle and hot oil, it is the same pattern as Low Idle Oil Pressure (POH 3A-6) - show the occurrences to the A&P.",
+            "If it only happens in the flare or landing roll with the power at idle and hot oil, it is the same pattern as Low Idle Oil Pressure (\(POHRef.page("3A-6"))) - show the occurrences to the A&P.",
         ],
         copaTopic: "Oil pressure out of range")
 
     private static let chtGuide = IssueGuide(
         title: "Cylinder head temperature high",
         meaning: "Hottest CHT above 420 °F (caution) or 460 °F (warning).",
-        pohProcedureID: "3-high-cylinder-head-temperature", pohReference: "POH 3-20",
+        pohProcedureID: "3-high-cylinder-head-temperature", pohReference: "\(POHRef.page("3-20"))",
         inFlight: [
             "Power lever - REDUCE; airspeed - INCREASE; monitor.",
             "Still on: power minimum required. Caution only: land as soon as practical. Warning: land as soon as possible.",
@@ -278,10 +301,10 @@ enum IssuePlaybook {
 
     /// Run-up mag check (MagCheck).
     private static func magGuide(_ kind: String) -> IssueGuide {
-        let poh = "POH 4-14 Before Takeoff (Magnetos)"
+        let poh = "\(POHRef.page("4-14")) Before Takeoff (Magnetos)"
         let inFlight = [
-            "At the run-up: RPM drop must not exceed 150 RPM for either magneto; differential must not exceed 75 RPM (POH 4-14).",
-            "If there is a doubt concerning operation of the ignition system, RPM checks at higher engine speeds will usually confirm whether a deficiency exists (POH 4-14).",
+            "At the run-up: RPM drop must not exceed 150 RPM for either magneto; differential must not exceed 75 RPM (\(POHRef.page("4-14"))).",
+            "If there is a doubt concerning operation of the ignition system, RPM checks at higher engine speeds will usually confirm whether a deficiency exists (\(POHRef.page("4-14"))).",
             "Don't take off with a mag check outside the POH limits.",
         ]
         switch kind {
@@ -362,9 +385,9 @@ enum IssuePlaybook {
         return IssueGuide(
             title: "Turbonormalizer or induction: " + (kind.hasPrefix("turbo.induction") ? "lean cylinder at low power" : kind == "turbo.deck" ? "manifold pressure low in climb" : "takeoff power low"),
             meaning: what,
-            pohProcedureID: nil, pohReference: "POH 4-16 Takeoff Power Check",
+            pohProcedureID: nil, pohReference: "\(POHRef.page("4-16")) Takeoff Power Check",
             inFlight: [
-                "Check full-throttle engine operation early in the takeoff run; discontinue the takeoff at any sign of rough operation or sluggish acceleration (POH 4-16).",
+                "Check full-throttle engine operation early in the takeoff run; discontinue the takeoff at any sign of rough operation or sluggish acceleration (\(POHRef.page("4-16"))).",
                 "Turbo limits: follow your POH/AFM and any turbo supplement.",
             ],
             toResolve: resolve,
@@ -424,14 +447,14 @@ enum IssuePlaybook {
         var poh: (String?, String?) = (nil, nil)
         var checks = ["Compare with the oil analysis and the shop's last inspection.", "If the trend continues over several flights, show the history to your A&P."]
         switch metric {
-        case .oilTemp?: poh = ("3-oil-temperature-high", "POH 3-19 if OIL TEMP warning")
+        case .oilTemp?: poh = ("3-oil-temperature-high", "\(POHRef.page("3-19")) if OIL TEMP warning")
             checks.insert("Already compared with this aircraft's flights at a similar outside air temperature, so a hot day alone does not trigger this. If it repeats, ask the A&P to check the oil cooler, cooler baffles and winterization plate.", at: 0)
-        case .oilPressure?: poh = ("3-oil-pressure-out-of-range", "POH 3-19 if OIL PRESS warning")
+        case .oilPressure?: poh = ("3-oil-pressure-out-of-range", "\(POHRef.page("3-19")) if OIL PRESS warning")
             checks.insert("Check oil quantity and for leaks.", at: 0)
-        case .chtMax?, .cht1?, .cht2?, .cht3?, .cht4?, .cht5?, .cht6?: poh = ("3-high-cylinder-head-temperature", "POH 3-20 if CHT annunciation")
+        case .chtMax?, .cht1?, .cht2?, .cht3?, .cht4?, .cht5?, .cht6?: poh = ("3-high-cylinder-head-temperature", "\(POHRef.page("3-20")) if CHT annunciation")
             checks.insert("Compared with this aircraft's flights at a similar outside air temperature. Check that cylinder's baffles, injector nozzle and probe.", at: 0)
         case .egtSpread?: checks.insert("A widening EGT spread can come from an injector, intake leak or probe: ask the A&P about a fuel spread check and nozzle cleaning.", at: 0)
-        case .volt1?, .volt2?: poh = ("3a-low-voltage-on-main-bus-1", "POH 3A-10 if M BUS caution")
+        case .volt1?, .volt2?: poh = ("3a-low-voltage-on-main-bus-1", "\(POHRef.page("3A-10")) if M BUS caution")
             checks.insert("Have the battery and alternator output checked." + (AircraftProfileSnapshot.shared.profile.batteryNote.map { " " + $0 } ?? ""), at: 0)
         default: break
         }
