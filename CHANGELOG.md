@@ -1,5 +1,9 @@
 # Engine Pulse changelog
 
+## 0.9.3 (2026-10-22)
+- New Get started screen, shown right after registering and as a card on HOME until the first flight arrives: three ways to bring flights in (from a computer with the upload address, the pilot's own email and a one-click link; from an SD card or USB stick plugged into the iPad; from Garmin Pilot / flyGarmin), the download steps for the pilot's own monitor, a live flight count and a "Check for my flights" button that says exactly what it found.
+- Version 0.9.3 (36).
+
 ## 0.9.2 (2026-10-21)
 - Fix: flights uploaded on the website reached only the first device that opened the app, and were never saved to the account, so a pilot's other iPad or iPhone (or a reinstall) showed no flights. Every device now brings in every uploaded engine log, and new flights are saved to the account straight after they come in.
 - Fix: when a different account signs in on a device, the previous account's flights and records are cleared from the device first, so two pilots' data can never mix or upload into the wrong account.

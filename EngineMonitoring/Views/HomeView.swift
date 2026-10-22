@@ -43,6 +43,7 @@ struct HomeView: View {
         ScrollView {
             VStack(spacing: 18) {
                 hero
+                if logs.entries.isEmpty { GetStartedCard() }
                 statTiles
                 if let last = flights.first { lastFlightCard(last) }
                 if !flights.isEmpty { EarlyWarningCard(report: earlyWarning, flights: flights, attention: attention) }
