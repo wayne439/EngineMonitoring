@@ -90,7 +90,7 @@ struct LandingView: View {
                         Benefit("lock.shield", "Your data stays yours", "Your aircraft and logs are private to your account and can be deleted at any time.")
                     }
                     InfoCard(title: "About us", systemImage: "person.2") {
-                        Text("Engine Pulse is built by Fueled Consulting LLC in Cave Creek, Arizona. It started as the tool we built to watch the engine on our own airplane after every flight, and we are now opening it to every owner whose avionics record engine data.")
+                        Text("Engine Pulse is built by Engine Pulse LLC in Cave Creek, Arizona. It started as the tool we built to watch the engine on our own airplane after every flight, and we are now opening it to every owner whose avionics record engine data.")
                         Text("We are pilots and owners first. Questions or ideas: sales@enginepulse.net")
                             .foregroundStyle(.secondary)
                     }
