@@ -1,5 +1,10 @@
 # Engine Pulse changelog
 
+## 0.9.6 (2026-10-22)
+- Cirrus G7: battery advice (low bus voltage, slow cranking, early warning) notes that battery 1 is a lithium-ion battery inside the instrument panel, not in the engine compartment, checked per the Cirrus maintenance manual and the battery maker (no lead-acid capacity tests or chargers).
+- Removed notes specific to the first aircraft from every pilot's issue guides (injector nozzles past due on a Nov 2025 status sheet, leaks found at a Nov 2025 prebuy, Tornado Alley supplement wording); the guides now refer to the pilot's own POH/AFM and supplements.
+- Version 0.9.6 (39).
+
 ## 0.9.5 (2026-10-22)
 - No references to other companies' services: removed Savvy, FlySto, COPA (resources and "Ask COPA Commander", now "Copy a question for your A&P"), GAMI and GAMIjector (now "Lean test" and "fuel spread"), EzTrends, and the planned flyGarmin and AirSync partnership claims (AirSync is no longer offered as a data link). Avionics and engine-monitor brand names remain only to describe compatibility.
 - Copyright: "© 2026 Engine Pulse LLC. All rights reserved." in the app (About, ACCOUNT) and on every website page, with a trademark notice. New ACCOUNT > Acknowledgements holds the open-source notices the JPI decoder's sources require. The repository has a proprietary LICENSE and THIRD-PARTY-NOTICES.md.
