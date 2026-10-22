@@ -1,5 +1,8 @@
 # Engine Pulse changelog
 
+## Unreleased
+- Company name: Engine Pulse LLC (was Fueled Consulting LLC) in the app's About text and across the website (footers, Terms and Privacy Policy, effective October 22, 2026). Bundle and product IDs keep their com.fueledconsulting prefix: App Store Connect can't change them.
+
 ## 0.9.4 (2026-10-22)
 - Sign in with Apple is off during the beta: "Hide My Email" created separate, empty accounts that didn't match the email used on the upload website. Email and password is the one sign-in everywhere.
 - Website: enginepulse.net/start is a single page of setup steps for testers (install, register, bring in flights, POH, troubleshooting).
