@@ -104,14 +104,10 @@ enum AircraftKnowledge {
     static var onlineResources: [Resource] { profile.isCirrus ? cirrusResources : [] }
 
     private static let cirrusResources: [Resource] = [
-        Resource(title: "COPA.fyi", detail: "COPA's Cirrus training workbook: Cirrus documents, avionics guides, FAA publications", url: "https://www.copa.fyi", authority: .experience),
-        Resource(title: "COPA Commander", detail: "COPA's AI assistant on Cirrus documentation (members unlimited; 3 free questions a day)", url: "https://commander.copa.fyi", authority: .experience),
-        Resource(title: "Ask COPA U", detail: "Answers from COPA instructors and experts (COPA membership)", url: "https://answers.copa.fyi", authority: .experience),
-        Resource(title: "COPA forum", detail: "Owner and pilot discussions", url: "https://forum.cirruspilots.org", authority: .experience),
         Resource(title: "Cirrus Tech Pubs", detail: "Cirrus manuals, service information and POH revisions", url: "https://techpubs.cirrusaircraft.com/tech/pubs", authority: .manufacturer),
     ]
 
-    /// A ready-to-paste question for COPA Commander, built from a finding.
+    /// A ready-to-paste question for the pilot's A&P or type club, built from a finding.
     static func copaQuestion(about topic: String, details: String) -> String {
         let p = profile
         let induction = p.isTurbocharged ? "turbocharged/turbonormalized" : "normally aspirated"

@@ -38,7 +38,11 @@ struct AccountView: View {
             }
 
             Section {
+                NavigationLink("Acknowledgements") { AcknowledgementsView() }
                 Text("Engine Pulse is advisory only. It is not FAA-approved and never replaces your POH/AFM, your engine monitor or your A&P.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Text("\u{00A9} 2026 Engine Pulse LLC. All rights reserved.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

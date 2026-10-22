@@ -332,10 +332,10 @@ enum PreShopReport {
         }
 
         // Fuel distribution.
-        t += "\nFUEL DISTRIBUTION (GAMI LEAN TEST)\n"
+        t += "\nFUEL DISTRIBUTION (LEAN TEST)\n"
         if let g = GAMICheck.history(summaries).first {
             t += "- \(d.string(from: g.test.time)): " + GAMICheck.describe(g.test) + "\n"
-            if g.test.spread >= GAMICheck.poorSpread { lookAt.append(String(format: "Injectors: GAMI spread %.1f gph (cylinder %ld richest, %ld leanest). Clean/flow the injectors; consider matched GAMIjectors.", g.test.spread, g.test.richest, g.test.leanest)) }
+            if g.test.spread >= GAMICheck.poorSpread { lookAt.append(String(format: "Injectors: fuel spread %.1f gph (cylinder %ld richest, %ld leanest). Clean/flow the injectors; consider matched GAMIjectors.", g.test.spread, g.test.richest, g.test.leanest)) }
         } else {
             t += "- No slow lean sweep in the logs yet (big-pull leaning is too fast to measure). Fly the guided lean test in the app for a spread.\n"
         }
@@ -411,7 +411,7 @@ enum PreShopReport {
         t += "\nPLEASE LOOK AT\n"
         if lookAt.isEmpty { t += "- Nothing specific from the engine data. Routine annual: compressions, borescope, plugs, mags, induction and exhaust.\n" }
         for (i, s) in lookAt.prefix(10).enumerated() { t += "\(i + 1). \(s)\n" }
-        t += "\nMethods: run-up per POH 4-14; GAMI spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with this aircraft's own normal. "
+        t += "\nMethods: run-up per POH 4-14; fuel spread from a slow lean sweep; valve watch, probe check, early warning and turbo checks compare each flight with this aircraft's own normal. "
         t += "Logs: engine monitor data card, 1 sample per second.\n"
         return t
     }

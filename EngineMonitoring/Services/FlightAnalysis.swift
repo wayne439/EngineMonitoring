@@ -278,7 +278,7 @@ struct FlightSummary: Codable, Hashable, Sendable {
     /// Steady-cruise engine values for the early warning and trend charts; nil for summaries built before v0.9.6.
     let engineTrend: EngineTrendMetrics?
     // Version 9
-    /// Run-up mag check, GAMI lean test and the flight card (report card, turbo and induction); nil before v0.9.7.
+    /// Run-up mag check, lean test and the flight card (report card, turbo and induction); nil before v0.9.7.
     let engineChecks: EngineCheckResult?
 
     init(filename: String, start: Date, end: Date, phaseSeconds: [FlightPhase: Int],

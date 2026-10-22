@@ -78,7 +78,7 @@ struct DiagnosticsView: View {
             } header: {
                 Text("Engine Analysis")
             } footer: {
-                Text("Valve watch: every flight is checked for the early sign of a leaking exhaust valve (one cylinder's EGT cycling about once a minute in steady cruise). Probes & wiring: every sensor is checked for readings a running engine cannot produce. Early warning & trends: every value followed across flights, warning when one starts to drift before it becomes a problem. Report card: every flight's numbers against all earlier flights. Run-up mag check, GAMI lean test, turbo & induction checks, and a one-page report for your A&P.")
+                Text("Valve watch: every flight is checked for the early sign of a leaking exhaust valve (one cylinder's EGT cycling about once a minute in steady cruise). Probes & wiring: every sensor is checked for readings a running engine cannot produce. Early warning & trends: every value followed across flights, warning when one starts to drift before it becomes a problem. Report card: every flight's numbers against all earlier flights. Run-up mag check, lean test, turbo & induction checks, and a one-page report for your A&P.")
             }
 
             Section("Diagnostic Areas") {

@@ -210,6 +210,6 @@ struct IssueGuide: Hashable, Sendable {
     let inFlight: [String]
     /// What to check on the ground to resolve it (TRAINING / shop).
     let toResolve: [String]
-    /// Topic for the "Ask COPA Commander" question.
+    /// Topic for the "Copy a question for your A&P" button.
     let copaTopic: String
 }

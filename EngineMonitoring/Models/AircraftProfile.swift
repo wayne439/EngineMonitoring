@@ -92,7 +92,7 @@ enum EngineMonitorType: String, Codable, CaseIterable, Identifiable, Sendable {
         case .jpiEDM:
             return ["Plug a USB stick into the EDM (units without USB need JPI's USB download box on the serial cable).",
                     "Hold STEP and LF for 5 seconds until PROGRAM shows, tap STEP until DUMP? appears, tap LF to choose NEW (or ALL), then tap STEP. Wait for DONE, then 10 more seconds.",
-                    "Import the file (named like U241015.JPI, older units .DAT) in DIAGNOSTICS > Flight Logs, or share it to Engine Pulse. Every flight in it is added. EzTrends CSV exports work too."]
+                    "Import the file (named like U241015.JPI, older units .DAT) in DIAGNOSTICS > Flight Logs, or share it to Engine Pulse. Every flight in it is added. JPI CSV exports work too."]
         case .eiMVP:
             return ["With the engine off, open the USB / Data Recording screen and download the flights to the USB data stick.",
                     "Import the CSV files (named like Flt0001_20241015F.csv) in DIAGNOSTICS > Flight Logs, or share them to Engine Pulse."]

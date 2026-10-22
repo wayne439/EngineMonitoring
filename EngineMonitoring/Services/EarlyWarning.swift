@@ -336,7 +336,7 @@ enum EarlyWarning {
             }
             if let gap, let cht {
                 add(c, "Cylinder moving out of balance and running hotter (injector, induction leak, timing)",
-                    "EGT moving away from the other cylinders with CHT rising. Clean/flow the injector, check the intake coupling for leaks, check timing; a GAMI lean test confirms.",
+                    "EGT moving away from the other cylinders with CHT rising. Clean/flow the injector, check the intake coupling for leaks, check timing; a lean test confirms.",
                     [gap, cht])
             } else if let gap {
                 add(c, "Fuel/air balance change on this cylinder (injector or induction)",
@@ -347,10 +347,10 @@ enum EarlyWarning {
             }
         }
         if let s = by["chtspread"], !out.contains(where: { $0.cylinder != nil }) {
-            add(nil, "Cylinders drifting apart (cooling or fuel distribution)", "Check baffles and injectors; a GAMI lean test shows fuel distribution.", [s])
+            add(nil, "Cylinders drifting apart (cooling or fuel distribution)", "Check baffles and injectors; a lean test shows fuel distribution.", [s])
         }
         if let s = by["egtspread"], !out.contains(where: { $0.cylinder != nil }) {
-            add(nil, "EGTs spreading apart (fuel distribution or induction)", "A GAMI lean test shows whether the injectors are matched; check intake couplings.", [s])
+            add(nil, "EGTs spreading apart (fuel distribution or induction)", "A lean test shows whether the injectors are matched; check intake couplings.", [s])
         }
         if let s = by["oilt"] {
             add(nil, "Oil running hotter for the weather (oil cooler, baffles, winterization plate)", "Check the oil cooler and its baffles/plate; compare with the oil analysis.", [s])
