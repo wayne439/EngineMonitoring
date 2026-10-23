@@ -1341,14 +1341,28 @@ struct TesterStatus: Identifiable, Sendable {
 
 extension CloudStore {
     /// True when this account is listed in app_admins (false on older databases or when signed out).
+    /// Tries up to three times; a network hiccup or a token refresh while the app is busy syncing no longer
+    /// hides the admin section. The last answer is remembered for this account, so the section shows at once.
     func checkAdmin() async -> Bool {
-        guard isConfigured, isSignedIn else { return false }
-        do {
-            let (api, s) = try await token()
-            return (try await api.rpc("is_app_admin", params: [:], token: s.accessToken) as? Bool) ?? false
-        } catch {
-            return false
+        guard isConfigured, isSignedIn, let uid = session?.userID.lowercased() else { return false }
+        let key = "EM.admin.\(uid)"
+        for attempt in 0..<3 {
+            do {
+                let (api, s) = try await token()
+                let admin = (try await api.rpc("is_app_admin", params: [:], token: s.accessToken) as? Bool) ?? false
+                defaults.set(admin, forKey: key)
+                return admin
+            } catch {
+                if attempt < 2 { try? await Task.sleep(for: .seconds(2)) }
+            }
         }
+        return defaults.bool(forKey: key)
+    }
+
+    /// The last admin answer for the signed-in account (shown while checking again).
+    var rememberedAdmin: Bool {
+        guard let uid = session?.userID.lowercased() else { return false }
+        return defaults.bool(forKey: "EM.admin.\(uid)")
     }
 
     func testerStatus() async throws -> [TesterStatus] {
