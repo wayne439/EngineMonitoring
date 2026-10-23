@@ -396,7 +396,8 @@ grant execute on function public.accept_aircraft_transfer(text, text) to authent
 create table if not exists public.app_admins (email text primary key check (email = lower(email)));
 alter table public.app_admins enable row level security;     -- no policies: not readable through the API
 revoke all on public.app_admins from anon, authenticated;
-insert into public.app_admins (email) values ('waynedickert@gmail.com'), ('wayne@fueledconsulting.com') on conflict do nothing;
+insert into public.app_admins (email) values ('waynedickert@gmail.com'), ('wayne@fueledconsulting.com'), ('sales@enginepulse.net')
+on conflict do nothing;
 
 create or replace function public.is_app_admin() returns boolean
 language sql stable security definer set search_path = public, auth
@@ -436,5 +437,35 @@ begin
 end;
 $$;
 
-revoke all on function public.is_app_admin(), public.admin_tester_status() from public, anon;
-grant execute on function public.is_app_admin(), public.admin_tester_status() to authenticated;
+-- One account in detail (admins only): every upload with its slot, status and any error, and every flight
+-- with the takeoffs and landings the app found in it. File contents are not returned.
+create or replace function public.admin_tester_detail(tester_email text)
+returns jsonb
+language plpgsql stable security definer set search_path = public, auth
+as $$
+declare uid uuid;
+begin
+    if not public.is_app_admin() then
+        raise exception 'not allowed' using errcode = '42501';
+    end if;
+    select u.id into uid from auth.users u where lower(u.email) = lower(tester_email);
+    if uid is null then return jsonb_build_object('uploads', '[]'::jsonb, 'flights', '[]'::jsonb); end if;
+    return jsonb_build_object(
+        'uploads', coalesce((select jsonb_agg(jsonb_build_object(
+                'filename', i.original_filename, 'category', i.category, 'status', i.status, 'detail', i.detail,
+                'source', i.source, 'size_bytes', i.size_bytes, 'received_at', i.received_at, 'processed_at', i.processed_at)
+                order by i.received_at desc)
+            from public.inbox_uploads i where i.owner_id = uid), '[]'::jsonb),
+        'flights', coalesce((select jsonb_agg(jsonb_build_object(
+                'filename', f.original_filename, 'started_at', f.started_at, 'ended_at', f.ended_at,
+                'samples', f.sample_count, 'airframe', f.airframe_name, 'system_id', f.system_id,
+                'takeoffs', coalesce(jsonb_array_length(case when jsonb_typeof(f.summary -> 'takeoffs') = 'array' then f.summary -> 'takeoffs' end), 0),
+                'landings', coalesce(jsonb_array_length(case when jsonb_typeof(f.summary -> 'landings') = 'array' then f.summary -> 'landings' end), 0),
+                'uploaded_at', f.uploaded_at)
+                order by f.started_at desc)
+            from public.flight_logs f where f.owner_id = uid), '[]'::jsonb));
+end;
+$$;
+
+revoke all on function public.is_app_admin(), public.admin_tester_status(), public.admin_tester_detail(text) from public, anon;
+grant execute on function public.is_app_admin(), public.admin_tester_status(), public.admin_tester_detail(text) to authenticated;

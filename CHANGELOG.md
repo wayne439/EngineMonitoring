@@ -5,6 +5,7 @@
 - Records sync between devices record by record instead of replacing the whole list: a record added on any device is kept, a record deleted on any device stays deleted, and a newly set-up device or one with older copies can no longer overwrite the account's records.
 - MY FLYING works with Garmin G1000 logs from aircraft other than Cirrus (indicated altitude recorded as AltInd), with logs that have no vertical-speed column (worked out from altitude), with GPS altitude when there's no baro altitude, and with engines whose redline is below 2,700 RPM. Flights are re-read once to find their takeoffs and landings.
 - When MY FLYING finds no takeoffs or landings, it now checks the newest log and says exactly what's missing (airspeed, altitude or RPM), or that the recording didn't cover the takeoff and landing.
+- ACCOUNT > Beta testers: the section no longer disappears when the admin check fails once (it retries and remembers). sales@enginepulse.net is an admin. Tap any account to see each upload (slot, status, any error) and each flight with the takeoffs and landings the pilot's app found. Flights re-read by a newer version update their stored summary, so the admin view stays current.
 - Version 0.9.8 (41).
 
 ## 0.9.7 (2026-10-22)

@@ -649,6 +649,18 @@ final class CloudStore: ObservableObject {
                 defaults.set(Array(uploadedLogs), forKey: Self.uploadedKey)
                 done += 1
             }
+            // Flights already in the account whose summary was re-read by a newer version (for example newly found
+            // takeoffs and landings): update the stored summary so other devices and the admin view see it.
+            let summaryKey = "EM.cloud.summaryVersion\(FlightSummary.currentVersion)"
+            var current = Set(defaults.stringArray(forKey: summaryKey) ?? [])
+            for entry in logs.entries where uploadedLogs.contains(entry.filename) && !current.contains(entry.filename) {
+                guard let summary = logs.summary(named: entry.filename), summary.isCurrent else { continue }
+                try await api.update(table: "flight_logs",
+                                     filter: ["aircraft_id": "eq.\(aircraftID.uuidString.lowercased())", "filename": "eq.\(entry.filename)"],
+                                     values: ["summary": try CloudAPI.jsonObject(summary)], token: s.accessToken)
+                current.insert(entry.filename)
+                defaults.set(Array(current), forKey: summaryKey)
+            }
             lastSync = Date()
             defaults.set(lastSync, forKey: Self.lastSyncKey)
             status = pending.isEmpty ? "Up to date." : "Uploaded \(done) log\(done == 1 ? "" : "s")."
@@ -1365,9 +1377,54 @@ extension CloudStore {
         return defaults.bool(forKey: "EM.admin.\(uid)")
     }
 
+    /// One account's uploads and flights (admins only).
+    func testerDetail(email: String) async throws -> TesterDetail {
+        let (api, s) = try await token()
+        let json = try await api.rpc("admin_tester_detail", params: ["tester_email": email], token: s.accessToken) as? [String: Any] ?? [:]
+        return TesterDetail(json: json)
+    }
+
     func testerStatus() async throws -> [TesterStatus] {
         let (api, s) = try await token()
         let rows = try await api.rpc("admin_tester_status", params: [:], token: s.accessToken) as? [[String: Any]] ?? []
         return rows.compactMap(TesterStatus.init(row:))
+    }
+}
+
+/// One account in detail for the admin view: each upload and each flight (no file contents).
+struct TesterDetail: Sendable {
+    struct Upload: Identifiable, Sendable {
+        let id = UUID()
+        let filename: String
+        let category: String
+        let status: String
+        let detail: String?
+        let source: String
+        let received: Date?
+    }
+    struct Flight: Identifiable, Sendable {
+        let id = UUID()
+        let filename: String
+        let start: Date?
+        let end: Date?
+        let samples: Int
+        let takeoffs: Int
+        let landings: Int
+    }
+    let uploads: [Upload]
+    let flights: [Flight]
+
+    init(json: [String: Any]) {
+        func date(_ v: Any?) -> Date? { (v as? String).flatMap { CloudAPI.parseDate($0) } }
+        func int(_ v: Any?) -> Int { (v as? Int) ?? (v as? NSNumber)?.intValue ?? 0 }
+        uploads = (json["uploads"] as? [[String: Any]] ?? []).map { u in
+            Upload(filename: u["filename"] as? String ?? "?", category: u["category"] as? String ?? "",
+                   status: u["status"] as? String ?? "", detail: u["detail"] as? String,
+                   source: u["source"] as? String ?? "", received: date(u["received_at"]))
+        }
+        flights = (json["flights"] as? [[String: Any]] ?? []).map { f in
+            Flight(filename: f["filename"] as? String ?? "?", start: date(f["started_at"]), end: date(f["ended_at"]),
+                   samples: int(f["samples"]), takeoffs: int(f["takeoffs"]), landings: int(f["landings"]))
+        }
     }
 }

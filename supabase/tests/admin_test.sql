@@ -19,6 +19,11 @@ do $$ begin
     exception when insufficient_privilege then null;
     end;
     begin
+        perform public.admin_tester_detail('tom@example.com');
+        raise exception 'tester saw admin detail';
+    exception when insufficient_privilege then null;
+    end;
+    begin
         perform 1 from public.app_admins;
         raise exception 'tester read app_admins';
     exception when insufficient_privilege then null;
@@ -40,6 +45,20 @@ begin
     end if;
     if r.documents <> 'logs x1, poh-limits x1' then raise exception 'documents %', r.documents; end if;
     if (select count(*) from public.admin_tester_status()) <> 2 then raise exception 'admin should see every account'; end if;
+end $$;
+do $$
+declare d jsonb := public.admin_tester_detail('TOM@example.com');
+begin
+    if jsonb_array_length(d -> 'uploads') <> 2 or jsonb_array_length(d -> 'flights') <> 0 then raise exception 'detail %', d; end if;
+    if not exists (select 1 from jsonb_array_elements(d -> 'uploads') e where e ->> 'filename' = 'a.csv' and e ->> 'status' = 'received')
+    then raise exception 'upload missing %', d; end if;
+end $$;
+reset role;
+insert into auth.users (id, email) values ('00000000-0000-0000-0000-00000000000c', 'Sales@EnginePulse.net');
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000000c', false);
+do $$ begin
+    if not public.is_app_admin() then raise exception 'sales@ should be admin'; end if;
 end $$;
 reset role;
 select 'ALL ADMIN TESTS PASSED' as result;
