@@ -31,6 +31,18 @@ final class FlightLogStore: ObservableObject {
         Task { await refreshSummaries() }
     }
 
+    /// Re-reads this device's flights after the signed-in account changed (AccountVault).
+    func reloadFromDisk() async {
+        cache = [:]
+        cacheOrder = []
+        summaries = bundledByName
+        do { entries = try library.loadIndex() } catch {
+            entries = []
+            lastError = "Flight log index could not be read: \(error.localizedDescription)"
+        }
+        await refreshSummaries()
+    }
+
     /// the aircraft's normal ranges from every imported flight (optionally leaving one log out).
     func baseline(excluding filename: String? = nil) -> Baseline {
         Baseline.build(from: summaries.values.filter { $0.filename != filename })

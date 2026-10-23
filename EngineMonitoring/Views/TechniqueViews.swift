@@ -499,6 +499,31 @@ private struct MyFlyingEmptySection: View {
     @EnvironmentObject private var cloud: CloudStore
     @EnvironmentObject private var logs: FlightLogStore
     @EnvironmentObject private var aircraft: AircraftProfileStore
+    /// What the newest log is missing for takeoffs and landings, in plain words (nil until checked).
+    @State private var airData: String?
+
+    /// Looks at the newest log's columns to say exactly why nothing was found.
+    private func checkAirData() async {
+        guard flights > 0, let newest = logs.entries.max(by: { $0.start < $1.start }),
+              let log = await logs.log(for: newest) else { return }
+        let cols = Set(log.columns)
+        func has(_ names: [String]) -> Bool { names.contains { name in cols.contains(name) && (0..<log.sampleCount).contains { (log.value(name, at: $0) ?? 0) != 0 } } }
+        let ias = has([PerspectiveChannel.ias])
+        let alt = has([PerspectiveChannel.altBaro, "AltMSL", "AltGPS"])
+        let rpm = has([PerspectiveChannel.rpm])
+        var missing: [String] = []
+        if !ias { missing.append("indicated airspeed") }
+        if !alt { missing.append("altitude") }
+        if !rpm { missing.append("engine RPM") }
+        if missing.isEmpty {
+            let maxIAS = (0..<log.sampleCount).compactMap { log.value(PerspectiveChannel.ias, at: $0) }.max() ?? 0
+            airData = maxIAS < 50
+                ? "Your newest log (\(newest.originalFilename)) has airspeed and altitude, but never reaches 50 KIAS: it may be a ground run, or the recording started after takeoff and stopped before landing. Logs that cover the whole flight, engine start to shutdown, show takeoffs and landings."
+                : "Your newest log (\(newest.originalFilename)) has airspeed and altitude. If takeoffs and landings still don't show after the flights finish reading, send this log to support from the flight's report."
+        } else {
+            airData = "Your newest log (\(newest.originalFilename)) has no \(ListFormatter.localizedString(byJoining: missing)). Takeoffs and landings need airspeed and altitude, which Garmin glass cockpits (G1000, Perspective, G3X) record on the SD card. Engine-only monitors such as JPI and most EI units don't, so this page stays empty for them; engine health, reports and early warning still work."
+        }
+    }
 
     var body: some View {
         Section {
@@ -523,11 +548,17 @@ private struct MyFlyingEmptySection: View {
                 }
             } else {
                 Label("\(flights) flight\(flights == 1 ? "" : "s"), but no takeoffs or landings found.", systemImage: "info.circle").font(.headline)
-                Text("Takeoffs and landings need airspeed and altitude in the log (Garmin glass records both). Engine-only monitors such as JPI and most EI units don't, so this page stays empty for them; engine health, reports and early warning still work.")
-                    .font(.subheadline)
+                if let check = airData {
+                    Text(check).font(.subheadline)
+                } else {
+                    Text("Takeoffs and landings need airspeed and altitude in the log (Garmin glass records both). Engine-only monitors such as JPI and most EI units don't, so this page stays empty for them; engine health, reports and early warning still work.")
+                        .font(.subheadline)
+                }
+                if logs.isSummarizing { ProgressView("Reading flights…") }
             }
         } header: {
             Text("Getting started")
         }
+        .task(id: logs.entries.count) { await checkAirData() }
     }
 }

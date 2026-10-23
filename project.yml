@@ -8,8 +8,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.9.7"
-    CURRENT_PROJECT_VERSION: "40"
+    MARKETING_VERSION: "0.9.8"
+    CURRENT_PROJECT_VERSION: "41"
 targets:
   EngineMonitoring:
     type: application

@@ -348,10 +348,28 @@ struct AppSyncState: Codable {
     var maintenanceModified: Date?
     var maintenanceItems: [MaintenanceItem]?
     var maintenanceEntries: [MaintenanceEntry]?
+    var maintenanceDeleted: [UUID]?
     var issuesModified: Date?
     var issueRecords: [String: IssueStatusRecord]?
     var eventsModified: Date?
     var events: [DiagnosticEvent]?
+    var eventsDeleted: [UUID]?
+}
+
+/// Record-by-record merge of two devices' copies.
+enum AppSyncMerge {
+    /// Everything in either list, minus deleted ids; where both have the same id, `localWins` picks the side.
+    static func union<T: Identifiable & Hashable>(_ local: [T], _ remote: [T], localWins: Bool, deleted: Set<UUID>) -> [T] where T.ID == UUID {
+        var byID: [UUID: T] = [:]
+        for r in remote { byID[r.id] = r }
+        for l in local where localWins || byID[l.id] == nil { byID[l.id] = l }
+        let order = local.map(\.id) + remote.map(\.id)
+        var seen = Set<UUID>()
+        return order.compactMap { id in
+            guard !deleted.contains(id), seen.insert(id).inserted else { return nil }
+            return byID[id]
+        }
+    }
 }
 
 /// Stores the session in the Keychain (this device only).
@@ -806,6 +824,22 @@ final class CloudStore: ObservableObject {
         set { defaults.set(newValue, forKey: "EM.deviceOwner") }
     }
 
+    /// Re-reads this device's per-account settings after AccountVault swapped accounts.
+    func reloadAfterAccountSwitch() {
+        if let raw = defaults.string(forKey: Self.aircraftIDKey), let id = UUID(uuidString: raw) {
+            aircraftID = id
+        } else {
+            let id = UUID()
+            defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
+            aircraftID = id
+        }
+        uploadedLogs = Set(defaults.stringArray(forKey: Self.uploadedKey) ?? [])
+        lastSync = defaults.object(forKey: Self.lastSyncKey) as? Date
+        outgoingTransfer = nil
+        soldAircraft = nil
+        inboxItems = []
+    }
+
     /// Another account signed in on this device: start from a clean slate so the two accounts' flights and
     /// records never mix (the previous account's data is in its own cloud account). The caller clears the stores.
     func resetForAccountSwitch() {
@@ -937,26 +971,47 @@ final class CloudStore: ObservableObject {
                 remote = nil
             }
             var upload = remote == nil
+            // Records are merged, not replaced: a record added on any device is kept, a record deleted on any
+            // device stays deleted, and where both devices changed the same record the newer side wins.
 
+            // Maintenance: your items list from the newer side; records merged one by one.
             let rm = remote?.maintenanceModified ?? .distantPast
-            if rm > maintenance.modifiedAt, let items = remote?.maintenanceItems, let entries = remote?.maintenanceEntries {
-                maintenance.replaceFromCloud(items: items, entries: entries, modified: rm)
-            } else if maintenance.modifiedAt > rm { upload = true }
+            let localMaintNewer = maintenance.modifiedAt > rm || remote?.maintenanceItems == nil
+            let maintDeleted = maintenance.deletedEntryIDs.union(remote?.maintenanceDeleted ?? [])
+            let items = localMaintNewer ? maintenance.items : (remote?.maintenanceItems ?? maintenance.items)
+            let entries = AppSyncMerge.union(maintenance.entries, remote?.maintenanceEntries ?? [], localWins: localMaintNewer, deleted: maintDeleted)
+            let maintModified = max(maintenance.modifiedAt, rm)
+            maintenance.noteDeleted(Array(remote?.maintenanceDeleted ?? []))
+            if items != maintenance.items || Set(entries) != Set(maintenance.entries) {
+                maintenance.replaceFromCloud(items: items, entries: entries, modified: maintModified)
+            }
+            if remote?.maintenanceItems.map({ $0 != items }) ?? true || Set(remote?.maintenanceEntries ?? []) != Set(entries)
+                || Set(remote?.maintenanceDeleted ?? []) != maintDeleted { upload = true }
 
+            // Issue reviews: per issue, the record changed most recently.
             let ri = remote?.issuesModified ?? .distantPast
-            if ri > issues.modifiedAt, let records = remote?.issueRecords {
-                await issues.replaceFromCloud(records: records, modified: ri)
-            } else if issues.modifiedAt > ri { upload = true }
+            var records = issues.records
+            for (kind, r) in remote?.issueRecords ?? [:] where records[kind].map({ r.updated > $0.updated }) ?? true {
+                records[kind] = r
+            }
+            let issuesModified = max(issues.modifiedAt, ri)
+            if records != issues.records { await issues.replaceFromCloud(records: records, modified: issuesModified) }
+            if remote?.issueRecords != records { upload = true }
 
+            // Event markers: merged one by one.
             let re = remote?.eventsModified ?? .distantPast
-            if re > events.modifiedAt, let list = remote?.events {
-                events.replaceFromCloud(events: list, modified: re)
-            } else if events.modifiedAt > re { upload = true }
+            let eventsDeleted = events.deletedIDs.union(remote?.eventsDeleted ?? [])
+            let markers = AppSyncMerge.union(events.events, remote?.events ?? [], localWins: events.modifiedAt > re, deleted: eventsDeleted)
+            let eventsModified = max(events.modifiedAt, re)
+            events.noteDeleted(Array(remote?.eventsDeleted ?? []))
+            if Set(markers) != Set(events.events) { events.replaceFromCloud(events: markers, modified: eventsModified) }
+            if Set(remote?.events ?? []) != Set(markers) || Set(remote?.eventsDeleted ?? []) != eventsDeleted { upload = true }
 
             if upload {
-                let state = AppSyncState(maintenanceModified: maintenance.modifiedAt, maintenanceItems: maintenance.items,
-                                         maintenanceEntries: maintenance.entries, issuesModified: issues.modifiedAt,
-                                         issueRecords: issues.records, eventsModified: events.modifiedAt, events: events.events)
+                let state = AppSyncState(maintenanceModified: maintModified, maintenanceItems: items,
+                                         maintenanceEntries: entries, maintenanceDeleted: Array(maintDeleted),
+                                         issuesModified: issuesModified, issueRecords: records,
+                                         eventsModified: eventsModified, events: markers, eventsDeleted: Array(eventsDeleted))
                 let data = try EventPersistence.encoder.encode(state)
                 try await api.uploadFile(path: path, data: data, contentType: "application/json", token: s.accessToken)
                 // While a sale is pending, the buyer's copy follows the seller's latest records.

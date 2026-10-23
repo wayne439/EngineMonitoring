@@ -18,6 +18,23 @@ final class MaintenanceStore: ObservableObject {
 
     init(baseDirectory: URL = EventPersistence.defaultDirectory()) {
         directory = baseDirectory.appendingPathComponent("Maintenance", isDirectory: true)
+        reloadFromDisk()
+    }
+
+    /// Records deleted on this device, so a sync doesn't bring them back from another device's copy.
+    private static let deletedKey = "EM.sync.maintenance.deleted"
+    var deletedEntryIDs: Set<UUID> {
+        Set((UserDefaults.standard.stringArray(forKey: Self.deletedKey) ?? []).compactMap(UUID.init(uuidString:)))
+    }
+    func noteDeleted(_ ids: [UUID]) {
+        guard !ids.isEmpty else { return }
+        UserDefaults.standard.set(Array(deletedEntryIDs.union(ids)).map(\.uuidString), forKey: Self.deletedKey)
+    }
+
+    /// Reads the records on this device (at launch, and after the signed-in account changed).
+    func reloadFromDisk() {
+        items = []
+        entries = []
         modifiedAt = UserDefaults.standard.object(forKey: Self.modifiedKey) as? Date ?? .distantPast
         load()
         // Records saved before sync existed: date them by the file so they win over an empty device.
@@ -83,6 +100,7 @@ final class MaintenanceStore: ObservableObject {
     }
 
     func deleteEntry(_ id: UUID) {
+        noteDeleted([id])
         entries.removeAll { $0.id == id }
         save()
     }
@@ -96,6 +114,7 @@ final class MaintenanceStore: ObservableObject {
     func removeItem(_ id: String) {
         guard let item = item(id), !item.builtIn else { return }
         items.removeAll { $0.id == id }
+        noteDeleted(entries.filter { $0.itemID == id }.map(\.id))
         entries.removeAll { $0.itemID == id }
         save()
     }

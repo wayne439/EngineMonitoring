@@ -180,9 +180,15 @@ enum TechniqueAnalyzer {
         let n = log.sampleCount
         guard n >= 120 else { return ([], []) }
         let ias = (0..<n).map { log.value(PerspectiveChannel.ias, at: $0) ?? 0 }
-        let alt = (0..<n).map { log.value(PerspectiveChannel.altBaro, at: $0) }
-        let vs = (0..<n).map { log.value("VSpd", at: $0) }
+        // Baro altitude; GPS/MSL altitude when the log has none (heights above the field are what matter).
+        let altChannel = [PerspectiveChannel.altBaro, "AltMSL", "AltGPS"].first { ch in log.columns.contains(ch) } ?? PerspectiveChannel.altBaro
+        let alt = (0..<n).map { log.value(altChannel, at: $0) }
+        let vs: [Double?] = log.columns.contains("VSpd")
+            ? (0..<n).map { log.value("VSpd", at: $0) }
+            : GenericEngineCSV.verticalSpeed(times: log.times, altitude: alt)
         let rpm = (0..<n).map { log.value(PerspectiveChannel.rpm, at: $0) ?? 0 }
+        // Takeoff power: 2,300 RPM on most engines, less where the redline is lower.
+        let takeoffRPM = min(2300, AircraftProfileSnapshot.shared.profile.limits.rpmMax * 0.85)
         let rollV = (0..<n).map { log.value(roll, at: $0) }
         let oat = (0..<n).map { log.value(PerspectiveChannel.oat, at: $0) }
         func pos(_ i: Int) -> (Double, Double)? {
@@ -203,7 +209,7 @@ enum TechniqueAnalyzer {
         var takeoffPositions: [(Double, Double)] = []
         var i = 1
         while i < n {
-            if ias[i] >= 50 && ias[i - 1] < 50 && rpm[i] > 2300, let field = alt[i] {
+            if ias[i] >= 50 && ias[i - 1] < 50 && rpm[i] > takeoffRPM, let field = alt[i] {
                 let end = min(n, i + 180)
                 let seg = Array(i..<end)
                 guard seg.count >= 60 else { i += 1; continue }

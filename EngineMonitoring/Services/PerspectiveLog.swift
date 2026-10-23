@@ -29,8 +29,10 @@ enum PerspectiveChannel {
     static let pitchMode = "PitchM"
     static let gpsFix = "GPSfix"
 
-    /// Other Garmin units' names for the same channels (G3X: Volts1, Amps1), mapped to the G1000 names.
-    static let aliases: [String: String] = ["Volts1": volt1, "Volts2": volt2, "Amps1": amp1, "Volt1": volt1, "Amp1": amp1]
+    /// Other Garmin units' names for the same channels (G3X: Volts1, Amps1; G1000 outside Cirrus: AltInd for
+    /// the indicated altitude), mapped to the names used here.
+    static let aliases: [String: String] = ["Volts1": volt1, "Volts2": volt2, "Amps1": amp1, "Volt1": volt1, "Amp1": amp1,
+                                            "AltInd": altBaro, "AltP": altBaro, "PAlt": altBaro, "BaroAlt": altBaro]
 
     /// Columns kept as text rather than numbers.
     static let textColumns: Set<String> = [date, time, utcOffset, "AtvWpt", "HSIS", rollMode, pitchMode, gpsFix]

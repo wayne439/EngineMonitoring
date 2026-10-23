@@ -57,6 +57,7 @@
 		000000000000000000000180 /* ValveWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000017F /* ValveWatchTests.swift */; };
 		000000000000000000000182 /* ProbeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000181 /* ProbeCheck.swift */; };
 		000000000000000000000184 /* ProbeCheckTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000183 /* ProbeCheckTests.swift */; };
+		0000000000000000000001BB /* AccountVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001BA /* AccountVault.swift */; };
 		0000000000000000000001B9 /* BatteryWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000000000000000000001B8 /* BatteryWatch.swift */; };
 		000000000000000000000186 /* EarlyWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000185 /* EarlyWarning.swift */; };
 		000000000000000000000188 /* EngineTrendViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000187 /* EngineTrendViews.swift */; };
@@ -149,6 +150,7 @@
 		00000000000000000000017F /* ValveWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValveWatchTests.swift; path = ValveWatchTests.swift; sourceTree = "<group>"; };
 		000000000000000000000181 /* ProbeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProbeCheck.swift; path = Services/ProbeCheck.swift; sourceTree = "<group>"; };
 		000000000000000000000183 /* ProbeCheckTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProbeCheckTests.swift; path = ProbeCheckTests.swift; sourceTree = "<group>"; };
+		0000000000000000000001BA /* AccountVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccountVault.swift; path = Services/AccountVault.swift; sourceTree = "<group>"; };
 		0000000000000000000001B8 /* BatteryWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BatteryWatch.swift; path = Services/BatteryWatch.swift; sourceTree = "<group>"; };
 		000000000000000000000185 /* EarlyWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EarlyWarning.swift; path = Services/EarlyWarning.swift; sourceTree = "<group>"; };
 		000000000000000000000187 /* EngineTrendViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EngineTrendViews.swift; path = Views/EngineTrendViews.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				000000000000000000000155 /* TechniqueAnalysis.swift */,
 				00000000000000000000017D /* ValveWatch.swift */,
 				000000000000000000000181 /* ProbeCheck.swift */,
+				0000000000000000000001BA /* AccountVault.swift */,
 				0000000000000000000001B8 /* BatteryWatch.swift */,
 				000000000000000000000185 /* EarlyWarning.swift */,
 				000000000000000000000187 /* EngineTrendViews.swift */,
@@ -440,6 +443,7 @@
 				000000000000000000000156 /* TechniqueAnalysis.swift in Sources */,
 				00000000000000000000017E /* ValveWatch.swift in Sources */,
 				000000000000000000000182 /* ProbeCheck.swift in Sources */,
+				0000000000000000000001BB /* AccountVault.swift in Sources */,
 				0000000000000000000001B9 /* BatteryWatch.swift in Sources */,
 				000000000000000000000186 /* EarlyWarning.swift in Sources */,
 				000000000000000000000188 /* EngineTrendViews.swift in Sources */,
@@ -545,7 +549,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -554,7 +558,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.7;
+				MARKETING_VERSION = 0.9.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = EnginePulse;
@@ -568,7 +572,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = NO;
 				CODE_SIGN_ENTITLEMENTS = EngineMonitoring/EngineMonitoring.entitlements;
@@ -577,7 +581,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.7;
+				MARKETING_VERSION = 0.9.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoring;
 				PRODUCT_MODULE_NAME = EngineMonitoring;
 				PRODUCT_NAME = EnginePulse;
@@ -591,10 +595,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.9.7;
+				MARKETING_VERSION = 0.9.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -609,10 +613,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = D64ZNA8J2P;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 0.9.7;
+				MARKETING_VERSION = 0.9.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fueledconsulting.EngineMonitoringTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

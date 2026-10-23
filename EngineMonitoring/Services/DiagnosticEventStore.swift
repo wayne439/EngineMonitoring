@@ -16,12 +16,28 @@ final class DiagnosticEventStore: ObservableObject {
     init(directory: URL = EventPersistence.defaultDirectory(), defaults: UserDefaults = .standard) {
         persistence = EventPersistence(directory: directory)
         self.defaults = defaults
+        reloadFromDisk()
+    }
+
+    /// Reads the markers on this device (at launch, and after the signed-in account changed).
+    func reloadFromDisk() {
+        events = []
         modifiedAt = defaults.object(forKey: Self.modifiedKey) as? Date ?? .distantPast
         load()
         if modifiedAt == .distantPast, !events.isEmpty {
             modifiedAt = events.map(\.timestamp).max() ?? Date()
             defaults.set(modifiedAt, forKey: Self.modifiedKey)
         }
+    }
+
+    /// Markers deleted on this device, so a sync doesn't bring them back from another device's copy.
+    private static let deletedKey = "EM.sync.events.deleted"
+    var deletedIDs: Set<UUID> {
+        Set((defaults.stringArray(forKey: Self.deletedKey) ?? []).compactMap(UUID.init(uuidString:)))
+    }
+    func noteDeleted(_ ids: [UUID]) {
+        guard !ids.isEmpty else { return }
+        defaults.set(Array(deletedIDs.union(ids)).map(\.uuidString), forKey: Self.deletedKey)
     }
 
     /// Records a marker at this instant. Call this the moment the pilot taps; details come later.
@@ -42,6 +58,7 @@ final class DiagnosticEventStore: ObservableObject {
     }
 
     func delete(ids: Set<UUID>) {
+        defaults.set(Array(deletedIDs.union(ids)).map(\.uuidString), forKey: Self.deletedKey)
         events.removeAll { ids.contains($0.id) }
         save()
     }
