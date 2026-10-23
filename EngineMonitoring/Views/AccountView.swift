@@ -48,7 +48,11 @@ struct AccountView: View {
             }
         }
         .navigationTitle("ACCOUNT")
-        .task(id: cloud.session?.userID) { isAdmin = await cloud.checkAdmin() }
+        .task(id: cloud.session?.userID) {
+            isAdmin = cloud.rememberedAdmin
+            isAdmin = await cloud.checkAdmin()
+        }
+        .refreshable { isAdmin = await cloud.checkAdmin() }
         .sheet(isPresented: $showPaywall) {
             NavigationStack { PaywallView() }
         }
