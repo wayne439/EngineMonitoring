@@ -7,6 +7,7 @@ import Foundation
 /// Application Support/Manuals) plus the app's "EM." settings. Switching moves the current account's copy into
 /// Application Support/AccountVault/<user id>/ and moves the incoming account's copy (if this device has one) back.
 /// The two accounts' data never mix: only one account's copy is in place at a time.
+@MainActor
 enum AccountVault {
     /// Settings that belong to the device, not to an account.
     private static let deviceKeys: Set<String> = ["EM.deviceOwner"]
