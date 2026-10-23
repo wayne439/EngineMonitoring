@@ -1,5 +1,12 @@
 # Engine Pulse changelog
 
+## 0.9.8 (2026-10-23)
+- Switching accounts no longer erases anything. Signing in with another account on the same iPad puts the first account's flights, documents, maintenance records, issue reviews and markers aside on the device; signing back in brings them back instantly, with no re-download or re-reading of logs. The two accounts' data still never mix.
+- Records sync between devices record by record instead of replacing the whole list: a record added on any device is kept, a record deleted on any device stays deleted, and a newly set-up device or one with older copies can no longer overwrite the account's records.
+- MY FLYING works with Garmin G1000 logs from aircraft other than Cirrus (indicated altitude recorded as AltInd), with logs that have no vertical-speed column (worked out from altitude), with GPS altitude when there's no baro altitude, and with engines whose redline is below 2,700 RPM. Flights are re-read once to find their takeoffs and landings.
+- When MY FLYING finds no takeoffs or landings, it now checks the newest log and says exactly what's missing (airspeed, altitude or RPM), or that the recording didn't cover the takeoff and landing.
+- Version 0.9.8 (41).
+
 ## 0.9.7 (2026-10-22)
 - Battery at engine start: every start now records the resting bus 1 voltage before cranking, the lowest voltage while cranking, the dip, cranking seconds, OAT and the charging voltage afterwards. A new HOME card charts the lowest cranking voltage over the last 20 starts against this battery's own normal and says "Check battery" when the newest 3 starts dip 1 V (24 V system) or 0.5 V (12 V) further than the earlier ones, with a note when the recent starts were much colder. Engine / Start history shows the same trend. Logs are re-read once to fill in the new values.
 - POH page numbers (for example "POH 4-14") are shown only for Cirrus SR22s; other aircraft see "your POH". Issue guides on other aircraft drop SR22-only procedure links and annunciator names (M BUS, ALT 1/2) and point to the pilot's own POH/AFM procedure.

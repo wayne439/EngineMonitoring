@@ -32,6 +32,34 @@ enum TechniqueFixture {
 }
 
 final class TechniqueTests: XCTestCase {
+    /// G1000 outside Cirrus names the altitude AltInd; some logs have no VSpd column.
+    func testG1000AltIndWithoutVerticalSpeedStillFindsTakeoffAndLanding() throws {
+        var lines = TechniqueFixture.circuit().components(separatedBy: "\n")
+        let header = try XCTUnwrap(lines.firstIndex { $0.contains("Lcl Date") })
+        var names = lines[header].components(separatedBy: ",")
+        let vsCol = try XCTUnwrap(names.firstIndex { $0.trimmingCharacters(in: .whitespaces) == "VSpd" })
+        names = names.map { $0.trimmingCharacters(in: .whitespaces) == "AltB" ? " AltInd" : $0 }
+        names[vsCol] = " Unused"
+        lines[header] = names.joined(separator: ",")
+        let log = try PerspectiveLogParser.parse(text: lines.joined(separator: "\n"), filename: "log_260801_080000_18AZ.csv")
+        XCTAssertTrue(log.columns.contains("AltB"))
+        let r = TechniqueAnalyzer.analyze(log, departure: "18AZ")
+        XCTAssertEqual(r.takeoffs.count, 1)
+        XCTAssertEqual(r.landings.count, 1)
+    }
+
+    func testRecordMergeKeepsBothSidesAndHonoursDeletes() {
+        let a = MaintenanceEntry(itemID: "oil", date: Date(), values: [:], notes: "iPad", by: "Pilot")
+        let b = MaintenanceEntry(itemID: "oil", date: Date(), values: [:], notes: "iPhone", by: "Pilot")
+        let gone = MaintenanceEntry(itemID: "oil", date: Date(), values: [:], notes: "deleted", by: "Pilot")
+        var changed = a
+        changed.notes = "iPad, edited"
+        let merged = AppSyncMerge.union([changed, gone], [a, b, gone], localWins: true, deleted: [gone.id])
+        XCTAssertEqual(Set(merged.map(\.notes)), ["iPad, edited", "iPhone"])
+        let empty = AppSyncMerge.union([MaintenanceEntry](), [a, b], localWins: true, deleted: [])
+        XCTAssertEqual(empty.count, 2, "an empty device never wipes the account's records")
+    }
+
     func testCircuitGivesOneTakeoffAndOneLanding() throws {
         let log = try PerspectiveLogParser.parse(text: TechniqueFixture.circuit(), filename: "log_260801_080000_18AZ.csv")
         let r = TechniqueAnalyzer.analyze(log, departure: "18AZ")

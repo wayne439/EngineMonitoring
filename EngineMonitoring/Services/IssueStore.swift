@@ -95,6 +95,14 @@ final class IssueStore: ObservableObject {
 
     init(baseDirectory: URL = EventPersistence.defaultDirectory()) {
         fileURL = baseDirectory.appendingPathComponent("Issues", isDirectory: true).appendingPathComponent("status.json")
+        reloadFromDisk()
+    }
+
+    /// Reads the review notes on this device (at launch, and after the signed-in account changed).
+    func reloadFromDisk() {
+        records = [:]
+        groups = []
+        lastSummaries = []
         modifiedAt = UserDefaults.standard.object(forKey: Self.modifiedKey) as? Date ?? .distantPast
         if let data = try? Data(contentsOf: fileURL) {
             do { records = try EventPersistence.decoder.decode([String: IssueStatusRecord].self, from: data) } catch {

@@ -76,12 +76,21 @@ struct ContentView: View {
         // Files uploaded on the website arrive whenever the app opens or comes back to the front.
         // After signing in (here or on another device): bring back the aircraft and flights, then new uploads.
         .task(id: cloud.session?.userID) {
-            // A different account than the one whose data is on this device: clear the local copy first, so
-            // one pilot's flights never show in (or upload to) another pilot's account.
+            // A different account than the one whose data is on this device: put the previous account's data
+            // aside on this device (not deleted) and bring back this account's copy if the device has one, so
+            // one pilot's flights never show in another pilot's account and switching back needs no re-sync.
             if let uid = cloud.session?.userID.lowercased() {
                 if let previous = cloud.deviceOwner, previous != uid {
-                    await AccountSwitchCleanup.run(cloud: cloud, aircraft: aircraft, logs: flightLogs, maintenance: maintenance,
-                                                   issues: issues, events: diagnosticEvents, poh: poh)
+                    cloud.deviceOwner = uid
+                    AccountVault.switchAccount(from: previous, to: uid)
+                    cloud.reloadAfterAccountSwitch()
+                    aircraft.reloadFromDisk()
+                    maintenance.reloadFromDisk()
+                    issues.reloadFromDisk()
+                    diagnosticEvents.reloadFromDisk()
+                    await poh.load()
+                    await flightLogs.reloadFromDisk()
+                    await issues.refresh(summaries: Array(flightLogs.summaries.values))
                 }
                 cloud.deviceOwner = uid
             }

@@ -451,6 +451,13 @@ final class AircraftProfileStore: ObservableObject {
         profile = AircraftProfileSnapshot.shared.profile
     }
 
+    /// Reads the profile on this device after the signed-in account changed (AccountVault).
+    func reloadFromDisk() {
+        let saved = AircraftProfileFile.load() ?? AircraftProfile.sr22TurboTemplate
+        AircraftProfileSnapshot.shared.update(saved)
+        profile = saved
+    }
+
     /// True until the required details are filled in and locked.
     var needsSetup: Bool { !profile.isLocked }
 

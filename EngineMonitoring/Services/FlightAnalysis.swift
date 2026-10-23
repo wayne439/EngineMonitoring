@@ -253,7 +253,7 @@ struct AFCSChange: Codable, Hashable, Sendable {
 /// per-system history screens are built from these, so logs need not be re-parsed.
 struct FlightSummary: Codable, Hashable, Sendable {
     /// Bumped when the summary gains fields; older summaries are rebuilt from their logs.
-    static let currentVersion = 10
+    static let currentVersion = 11
 
     let version: Int
     let filename: String
