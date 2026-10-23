@@ -66,7 +66,9 @@ struct ContentView: View {
             .id(selection ?? .home)
         }
         // Issue history follows the flight summaries (bundled history plus every imported log).
-        .task(id: flightLogs.summaries.count) {
+        .task(id: flightLogs.revision) {
+            // While an update re-reads older flights, wait for the last batch (the saved results still show).
+            guard flightLogs.reread == nil else { return }
             await issues.refresh(summaries: Array(flightLogs.summaries.values))
             MaintenanceReminders.reschedule(store: maintenance, summaries: Array(flightLogs.summaries.values))
             EarlyWarningNotifier.check(summaries: Array(flightLogs.summaries.values))

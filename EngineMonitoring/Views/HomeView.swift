@@ -44,6 +44,16 @@ struct HomeView: View {
         ScrollView {
             VStack(spacing: 18) {
                 hero
+                if let r = logs.reread {
+                    HStack(spacing: 10) {
+                        ProgressView(value: Double(r.done), total: Double(max(r.total, 1)))
+                            .frame(maxWidth: 120)
+                        Text("Updating flights for this version: \(r.done) of \(r.total). Your data stays available meanwhile.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 if logs.entries.isEmpty { GetStartedCard() }
                 statTiles
                 if let last = flights.first { lastFlightCard(last) }
@@ -65,7 +75,8 @@ struct HomeView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Home")
-        .task(id: logs.summaries.count) {
+        .task(id: logs.revision) {
+            guard logs.reread == nil || engineHealth.score == nil else { return }
             let all = Array(logs.summaries.values)
             engineHealth = EngineHealth.compute(all)
             earlyWarning = EarlyWarning.analyze(all)

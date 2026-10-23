@@ -10,6 +10,11 @@ final class FlightLogStore: ObservableObject {
     /// One compact summary per imported log; the aircraft's normal ranges are built from these.
     @Published private(set) var summaries: [String: FlightSummary] = [:]
     @Published private(set) var isSummarizing = false
+    /// While an update re-reads older flights in the background: how many are done of how many.
+    @Published private(set) var reread: (done: Int, total: Int)?
+    /// Changes whenever any summary changes (views that depend on summaries refresh on it).
+    @Published private(set) var revision = 0
+    private var refreshGeneration = 0
     /// Flights bundled with the app (none in Engine Pulse; kept so older code paths still work).
     let bundled: BundledFlightHistory?
     private let bundledByName: [String: FlightSummary]
@@ -49,14 +54,48 @@ final class FlightLogStore: ObservableObject {
     }
 
     /// Loads saved summaries and builds any that are missing (logs imported before v0.4).
+    /// After an app update, nothing disappears: every saved summary shows at once, and only flights whose
+    /// summary came from an older version are read again in the background, newest first, a batch at a time.
     func refreshSummaries() async {
+        refreshGeneration += 1
+        let generation = refreshGeneration
         isSummarizing = true
-        defer { isSummarizing = false }
+        defer {
+            if generation == refreshGeneration {
+                isSummarizing = false
+                reread = nil
+                revision += 1
+            }
+        }
         let library = self.library
         let entries = self.entries
-        let loaded = await Task.detached(priority: .utility) { library.loadOrBuildSummaries(for: entries) }.value
+        let (saved, toRebuild) = await Task.detached(priority: .userInitiated) { library.loadSavedSummaries(for: entries) }.value
+        guard generation == refreshGeneration else { return }
         // Imported logs replace the bundled summary of the same file.
-        summaries = bundledByName.merging(loaded.map { ($0.filename, $0) }, uniquingKeysWith: { _, imported in imported })
+        summaries = bundledByName.merging(saved.map { ($0.filename, $0) }, uniquingKeysWith: { _, imported in imported })
+        revision += 1
+        guard !toRebuild.isEmpty else { return }
+        let ordered = toRebuild.sorted { $0.start > $1.start }
+        reread = (0, ordered.count)
+        let batchSize = 6
+        var index = 0
+        while index < ordered.count {
+            let batch = Array(ordered[index..<min(index + batchSize, ordered.count)])
+            let rebuilt = await Task.detached(priority: .utility) {
+                await withTaskGroup(of: FlightSummary?.self) { group in
+                    for entry in batch { group.addTask { library.rebuildSummary(for: entry) } }
+                    var out: [FlightSummary] = []
+                    for await s in group { if let s { out.append(s) } }
+                    return out
+                }
+            }.value
+            // Another refresh started (for example a different account signed in): stop here.
+            guard generation == refreshGeneration else { return }
+            for s in rebuilt { summaries[s.filename] = s }
+            index += batch.count
+            reread = (index, ordered.count)
+            revision += 1
+        }
     }
 
     /// Post-flight report for one log, compared with every other imported flight.
@@ -105,6 +144,7 @@ final class FlightLogStore: ObservableObject {
                 for entry in result.entries {
                     if let summary = await Task.detached(priority: .utility, operation: { library.loadSummary(for: entry.filename) }).value {
                         summaries[summary.filename] = summary
+                        revision += 1
                     }
                 }
                 added += result.entries.count
@@ -185,6 +225,7 @@ final class FlightLogStore: ObservableObject {
         do {
             entries = try library.delete(entry, from: entries)
             summaries[entry.filename] = bundledByName[entry.filename]
+            revision += 1
             cache[entry.filename] = nil
             cacheOrder.removeAll { $0 == entry.filename }
         } catch {

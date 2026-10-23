@@ -6,6 +6,7 @@
 - MY FLYING works with Garmin G1000 logs from aircraft other than Cirrus (indicated altitude recorded as AltInd), with logs that have no vertical-speed column (worked out from altitude), with GPS altitude when there's no baro altitude, and with engines whose redline is below 2,700 RPM. Flights are re-read once to find their takeoffs and landings.
 - When MY FLYING finds no takeoffs or landings, it now checks the newest log and says exactly what's missing (airspeed, altitude or RPM), or that the recording didn't cover the takeoff and landing.
 - ACCOUNT > Beta testers: the section no longer disappears when the admin check fails once (it retries and remembers). sales@enginepulse.net is an admin. Tap any account to see each upload (slot, status, any error) and each flight with the takeoffs and landings the pilot's app found. Flights re-read by a newer version update their stored summary, so the admin view stays current.
+- App updates no longer hide your data while flights are re-read. Every saved result shows straight away; only flights read by an older version are read again, in the background, newest first, with a progress line on HOME. If the app is closed part-way, it carries on from where it stopped.
 - Version 0.9.8 (41).
 
 ## 0.9.7 (2026-10-22)
