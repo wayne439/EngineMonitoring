@@ -150,6 +150,27 @@ struct FlightLogLibrary: Sendable {
     }
 
     /// Summaries for every log in the index; logs imported before v0.4 are summarized now and saved.
+    /// Every saved summary, current or from an older version (shown at once while older ones are re-read),
+    /// and the flights that need reading again (older version or no summary).
+    func loadSavedSummaries(for entries: [FlightLogEntry]) -> (saved: [FlightSummary], toRebuild: [FlightLogEntry]) {
+        var saved: [FlightSummary] = []
+        var toRebuild: [FlightLogEntry] = []
+        for entry in entries {
+            let s = loadSummary(for: entry.filename)
+            if let s { saved.append(s) }
+            if !(s?.isCurrent ?? false) { toRebuild.append(entry) }
+        }
+        return (saved, toRebuild)
+    }
+
+    /// Reads one flight again with this version and saves its summary.
+    func rebuildSummary(for entry: FlightLogEntry) -> FlightSummary? {
+        guard let log = try? loadLog(entry) else { return nil }
+        let s = FlightSummarizer.summarize(log)
+        try? saveSummary(s)
+        return s
+    }
+
     func loadOrBuildSummaries(for entries: [FlightLogEntry]) -> [FlightSummary] {
         entries.compactMap { entry in
             if let s = loadSummary(for: entry.filename), s.isCurrent { return s }
