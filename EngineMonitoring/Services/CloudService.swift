@@ -635,13 +635,18 @@ final class CloudStore: ObservableObject {
     func sync(profile: AircraftProfile, logs: FlightLogStore) async {
         guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil else { return }
         // Not until restore has matched this device to the account's aircraft (see aircraftConfirmed).
-        guard aircraftConfirmed else { return }
+        guard aircraftConfirmed, !holdSync else { return }
         isBusy = true
         defer { isBusy = false }
         do {
             let (api, s) = try await token()
-            try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: profile)],
-                                 onConflict: "id", token: s.accessToken)
+            // A blank starting profile never overwrites an aircraft the account already has (for example while
+            // switching to an aircraft whose profile hasn't loaded yet).
+            let blank = profile.tailNumber.trimmingCharacters(in: .whitespaces).isEmpty && !profile.isLocked
+            if !(blank && fleet.contains { $0.id == aircraftID }) {
+                try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: profile)],
+                                     onConflict: "id", token: s.accessToken)
+            }
             var done = 0
             let pending = logs.entries.filter { !uploadedLogs.contains($0.filename) }
             for entry in pending {
@@ -857,6 +862,9 @@ final class CloudStore: ObservableObject {
 
     private static let oldestKey = "EM.fleet.oldestAircraft"
     private static let confirmedKey = "EM.cloud.aircraftConfirmed"
+
+    /// True while AircraftSwitcher is changing aircraft: nothing is uploaded until the new aircraft has loaded.
+    var holdSync = false
 
     /// True once this device knows the selected aircraft belongs to the account (restored from it, created on
     /// purpose, or the account had none). Until then nothing creates an aircraft row, so a device that signs in

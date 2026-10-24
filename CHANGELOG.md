@@ -10,6 +10,7 @@
 - Several aircraft in one account. The aircraft menu at the top of the sidebar shows the selected aircraft, switches to another and adds a new one (make, model, tail, avionics). AIRCRAFT > Your aircraft lists them with Switch, Add and (swipe) Remove. Each aircraft keeps its own flights, POH, maintenance, issue reviews and markers; switching is instant because the other aircraft's data waits on the device. Imports and uploads in the app show which aircraft they go to, with a picker. On enginepulse.net/upload, an account with several aircraft chooses the aircraft before uploading, and the checklist shows that aircraft's files.
 - Aircraft transfers add the aircraft next to any the buyer already has (an empty placeholder from registering is replaced).
 - No more extra copies of an aircraft: a device that signs in (or switches accounts) no longer creates its own aircraft record before it has loaded the account's. supabase/fix-duplicate-aircraft.sql merges the copies older versions made (same tail number, or no tail number), keeping every flight and upload.
+- Add another aircraft keeps the details you entered: the new aircraft was being saved, then overwritten with a blank starting profile by an upload that ran while the app was switching to it (it showed as another "SR22 Turbo"). Nothing uploads now until the switch has finished, and a blank profile never replaces an aircraft already in the account.
 - Version 0.9.8 (41).
 
 ## 0.9.7 (2026-10-22)

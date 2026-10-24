@@ -11,9 +11,9 @@ struct FleetActions {
     let poh: POHRepository
 
     @MainActor
-    func switchTo(_ id: UUID) async {
+    func switchTo(_ id: UUID, newProfile: AircraftProfile? = nil) async {
         await AircraftSwitcher.switchTo(id, cloud: cloud, aircraft: aircraft, logs: logs, maintenance: maintenance,
-                                        issues: issues, events: events, poh: poh)
+                                        issues: issues, events: events, poh: poh, newProfile: newProfile)
     }
 }
 
@@ -165,7 +165,7 @@ struct AddAircraftView: View {
             error = actions.cloud.lastError ?? "The aircraft could not be added."
             return
         }
-        await actions.switchTo(id)
+        await actions.switchTo(id, newProfile: profile)
         dismiss()
     }
 }

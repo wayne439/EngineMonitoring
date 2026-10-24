@@ -73,12 +73,17 @@ enum AircraftVault {
 enum AircraftSwitcher {
     static func switchTo(_ id: UUID, cloud: CloudStore, aircraft: AircraftProfileStore, logs: FlightLogStore,
                          maintenance: MaintenanceStore, issues: IssueStore, events: DiagnosticEventStore, poh: POHRepository,
-                         syncFromCloud: Bool = true) async {
+                         syncFromCloud: Bool = true, newProfile: AircraftProfile? = nil) async {
         let current = cloud.aircraftID
         guard id != current else { return }
+        // Nothing uploads until the new aircraft has loaded (a blank profile must never overwrite it).
+        cloud.holdSync = true
+        defer { cloud.holdSync = false }
         AircraftVault.switchAircraft(from: current, to: id)
         cloud.setActiveAircraft(id)
         aircraft.reloadFromDisk()
+        // A just-added aircraft starts with the details entered for it.
+        if let newProfile { aircraft.profile = newProfile }
         maintenance.reloadFromDisk()
         issues.reloadFromDisk()
         events.reloadFromDisk()
@@ -87,8 +92,10 @@ enum AircraftSwitcher {
         await issues.refresh(summaries: Array(logs.summaries.values))
         guard syncFromCloud else { return }
         await cloud.restore(aircraft: aircraft, logs: logs)
+        cloud.holdSync = false
         await cloud.syncAppState(maintenance: maintenance, issues: issues, events: events)
         await cloud.pullInbox(logs: logs)
         await poh.syncFromUploads(cloud: cloud)
+        await cloud.sync(profile: aircraft.profile, logs: logs)
     }
 }
