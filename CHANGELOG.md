@@ -7,6 +7,8 @@
 - When MY FLYING finds no takeoffs or landings, it now checks the newest log and says exactly what's missing (airspeed, altitude or RPM), or that the recording didn't cover the takeoff and landing.
 - ACCOUNT > Beta testers: the section no longer disappears when the admin check fails once (it retries and remembers). sales@enginepulse.net is an admin. Tap any account to see each upload (slot, status, any error) and each flight with the takeoffs and landings the pilot's app found. Flights re-read by a newer version update their stored summary, so the admin view stays current.
 - App updates no longer hide your data while flights are re-read. Every saved result shows straight away; only flights read by an older version are read again, in the background, newest first, with a progress line on HOME. If the app is closed part-way, it carries on from where it stopped.
+- Several aircraft in one account. The aircraft menu at the top of the sidebar shows the selected aircraft, switches to another and adds a new one (make, model, tail, avionics). AIRCRAFT > Your aircraft lists them with Switch, Add and (swipe) Remove. Each aircraft keeps its own flights, POH, maintenance, issue reviews and markers; switching is instant because the other aircraft's data waits on the device. Imports and uploads in the app show which aircraft they go to, with a picker. On enginepulse.net/upload, an account with several aircraft chooses the aircraft before uploading, and the checklist shows that aircraft's files.
+- Aircraft transfers add the aircraft next to any the buyer already has (an empty placeholder from registering is replaced).
 - Version 0.9.8 (41).
 
 ## 0.9.7 (2026-10-22)

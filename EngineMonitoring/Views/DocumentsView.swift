@@ -29,6 +29,7 @@ struct DocumentsView: View {
     var body: some View {
         Form {
             Section {
+                ImportTargetRow()
                 Button {
                     Task { message = await cloud.emailUploadLink() }
                 } label: {

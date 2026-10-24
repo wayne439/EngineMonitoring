@@ -43,6 +43,13 @@ struct ContentView: View {
                 Label(item.rawValue, systemImage: item.icon).tag(item)
             }
             .navigationTitle("Engine Pulse")
+            .safeAreaInset(edge: .top) {
+                // The selected aircraft; pick another or add one.
+                AircraftMenu()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 6)
+            }
             .safeAreaInset(edge: .bottom) {
                 // Shows which build is running, so an old install is easy to spot.
                 Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"))")

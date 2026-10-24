@@ -18,7 +18,8 @@ enum AccountVault {
 
     /// The folders holding one account's data on this device.
     private static var dataFolders: [URL] {
-        [EventPersistence.defaultDirectory(), POHRepository.folder]
+        // The selected aircraft's data, and the account's other aircraft put aside on this device.
+        [EventPersistence.defaultDirectory(), POHRepository.folder, AircraftVault.root]
     }
 
     private static func vault(_ uid: String) -> URL {

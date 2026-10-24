@@ -312,6 +312,8 @@ struct InboxItem: Identifiable, Hashable, Sendable {
     let status: String
     let source: String
     let receivedAt: Date?
+    /// The aircraft the file was uploaded for (nil: not chosen yet).
+    var aircraftID: String? = nil
 
     static let categories: [(id: String, title: String)] = [
         ("logs", "Engine monitor logs"),
@@ -339,6 +341,7 @@ struct InboxItem: Identifiable, Hashable, Sendable {
         status = row["status"] as? String ?? "received"
         source = row["source"] as? String ?? "app"
         receivedAt = (row["received_at"] as? String).flatMap { CloudAPI.parseDate($0) }
+        aircraftID = (row["aircraft_id"] as? String)?.lowercased()
     }
 }
 
@@ -415,6 +418,8 @@ final class CloudStore: ObservableObject {
     @Published var pendingConfirmationEmail: String?
     /// Documents and files in the cloud inbox (everything except logs already turned into flights).
     @Published private(set) var inboxItems: [InboxItem] = []
+    /// Every aircraft in this account (oldest first). The selected one is `aircraftID`.
+    @Published private(set) var fleet: [FleetAircraft] = []
     /// A transfer of this aircraft to a buyer that is waiting for them to accept.
     @Published private(set) var outgoingTransfer: AircraftTransfer?
     /// Set when this device's aircraft has been transferred to its new owner (sold). Syncing stops until
@@ -422,9 +427,9 @@ final class CloudStore: ObservableObject {
     @Published private(set) var soldAircraft: AircraftTransfer?
 
     let api: CloudAPI?
-    /// Cloud id of this device's aircraft (one aircraft per account for now). Adopts the account's
-    /// existing aircraft when a pilot signs in on another device.
-    private(set) var aircraftID: UUID
+    /// Cloud id of the selected aircraft. Adopts the account's first aircraft when a pilot signs in on a new device;
+    /// AircraftSwitcher changes it when the pilot picks another of their aircraft.
+    @Published private(set) var aircraftID: UUID
     /// One token refresh at a time: Supabase revokes a session if the same refresh token is used twice.
     private var refreshTask: Task<CloudSession, Error>?
     private var stateSyncing = false
@@ -734,10 +739,12 @@ final class CloudStore: ObservableObject {
         do {
             let (api, s) = try await token()
             let rows = try await api.select(table: "inbox_uploads",
-                                            query: [URLQueryItem(name: "select", value: "id,original_filename,storage_path,category,format,status,source,received_at"),
+                                            query: [URLQueryItem(name: "select", value: "id,original_filename,storage_path,category,format,status,source,received_at,aircraft_id"),
                                                     URLQueryItem(name: "order", value: "received_at.desc")],
                                             token: s.accessToken)
-            inboxItems = rows.compactMap(InboxItem.init(row:))
+            // Only this aircraft's uploads (and any not tied to an aircraft yet, which become this one's).
+            let mine = aircraftID.uuidString.lowercased()
+            inboxItems = rows.compactMap(InboxItem.init(row:)).filter { $0.aircraftID == nil || $0.aircraftID == mine }
         } catch {
             lastError = "Could not load your uploads: \(error.localizedDescription)"
         }
@@ -795,7 +802,8 @@ final class CloudStore: ObservableObject {
                 if item.status != "imported" || newStatus == "failed" {
                     try await api.update(table: "inbox_uploads", filter: ["id": "eq.\(item.id)"],
                                          values: ["status": newStatus, "detail": detail,
-                                                  "processed_at": CloudAPI.isoFormatter.string(from: Date())],
+                                                  "processed_at": CloudAPI.isoFormatter.string(from: Date()),
+                                                  "aircraft_id": aircraftID.uuidString.lowercased()],
                                          token: s.accessToken)
                 }
             }
@@ -819,10 +827,12 @@ final class CloudStore: ObservableObject {
             let rows = try await api.select(table: "flight_logs", query: [
                 URLQueryItem(name: "select", value: "id,storage_path"),
                 URLQueryItem(name: "filename", value: "eq.\(filename)"),
+                URLQueryItem(name: "aircraft_id", value: "eq.\(aircraftID.uuidString.lowercased())"),
             ], token: s.accessToken)
             let paths = rows.compactMap { $0["storage_path"] as? String }
             try? await api.deleteFiles(paths: paths, token: s.accessToken)
-            try await api.delete(table: "flight_logs", filter: ["filename": "eq.\(filename)"], token: s.accessToken)
+            try await api.delete(table: "flight_logs", filter: ["filename": "eq.\(filename)", "aircraft_id": "eq.\(aircraftID.uuidString.lowercased())"],
+                                 token: s.accessToken)
             uploadedLogs.remove(filename)
             defaults.set(Array(uploadedLogs), forKey: Self.uploadedKey)
         } catch {
@@ -834,6 +844,97 @@ final class CloudStore: ObservableObject {
     var deviceOwner: String? {
         get { defaults.string(forKey: "EM.deviceOwner") }
         set { defaults.set(newValue, forKey: "EM.deviceOwner") }
+    }
+
+    // MARK: Fleet (several aircraft in one account)
+
+    /// The aircraft a transfer just gave this account (the caller switches to it).
+    private(set) var receivedAircraftID: UUID?
+
+    private static let oldestKey = "EM.fleet.oldestAircraft"
+
+    /// The account's first aircraft keeps the original records file; others have their own.
+    private func appStatePath(userID: String) -> String {
+        let oldest = defaults.string(forKey: Self.oldestKey).flatMap(UUID.init(uuidString:))
+        if oldest == nil || oldest == aircraftID { return "\(userID.lowercased())/app-state.json" }
+        return "\(userID.lowercased())/app-state-\(aircraftID.uuidString.lowercased()).json"
+    }
+
+    private func setFleet(_ rows: [[String: Any]]) {
+        fleet = rows.compactMap(FleetAircraft.init(row:))
+        if let first = fleet.first { defaults.set(first.id.uuidString, forKey: Self.oldestKey) }
+    }
+
+    /// Reloads the list of this account's aircraft.
+    func refreshFleet() async {
+        guard isConfigured, isSignedIn else { fleet = []; return }
+        do {
+            let (api, s) = try await token()
+            let rows = try await api.select(table: "aircraft",
+                                            query: [URLQueryItem(name: "select", value: "id,tail_number,make,model,created_at"),
+                                                    URLQueryItem(name: "order", value: "created_at.asc")],
+                                            token: s.accessToken)
+            setFleet(rows)
+        } catch {
+            lastError = "Could not load your aircraft: \(error.localizedDescription)"
+        }
+    }
+
+    /// Adds an aircraft to the account (saved to the cloud straight away, so every device and the website see it).
+    /// Returns its id; switch to it with AircraftSwitcher.
+    func createAircraft(profile: AircraftProfile) async -> UUID? {
+        guard isConfigured, isSignedIn else { lastError = "Sign in to add an aircraft."; return nil }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let (api, s) = try await token()
+            let id = UUID()
+            try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: id, profile: profile)], onConflict: "id", token: s.accessToken)
+            isBusy = false
+            await refreshFleet()
+            return id
+        } catch {
+            lastError = "Could not add the aircraft: \(error.localizedDescription)"
+            return nil
+        }
+    }
+
+    /// Removes an aircraft that isn't selected from the account: its flights, uploads and files.
+    func removeAircraft(_ id: UUID) async -> Bool {
+        guard id != aircraftID else { lastError = "Switch to another aircraft before removing this one."; return false }
+        isBusy = true
+        defer { isBusy = false }
+        do {
+            let (api, s) = try await token()
+            let aid = "eq.\(id.uuidString.lowercased())"
+            let logs = try await api.select(table: "flight_logs", query: [URLQueryItem(name: "select", value: "storage_path"),
+                                                                         URLQueryItem(name: "aircraft_id", value: aid)], token: s.accessToken)
+            let inbox = try await api.select(table: "inbox_uploads", query: [URLQueryItem(name: "select", value: "storage_path"),
+                                                                            URLQueryItem(name: "aircraft_id", value: aid)], token: s.accessToken)
+            let paths = (logs + inbox).compactMap { $0["storage_path"] as? String }
+            if !paths.isEmpty { try? await api.deleteFiles(paths: paths, token: s.accessToken) }
+            try await api.delete(table: "inbox_uploads", filter: ["aircraft_id": aid], token: s.accessToken)
+            try await api.delete(table: "aircraft", filter: ["id": aid], token: s.accessToken)
+            AircraftVault.discard(id)
+            isBusy = false
+            await refreshFleet()
+            status = "The aircraft was removed from your account."
+            return true
+        } catch {
+            lastError = "Could not remove the aircraft: \(error.localizedDescription)"
+            return false
+        }
+    }
+
+    /// Makes `id` the selected aircraft and re-reads its settings (AircraftVault has already swapped the data).
+    func setActiveAircraft(_ id: UUID) {
+        aircraftID = id
+        defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
+        uploadedLogs = Set(defaults.stringArray(forKey: Self.uploadedKey) ?? [])
+        outgoingTransfer = nil
+        soldAircraft = nil
+        inboxItems = []
+        receivedAircraftID = nil
     }
 
     /// Re-reads this device's per-account settings after AccountVault swapped accounts.
@@ -850,6 +951,7 @@ final class CloudStore: ObservableObject {
         outgoingTransfer = nil
         soldAircraft = nil
         inboxItems = []
+        fleet = []
     }
 
     /// Another account signed in on this device: start from a clean slate so the two accounts' flights and
@@ -906,9 +1008,10 @@ final class CloudStore: ObservableObject {
         do {
             let (api, s) = try await token()
             let planes = try await api.select(table: "aircraft",
-                                              query: [URLQueryItem(name: "select", value: "id,profile,updated_at,created_at"),
+                                              query: [URLQueryItem(name: "select", value: "id,profile,updated_at,created_at,tail_number,make,model"),
                                                       URLQueryItem(name: "order", value: "created_at.asc")],
                                               token: s.accessToken)
+            setFleet(planes)
             // One aircraft per account: every device uses the account's first aircraft, so a device that
             // uploaded before restoring doesn't end up with its own copy.
             // This device's aircraft if the account has it (for example one just received by transfer), else the first.
@@ -920,6 +1023,8 @@ final class CloudStore: ObservableObject {
                 if adopting {
                     aircraftID = cloudID
                     defaults.set(cloudID.uuidString, forKey: Self.aircraftIDKey)
+                    // An older copy of this aircraft put aside on this device is out of date now.
+                    AircraftVault.discard(cloudID)
                 }
                 if let json = newest["profile"], !(json is NSNull),
                    let cloud = try? EventPersistence.decoder.decode(AircraftProfile.self, from: JSONSerialization.data(withJSONObject: json)) {
@@ -937,7 +1042,8 @@ final class CloudStore: ObservableObject {
                 }
             }
             let rows = try await api.select(table: "flight_logs",
-                                            query: [URLQueryItem(name: "select", value: "filename,original_filename,storage_path")],
+                                            query: [URLQueryItem(name: "select", value: "filename,original_filename,storage_path"),
+                                                    URLQueryItem(name: "aircraft_id", value: "eq.\(aircraftID.uuidString.lowercased())")],
                                             token: s.accessToken)
             let have = Set(logs.entries.map(\.filename))
             let missing = rows.filter { ($0["filename"] as? String).map { !have.contains($0) } ?? false }
@@ -974,7 +1080,7 @@ final class CloudStore: ObservableObject {
         defer { stateSyncing = false }
         do {
             let (api, s) = try await token()
-            let path = "\(s.userID.lowercased())/app-state.json"
+            let path = appStatePath(userID: s.userID)
             var remote: AppSyncState?
             do {
                 let data = try await api.downloadFile(path: path, token: s.accessToken)
@@ -1254,11 +1360,7 @@ extension CloudStore {
             guard (r["ok"] as? Bool) == true, let raw = r["aircraft_id"] as? String, let id = UUID(uuidString: raw) else {
                 return .failed(Self.acceptMessage(reason: r["reason"] as? String, tail: r["tail_number"] as? String, email: s.email))
             }
-            aircraftID = id
-            defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
-            defaults.removeObject(forKey: "EM.cloud.profileRestored.\(s.userID.lowercased())")
-            uploadedLogs = []
-            defaults.removeObject(forKey: Self.uploadedKey)
+            receivedAircraftID = id
             outgoingTransfer = nil
             soldAircraft = nil
             var state: AppSyncState?
@@ -1287,7 +1389,7 @@ extension CloudStore {
         case "self":
             return "This transfer was started from this account. Sign in with the buyer's account to accept it."
         case "has_aircraft":
-            return "Your account already has \(tail.map { $0.isEmpty ? "an aircraft" : $0 } ?? "an aircraft") with flights or documents. Engine Pulse keeps one aircraft per account for now: transfer that one first, or register a new account and ask the seller to send the transfer to that email."
+            return "Your account already has \(tail.map { $0.isEmpty ? "an aircraft" : $0 } ?? "an aircraft"). Update the app to add the transferred aircraft alongside it."
         default:
             return "The transfer could not be accepted."
         }
@@ -1426,5 +1528,27 @@ struct TesterDetail: Sendable {
             Flight(filename: f["filename"] as? String ?? "?", start: date(f["started_at"]), end: date(f["ended_at"]),
                    samples: int(f["samples"]), takeoffs: int(f["takeoffs"]), landings: int(f["landings"]))
         }
+    }
+}
+
+/// One aircraft in the account, for the aircraft picker.
+struct FleetAircraft: Identifiable, Hashable, Sendable {
+    let id: UUID
+    let tailNumber: String
+    let make: String
+    let model: String
+
+    var title: String {
+        let t = tailNumber.trimmingCharacters(in: .whitespaces)
+        return t.isEmpty ? (model.isEmpty ? "New aircraft" : model) : t
+    }
+    var subtitle: String { [make, model].filter { !$0.isEmpty }.joined(separator: " ") }
+
+    init?(row: [String: Any]) {
+        guard let raw = row["id"] as? String, let id = UUID(uuidString: raw) else { return nil }
+        self.id = id
+        tailNumber = row["tail_number"] as? String ?? ""
+        make = row["make"] as? String ?? ""
+        model = row["model"] as? String ?? ""
     }
 }

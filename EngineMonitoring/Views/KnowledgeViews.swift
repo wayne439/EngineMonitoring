@@ -11,6 +11,7 @@ struct AircraftView: View {
 
     var body: some View {
         List {
+            FleetSection()
             Section {
                 NavigationLink {
                     AircraftProfileView()

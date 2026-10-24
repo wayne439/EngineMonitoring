@@ -277,6 +277,7 @@ struct AcceptTransferView: View {
     @EnvironmentObject private var maintenance: MaintenanceStore
     @EnvironmentObject private var issues: IssueStore
     @EnvironmentObject private var events: DiagnosticEventStore
+    @EnvironmentObject private var poh: POHRepository
 
     @State private var code = ""
     @State private var phone = ""
@@ -331,9 +332,7 @@ struct AcceptTransferView: View {
                     }
                     .disabled(!canAccept)
                 } footer: {
-                    Text(logs.entries.isEmpty
-                         ? "The aircraft's profile, flights, maintenance and notes replace the ones on this device."
-                         : "The aircraft's profile, maintenance and notes replace the ones on this device. The \(logs.entries.count) flight\(logs.entries.count == 1 ? "" : "s") already on this device stay.")
+                    Text("The aircraft is added to your account with its profile, flights, maintenance and notes. Any aircraft you already have stays: switch between them from the aircraft menu.")
                 }
                 if let message {
                     Section { Label(message, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red) }
@@ -351,6 +350,16 @@ struct AcceptTransferView: View {
         case .failed(let text):
             message = text
         case .accepted(let tail, let state):
+            // The transferred aircraft is added to this account; the aircraft already on this device stays and
+            // can be picked again from the aircraft menu.
+            if let id = cloud.receivedAircraftID {
+                let previous = cloud.aircraftID
+                // An empty aircraft (made while registering) is replaced, as on the server.
+                let keepPrevious = !logs.entries.isEmpty || !cloud.inboxItems.isEmpty
+                await AircraftSwitcher.switchTo(id, cloud: cloud, aircraft: aircraft, logs: logs, maintenance: maintenance,
+                                                issues: issues, events: events, poh: poh, syncFromCloud: false)
+                if !keepPrevious { AircraftVault.discard(previous) }
+            }
             let now = Date()
             if let state {
                 maintenance.replaceFromCloud(items: state.maintenanceItems ?? MaintenanceSchedule.defaults,
@@ -362,6 +371,7 @@ struct AcceptTransferView: View {
             await cloud.restore(aircraft: aircraft, logs: logs)
             await cloud.syncAppState(maintenance: maintenance, issues: issues, events: events)
             await cloud.refreshInbox()
+            await cloud.refreshFleet()
         }
     }
 }
@@ -408,12 +418,21 @@ enum SoldAircraftCleanup {
     @MainActor
     static func run(cloud: CloudStore, aircraft: AircraftProfileStore, logs: FlightLogStore, maintenance: MaintenanceStore,
                     issues: IssueStore, events: DiagnosticEventStore, poh: POHRepository) async {
+        let sold = cloud.aircraftID
         for entry in logs.entries { logs.delete(entry) }
         let now = Date()
         maintenance.replaceFromCloud(items: MaintenanceSchedule.defaults, entries: [], modified: now)
         await issues.replaceFromCloud(records: [:], modified: now)
         events.replaceFromCloud(events: [], modified: now)
         await poh.removeAll()
+        // Another aircraft in this account: switch to it and drop the sold one from this device.
+        await cloud.refreshFleet()
+        if let other = cloud.fleet.first(where: { $0.id != sold }) {
+            await AircraftSwitcher.switchTo(other.id, cloud: cloud, aircraft: aircraft, logs: logs, maintenance: maintenance,
+                                            issues: issues, events: events, poh: poh)
+            AircraftVault.discard(sold)
+            return
+        }
         cloud.forgetSoldAircraft()
         aircraft.profile = AircraftProfile.sr22TurboTemplate
         // This account's own copy of the records is now empty too (the buyer has theirs).

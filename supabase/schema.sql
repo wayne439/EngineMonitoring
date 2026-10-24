@@ -315,7 +315,7 @@ create policy "engine-logs: owner delete" on storage.objects
 -- The buyer accepts. Checks the signed-in (confirmed) email, the code and the cell number, then moves
 -- the aircraft and everything recorded for it. Five wrong tries cancel the transfer.
 -- Returns {"ok": true, "aircraft_id", "tail_number", "state_path"} or {"ok": false, "reason"}, where reason is
--- unconfirmed, none, mismatch, locked, self or has_aircraft.
+-- unconfirmed, none, mismatch, locked or self.
 create or replace function public.accept_aircraft_transfer(transfer_code text, phone text) returns jsonb
 language plpgsql
 security definer
@@ -367,15 +367,11 @@ begin
         return jsonb_build_object('ok', false, 'reason', 'none');
     end if;
 
-    -- One aircraft per account for now: an aircraft the buyer already has flights or documents for
-    -- blocks the transfer; an empty one (made while registering) is replaced.
-    if exists (select 1 from public.aircraft a where a.owner_id = me
-               and (exists (select 1 from public.flight_logs f where f.aircraft_id = a.id)
-                    or exists (select 1 from public.inbox_uploads i where i.aircraft_id = a.id))) then
-        return jsonb_build_object('ok', false, 'reason', 'has_aircraft',
-            'tail_number', (select tail_number from public.aircraft where owner_id = me order by created_at limit 1));
-    end if;
-    delete from public.aircraft where owner_id = me;
+    -- The aircraft is added to the buyer's account next to any they already have. Only an empty placeholder
+    -- (made while registering: no flights, no uploads) is removed.
+    delete from public.aircraft a where a.owner_id = me
+       and not exists (select 1 from public.flight_logs f where f.aircraft_id = a.id)
+       and not exists (select 1 from public.inbox_uploads i where i.aircraft_id = a.id);
 
     update public.aircraft set owner_id = me where id = t.aircraft_id;
     update public.flight_logs set owner_id = me where aircraft_id = t.aircraft_id;
