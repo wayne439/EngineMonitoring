@@ -12,6 +12,7 @@
 - No more extra copies of an aircraft: a device that signs in (or switches accounts) no longer creates its own aircraft record before it has loaded the account's. supabase/fix-duplicate-aircraft.sql merges the copies older versions made (same tail number, or no tail number), keeping every flight and upload.
 - Add another aircraft keeps the details you entered: the new aircraft was being saved, then overwritten with a blank starting profile by an upload that ran while the app was switching to it (it showed as another "SR22 Turbo"). Nothing uploads now until the switch has finished, and a blank profile never replaces an aircraft already in the account.
 - After duplicate copies of an aircraft are merged, a device that had the aircraft set up and locked keeps its own (newer) profile, such as turbonormalized limits, instead of taking a plainer copy from the account.
+- A new aircraft only needs make, model and tail number to be saved; the POH, logs and records can be added later. HOME's setup card names the aircraft and shows what's left, and AIRCRAFT > Your aircraft has Finish setup for the selected aircraft until its profile is locked.
 - Version 0.9.8 (41).
 
 ## 0.9.7 (2026-10-22)
