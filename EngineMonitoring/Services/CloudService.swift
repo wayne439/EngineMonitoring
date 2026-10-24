@@ -1060,7 +1060,11 @@ final class CloudStore: ObservableObject {
                     // device may already have filled a few values from the POH). After that, the newer one wins.
                     let firstKey = "EM.cloud.profileRestored.\(s.userID.lowercased())"
                     let first = !defaults.bool(forKey: firstKey)
-                    if first || adopting || cloud.updatedAt > local.updatedAt {
+                    // Same aircraft already set up and locked on this device (for example after duplicate copies of it
+                    // were merged in the account): this device's newer, locked profile is kept and uploaded instead.
+                    let sameLockedHere = local.isLocked && !local.tailNumber.isEmpty
+                        && local.tailNumber.uppercased() == cloud.tailNumber.uppercased() && local.updatedAt >= cloud.updatedAt
+                    if (first || adopting) && !sameLockedHere || cloud.updatedAt > local.updatedAt {
                         var merged = cloud
                         merged.documentsAppliedFrom = nil   // re-read this device's POH copy against the restored profile
                         aircraft.profile = merged
