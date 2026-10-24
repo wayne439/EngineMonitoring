@@ -9,6 +9,7 @@
 - App updates no longer hide your data while flights are re-read. Every saved result shows straight away; only flights read by an older version are read again, in the background, newest first, with a progress line on HOME. If the app is closed part-way, it carries on from where it stopped.
 - Several aircraft in one account. The aircraft menu at the top of the sidebar shows the selected aircraft, switches to another and adds a new one (make, model, tail, avionics). AIRCRAFT > Your aircraft lists them with Switch, Add and (swipe) Remove. Each aircraft keeps its own flights, POH, maintenance, issue reviews and markers; switching is instant because the other aircraft's data waits on the device. Imports and uploads in the app show which aircraft they go to, with a picker. On enginepulse.net/upload, an account with several aircraft chooses the aircraft before uploading, and the checklist shows that aircraft's files.
 - Aircraft transfers add the aircraft next to any the buyer already has (an empty placeholder from registering is replaced).
+- No more extra copies of an aircraft: a device that signs in (or switches accounts) no longer creates its own aircraft record before it has loaded the account's. supabase/fix-duplicate-aircraft.sql merges the copies older versions made (same tail number, or no tail number), keeping every flight and upload.
 - Version 0.9.8 (41).
 
 ## 0.9.7 (2026-10-22)

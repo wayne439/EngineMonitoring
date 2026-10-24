@@ -634,6 +634,8 @@ final class CloudStore: ObservableObject {
     /// Uploads the aircraft profile, then every log not uploaded yet. Safe to call often.
     func sync(profile: AircraftProfile, logs: FlightLogStore) async {
         guard isConfigured, isSignedIn, !isBusy, soldAircraft == nil else { return }
+        // Not until restore has matched this device to the account's aircraft (see aircraftConfirmed).
+        guard aircraftConfirmed else { return }
         isBusy = true
         defer { isBusy = false }
         do {
@@ -701,7 +703,7 @@ final class CloudStore: ObservableObject {
             let format = Self.format(for: fileURL)
             let isDocument = category != "logs"
             let row: [String: Any] = [
-                "aircraft_id": aircraftID.uuidString.lowercased(),
+                "aircraft_id": aircraftConfirmed ? aircraftID.uuidString.lowercased() : NSNull(),
                 "source": source,
                 "category": category,
                 "original_filename": name,
@@ -711,8 +713,10 @@ final class CloudStore: ObservableObject {
                 "status": isDocument ? "stored" : "unsupported",
             ]
             // The aircraft row must exist before the inbox row can point at it.
-            try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: AircraftProfileSnapshot.shared.profile)],
-                                 onConflict: "id", token: s.accessToken)
+            if aircraftConfirmed {
+                try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: AircraftProfileSnapshot.shared.profile)],
+                                     onConflict: "id", token: s.accessToken)
+            }
             try await api.upsert(table: "inbox_uploads", rows: [row], onConflict: "id", token: s.accessToken)
             await refreshInbox()
             return isDocument
@@ -852,6 +856,15 @@ final class CloudStore: ObservableObject {
     private(set) var receivedAircraftID: UUID?
 
     private static let oldestKey = "EM.fleet.oldestAircraft"
+    private static let confirmedKey = "EM.cloud.aircraftConfirmed"
+
+    /// True once this device knows the selected aircraft belongs to the account (restored from it, created on
+    /// purpose, or the account had none). Until then nothing creates an aircraft row, so a device that signs in
+    /// never makes its own copy of the account's aircraft.
+    var aircraftConfirmed: Bool {
+        get { defaults.bool(forKey: Self.confirmedKey) }
+        set { defaults.set(newValue, forKey: Self.confirmedKey) }
+    }
 
     /// The account's first aircraft keeps the original records file; others have their own.
     private func appStatePath(userID: String) -> String {
@@ -890,6 +903,7 @@ final class CloudStore: ObservableObject {
             let (api, s) = try await token()
             let id = UUID()
             try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: id, profile: profile)], onConflict: "id", token: s.accessToken)
+            aircraftConfirmed = true
             isBusy = false
             await refreshFleet()
             return id
@@ -939,6 +953,7 @@ final class CloudStore: ObservableObject {
 
     /// Re-reads this device's per-account settings after AccountVault swapped accounts.
     func reloadAfterAccountSwitch() {
+        // A copy of this account brought back from the device keeps its own confirmed flag (it moved with it).
         if let raw = defaults.string(forKey: Self.aircraftIDKey), let id = UUID(uuidString: raw) {
             aircraftID = id
         } else {
@@ -957,6 +972,7 @@ final class CloudStore: ObservableObject {
     /// Another account signed in on this device: start from a clean slate so the two accounts' flights and
     /// records never mix (the previous account's data is in its own cloud account). The caller clears the stores.
     func resetForAccountSwitch() {
+        aircraftConfirmed = false
         let id = UUID()
         aircraftID = id
         defaults.set(id.uuidString, forKey: Self.aircraftIDKey)
@@ -1012,6 +1028,8 @@ final class CloudStore: ObservableObject {
                                                       URLQueryItem(name: "order", value: "created_at.asc")],
                                               token: s.accessToken)
             setFleet(planes)
+            // The account has no aircraft yet: this device's becomes its first.
+            if planes.isEmpty { aircraftConfirmed = true }
             // One aircraft per account: every device uses the account's first aircraft, so a device that
             // uploaded before restoring doesn't end up with its own copy.
             // This device's aircraft if the account has it (for example one just received by transfer), else the first.
@@ -1019,6 +1037,7 @@ final class CloudStore: ObservableObject {
             let chosen = planes.first { ($0["id"] as? String)?.lowercased() == current } ?? planes.first
             if let newest = chosen, let rawID = newest["id"] as? String, let cloudID = UUID(uuidString: rawID) {
                 // Switching to another aircraft (a new device, or a transfer accepted on another device): its profile wins.
+                aircraftConfirmed = true
                 let adopting = aircraftID != cloudID
                 if adopting {
                     aircraftID = cloudID
