@@ -47,6 +47,7 @@
       <a href="#contact">Contact us</a>
       <a href="#start">Getting started</a>
       <a href="#upload">Uploading data</a>
+      <a href="#aircraft">More than one aircraft</a>
       <a href="#sync">Sync across devices</a>
       <a href="#code">Confirmation code</a>
       <a href="#locked">Locked profile</a>
@@ -81,7 +82,8 @@
       <h3>From a computer</h3>
       <ol>
         <li>Go to the <a href="../upload/">upload page</a> and sign in with the same email and password you use in the app.</li>
-        <li>Drop files on the matching checklist item, or click it to choose files. Engine log CSV files become flights; PDFs and photos are kept with your aircraft.</li>
+        <li>Have more than one aircraft? Choose the aircraft at the top first. The checklist then shows that aircraft's files.</li>
+        <li>Drop files on the matching checklist item, or click it to choose files. Engine logs become flights; PDFs and photos are kept with your aircraft.</li>
         <li>Open the app. It brings in waiting uploads when it opens.</li>
       </ol>
       <p>In the app, <strong>Email me an upload link</strong> sends the upload page to your inbox so you can open it on a computer.</p>
@@ -93,10 +95,27 @@
         <li><strong>Open in Engine Pulse:</strong> use the share sheet in another app, such as Mail.</li>
       </ul>
       <h3>Where to find your engine logs</h3>
-      <p>On Garmin Perspective, Perspective+, G1000 and G1000 NXi, the CSV logs are written to the SD card in the MFD (usually the top slot), in the <code>data_log</code> folder. Copy the files to a computer or your iPad with a card reader.</p>
+      <ul>
+        <li><strong>Garmin G1000, G1000 NXi, Cirrus Perspective, Perspective+ and Touch+:</strong> CSV files on the SD card in the MFD (usually the top slot), in the <code>data_log</code> folder.</li>
+        <li><strong>JPI EDM:</strong> download to a USB stick from the EDM (STEP and LF together, then DUMP). The files end in <code>.JPI</code> (older units: <code>.DAT</code>).</li>
+        <li><strong>EI MVP-50 / CGR-30:</strong> the CSV files on the USB data stick.</li>
+        <li><strong>Dynon SkyView / HDX:</strong> SETUP &gt; SYSTEM SOFTWARE &gt; EXPORT USER DATA LOGS to a USB stick.</li>
+        <li><strong>Garmin G3X, G3000, TXi, GI 275, Avidyne R9 and others:</strong> the CSV files your system saves to its SD card or USB stick.</li>
+      </ul>
+      <p>Copy the files to a computer, or to your iPad with a card reader. Not sure where yours are? Email us your avionics and we'll help.</p>
+
+      <h2 id="aircraft">More than one aircraft</h2>
+      <p>One account can hold several aircraft. Each keeps its own flights, POH, maintenance, issue reviews and notes.</p>
+      <ul>
+        <li><strong>Add an aircraft:</strong> in the app, open the aircraft menu at the top of the sidebar and choose <strong>Add another aircraft</strong>. Pick the make and model, then enter the tail number and avionics.</li>
+        <li><strong>Switch aircraft:</strong> use the same menu, or AIRCRAFT &gt; Your aircraft and tap <strong>Switch</strong>.</li>
+        <li><strong>Uploads:</strong> in the app, the <strong>Adding to</strong> line above the import buttons shows which aircraft new files go to; change it there. On the <a href="../upload/">upload page</a>, choose the aircraft at the top before adding files.</li>
+        <li><strong>Remove an aircraft:</strong> AIRCRAFT &gt; Your aircraft, swipe the aircraft and tap <strong>Remove</strong>. This deletes its flights, uploads and records on every device and can't be undone.</li>
+        <li><strong>Sold an aircraft?</strong> Use <strong>Transfer to the new owner</strong> instead of removing it, so its records go with it. It's added to the buyer's account next to any aircraft they already have.</li>
+      </ul>
 
       <h2 id="sync">Sync across devices</h2>
-      <p>Sign in with the same account on each device. Flights, your aircraft profile, maintenance records, reviews and event markers sync between your iPad and iPhone.</p>
+      <p>Sign in with the same account on each device. Every aircraft in your account syncs between your iPad and iPhone, with its flights, profile, maintenance records, reviews and event markers.</p>
       <ul>
         <li>Make sure each device is online and signed in to the same account. Use the same email on every device and on the website.</li>
         <li>Open the app on the device that's behind. It catches up when it opens.</li>
@@ -140,7 +159,8 @@
         <table>
           <tbody>
             <tr><th>App</th><td>iPad or iPhone with iPadOS or iOS 17 or later</td></tr>
-            <tr><th>Engine logs</th><td>Garmin CSV data logs from Cirrus Perspective, Perspective+, G1000 and G1000 NXi. Garmin TXi, GI 275 and G3X, JPI EDM, EI MVP and Avidyne are coming.</td></tr>
+            <tr><th>Engine logs</th><td>Tested with real logs: Garmin G1000 and G1000 NXi, Cirrus Perspective, Perspective+ and Touch+, JPI EDM-830. In beta: other JPI EDM models, Garmin G3X Touch, G3000, TXi and GI 275, EI MVP-50 and CGR-30, Dynon SkyView / HDX, Avidyne Entegra R9, and GRT, AFS and MGL exports.</td></tr>
+            <tr><th>Aircraft</th><td>One or more per account. On twins, the left engine is analyzed for now.</td></tr>
             <tr><th>Documents</th><td>Your POH / AFM as a PDF. Logbook entries and reports as PDFs or photos.</td></tr>
             <tr><th>Upload website</th><td>A current version of Safari, Chrome, Edge or Firefox</td></tr>
             <tr><th>Connection</th><td>Internet access to sign in, upload and sync</td></tr>
