@@ -40,6 +40,9 @@
   let registering = false;
   let user = null;
   let aircraftId = null;
+  let planeCount = 0;
+  let allUploads = [];
+  const PICK_KEY = "ep.upload.aircraft";
   let uploads = [];
   const notes = {}; // per-checklist-item status line, kept across re-renders
 
@@ -169,7 +172,7 @@
   async function loadAll() {
     const name = (user.user_metadata && user.user_metadata.full_name) || user.email;
     $("hello").textContent = "Welcome, " + name;
-    const { data: planes, error } = await sb.from("aircraft").select("id, tail_number, make, model").order("updated_at", { ascending: false });
+    const { data: planes, error } = await sb.from("aircraft").select("id, tail_number, make, model").order("created_at", { ascending: true });
     if (error) { $("aircraft-line").textContent = error.message; return; }
     const pick = $("aircraft");
     pick.innerHTML = "";
@@ -179,26 +182,54 @@
       o.textContent = [p.tail_number, [p.make, p.model].filter(Boolean).join(" ")].filter(Boolean).join(" – ") || "Unnamed aircraft";
       pick.append(o);
     });
-    aircraftId = planes && planes.length ? planes[0].id : null;
-    $("aircraft-pick").classList.toggle("hidden", !planes || planes.length < 2);
-    pick.onchange = () => { aircraftId = pick.value; };
+    planeCount = planes ? planes.length : 0;
+    // Several aircraft: the pilot chooses which one the files are for (remembered on this computer).
+    let remembered = null;
+    try { remembered = localStorage.getItem(PICK_KEY); } catch (e) {}
+    if (planeCount > 1) {
+      const choose = document.createElement("option");
+      choose.value = ""; choose.textContent = "Choose the aircraft…";
+      pick.prepend(choose);
+      aircraftId = planes.some((p) => p.id === remembered) ? remembered : "";
+    } else {
+      aircraftId = planeCount ? planes[0].id : null;
+    }
+    pick.value = aircraftId || "";
+    $("aircraft-pick").classList.toggle("hidden", planeCount < 2);
+    const showPlane = () => {
+      const opt = pick.options[pick.selectedIndex];
+      $("aircraft-line").textContent = !aircraftId
+        ? (planeCount > 1 ? "Choose which aircraft these files are for." : "")
+        : "Uploading for " + (opt ? opt.textContent : "your aircraft");
+    };
+    pick.onchange = () => {
+      aircraftId = pick.value || "";
+      try { if (aircraftId) localStorage.setItem(PICK_KEY, aircraftId); } catch (e) {}
+      showPlane();
+      showUploads();
+    };
     const noPlane = $("no-aircraft");
-    if (!aircraftId) {
+    if (!planeCount) {
       noPlane.textContent = "No aircraft yet. Set it up in the iPad app (Register or AIRCRAFT > Aircraft Profile); you can still upload now.";
       noPlane.classList.remove("hidden");
-      $("aircraft-line").textContent = "";
     } else {
       noPlane.classList.add("hidden");
-      $("aircraft-line").textContent = pick.options[0].textContent;
     }
+    showPlane();
     await loadUploads();
   }
 
   async function loadUploads() {
     const { data, error } = await sb.from("inbox_uploads")
-      .select("id, category, original_filename, status, received_at, storage_path, size_bytes")
+      .select("id, category, original_filename, status, received_at, storage_path, size_bytes, aircraft_id")
       .order("received_at", { ascending: false });
-    uploads = error ? [] : data || [];
+    allUploads = error ? [] : data || [];
+    showUploads();
+  }
+
+  // With several aircraft, the checklist and file list show the chosen aircraft's uploads.
+  function showUploads() {
+    uploads = planeCount > 1 ? allUploads.filter((u) => !u.aircraft_id || u.aircraft_id === aircraftId) : allUploads;
     renderChecklist();
     const all = $("all-files");
     all.innerHTML = "";
@@ -209,6 +240,11 @@
   async function upload(boxCategory, files) {
     let done = 0, skipped = 0, total = files.length;
     const category = boxCategory;
+    if (planeCount > 1 && !aircraftId) {
+      note(category, "Choose the aircraft at the top first, so the files go to the right one.", "err");
+      $("aircraft").focus();
+      return;
+    }
     for (const file of files) {
       // Engine logs always go to the logs box, whichever box they were dropped on.
       const cat = isLog(file.name) ? "logs" : (boxCategory === "logs" ? "other" : boxCategory);

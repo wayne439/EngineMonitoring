@@ -397,6 +397,7 @@ struct FlightLogsView: View {
     var body: some View {
         List {
             Section {
+                ImportTargetRow()
                 Button {
                     Task {
                         if !(await logStore.importFromSavedFolder()) {

@@ -125,7 +125,7 @@ do $$ begin
     if (select count(*) from storage.objects where name like '00000000-0000-0000-0000-00000000000a/%') <> 3 then raise exception 'seller deleted the buyer''s files'; end if;
 end $$;
 
--- A buyer who already has an aircraft with flights is stopped (after the code checks out).
+-- A buyer who already has an aircraft with flights gets the transferred one added next to it.
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000000c', false);
 insert into public.flight_logs (aircraft_id, filename, original_filename, started_at, ended_at, storage_path)
@@ -139,12 +139,16 @@ do $$
 declare r jsonb;
 begin
     r := public.accept_aircraft_transfer('HHHH2222', '4805551111');
-    if r->>'reason' <> 'has_aircraft' or r->>'tail_number' <> 'N999C' then raise exception 'has_aircraft not reported: %', r; end if;
-    if (select count(*) from public.aircraft) <> 1 then raise exception 'C''s aircraft changed'; end if;
+    if (r->>'ok')::boolean is not true then raise exception 'second aircraft not accepted: %', r; end if;
+    if (select count(*) from public.aircraft) <> 2 then raise exception 'C should have both aircraft'; end if;
+    if not exists (select 1 from public.aircraft where tail_number = 'N999C') then raise exception 'C''s own aircraft was removed'; end if;
 end $$;
-select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000000b', false);
-update public.aircraft_transfers set status = 'cancelled' where status = 'pending';
 reset role;
+-- Put the aircraft back with B for the tests below.
+update public.aircraft set owner_id = '00000000-0000-0000-0000-00000000000b' where id = '11111111-1111-1111-1111-111111111111';
+update public.flight_logs set owner_id = '00000000-0000-0000-0000-00000000000b' where aircraft_id = '11111111-1111-1111-1111-111111111111';
+update public.inbox_uploads set owner_id = '00000000-0000-0000-0000-00000000000b' where aircraft_id = '11111111-1111-1111-1111-111111111111';
+update public.aircraft_transfers set status = 'cancelled' where status in ('pending', 'accepted') and to_email = 'other@example.com';
 
 -- Five wrong tries cancel a transfer. B sells to C; C guesses.
 set role authenticated;
