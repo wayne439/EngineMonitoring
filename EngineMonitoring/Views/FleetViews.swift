@@ -135,7 +135,7 @@ struct AddAircraftView: View {
                 }
                 .pickerStyle(.menu)
             } footer: {
-                Text("Your current aircraft and everything recorded for it stay. Switch between aircraft from the aircraft menu at the top of the sidebar. Each aircraft has its own flights, POH, maintenance and notes.")
+                Text("Only the make, model and tail number are needed now. The POH, logs and records can come later: the aircraft is saved straight away, and HOME shows what's left to set up whenever it's selected. Your current aircraft and everything recorded for it stay; switch between aircraft from the aircraft menu.")
             }
             if let error {
                 Section { Label(error, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red) }
@@ -188,7 +188,14 @@ struct FleetSection: View {
                         }
                         Spacer()
                         if plane.id == cloud.aircraftID {
-                            Text("Selected").font(.caption.bold()).foregroundStyle(.green)
+                            if actions.aircraft.needsSetup {
+                                NavigationLink { AircraftProfileView() } label: {
+                                    Text("Finish setup").font(.caption.bold()).foregroundStyle(.orange)
+                                }
+                                .fixedSize()
+                            } else {
+                                Text("Selected").font(.caption.bold()).foregroundStyle(.green)
+                            }
                         } else {
                             Button("Switch") {
                                 Task { switching = true; await actions.switchTo(plane.id); switching = false }

@@ -342,7 +342,8 @@ struct HomeView: View {
         let steps = setupSteps
         let done = steps.filter { $0.done }.count
         if done < steps.count {
-            Card(title: "Getting set up · \(done) of \(steps.count)", icon: "list.bullet.clipboard") {
+            Card(title: (aircraft.profile.tailNumber.isEmpty ? "Getting set up" : "Setting up \(aircraft.profile.tailNumber)") + " · \(done) of \(steps.count)",
+                 icon: "list.bullet.clipboard") {
                 VStack(alignment: .leading, spacing: 10) {
                     ProgressView(value: Double(done), total: Double(steps.count)).tint(.cyan)
                     ForEach(Array(steps.enumerated()), id: \.offset) { _, step in
