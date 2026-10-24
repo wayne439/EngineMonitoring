@@ -640,6 +640,9 @@ final class CloudStore: ObservableObject {
         defer { isBusy = false }
         do {
             let (api, s) = try await token()
+            // The selected aircraft was removed from the account (for example a duplicate copy that was merged):
+            // never re-create it; restore switches this device to the account's aircraft.
+            guard try await selectedAircraftInAccount(api: api, token: s.accessToken) else { return }
             // A blank starting profile never overwrites an aircraft the account already has (for example while
             // switching to an aircraft whose profile hasn't loaded yet).
             let blank = profile.tailNumber.trimmingCharacters(in: .whitespaces).isEmpty && !profile.isLocked
@@ -704,11 +707,12 @@ final class CloudStore: ObservableObject {
             let name = fileURL.lastPathComponent
             let stamp = Int(Date().timeIntervalSince1970)
             let path = "\(s.userID.lowercased())/inbox/\(stamp)-\(FlightLogLibrary.storedFilename(for: name))"
+            let attach = aircraftConfirmed ? try await selectedAircraftInAccount(api: api, token: s.accessToken) : false
             try await api.uploadFile(path: path, data: data, contentType: "application/octet-stream", token: s.accessToken)
             let format = Self.format(for: fileURL)
             let isDocument = category != "logs"
             let row: [String: Any] = [
-                "aircraft_id": aircraftConfirmed ? aircraftID.uuidString.lowercased() : NSNull(),
+                "aircraft_id": attach ? aircraftID.uuidString.lowercased() : NSNull(),
                 "source": source,
                 "category": category,
                 "original_filename": name,
@@ -718,7 +722,7 @@ final class CloudStore: ObservableObject {
                 "status": isDocument ? "stored" : "unsupported",
             ]
             // The aircraft row must exist before the inbox row can point at it.
-            if aircraftConfirmed {
+            if attach {
                 try await api.upsert(table: "aircraft", rows: [CloudAPI.aircraftRow(id: aircraftID, profile: AircraftProfileSnapshot.shared.profile)],
                                      onConflict: "id", token: s.accessToken)
             }
@@ -862,6 +866,16 @@ final class CloudStore: ObservableObject {
 
     private static let oldestKey = "EM.fleet.oldestAircraft"
     private static let confirmedKey = "EM.cloud.aircraftConfirmed"
+
+    /// False when the account has aircraft but not the one selected on this device (it was removed or merged
+    /// elsewhere). Then this device stops treating it as confirmed until restore picks the account's aircraft.
+    func selectedAircraftInAccount(api: CloudAPI, token: String) async throws -> Bool {
+        let rows = try await api.select(table: "aircraft", query: [URLQueryItem(name: "select", value: "id")], token: token)
+        let ids = Set(rows.compactMap { ($0["id"] as? String)?.lowercased() })
+        if ids.isEmpty || ids.contains(aircraftID.uuidString.lowercased()) { return true }
+        aircraftConfirmed = false
+        return false
+    }
 
     /// True while AircraftSwitcher is changing aircraft: nothing is uploaded until the new aircraft has loaded.
     var holdSync = false
