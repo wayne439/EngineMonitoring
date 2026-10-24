@@ -48,6 +48,7 @@ struct AircraftMenu: View {
 
     var body: some View {
         WithFleetActions { actions in
+          VStack(alignment: .leading, spacing: 2) {
             Menu {
                 if cloud.fleet.count > 1 {
                     Section("Switch aircraft") {
@@ -79,10 +80,15 @@ struct AircraftMenu: View {
                 HStack(spacing: 6) {
                     Image(systemName: "airplane")
                     Text(currentTitle).font(.headline.monospaced())
-                    if switching { ProgressView().controlSize(.small) } else { Image(systemName: "chevron.up.chevron.down").font(.caption) }
+                    if switching || cloud.isBusy { ProgressView().controlSize(.small) } else { Image(systemName: "chevron.up.chevron.down").font(.caption) }
                 }
             }
             .disabled(cloud.isBusy || switching)
+            // Why the menu is grey: say what the app is doing (switching waits for it to finish).
+            if cloud.isBusy || switching, let status = cloud.status {
+                Text(status).font(.caption2).foregroundStyle(.secondary).lineLimit(2)
+            }
+          }
             .sheet(isPresented: $adding) {
                 NavigationStack { AddAircraftView(actions: actions) }
             }
