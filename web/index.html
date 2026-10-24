@@ -58,7 +58,7 @@
         <a class="btn btn-primary" href="signup/">Sign up for the beta</a>
         <a class="btn btn-ghost" href="demo/">Try the live demo</a>
       </div>
-      <div class="badges"><span>iPad and iPhone</span><span>iOS / iPadOS 17 or later</span><span>Garmin Perspective and G1000 logs today</span></div>
+      <div class="badges"><span>iPad and iPhone</span><span>iOS / iPadOS 17 or later</span><span>Garmin, JPI and other engine monitors</span><span>More than one aircraft per account</span></div>
     </div>
 
     <figure style="margin:0">
@@ -188,8 +188,8 @@
         </article>
         <article class="feature">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="16" rx="2"/><rect x="15" y="9" width="6" height="11" rx="1.5"/></svg></span>
-          <h3>Your account, every device</h3>
-          <p>Sign in with your email. Flights, your aircraft profile, maintenance, reviews and event markers sync between your iPad and iPhone.</p>
+          <h3>Every aircraft you fly, every device</h3>
+          <p>Add more than one aircraft to your account and switch between them from the aircraft menu. Each keeps its own flights, POH, maintenance and notes, and everything syncs between your iPad and iPhone.</p>
         </article>
       </div>
     </div>
@@ -235,24 +235,29 @@
       <div class="avionics">
         <div class="card">
           <span class="status"><span class="dot" style="background:var(--green)"></span>Works today</span>
-          <p>Garmin CSV data logs from:</p>
+          <p>Tested with real logs:</p>
           <div class="chips">
+            <span class="chip live">Garmin G1000</span>
+            <span class="chip live">G1000 NXi</span>
             <span class="chip live">Cirrus Perspective</span>
             <span class="chip live">Perspective+</span>
-            <span class="chip live">G1000</span>
-            <span class="chip live">G1000 NXi</span>
+            <span class="chip live">Perspective Touch+</span>
+            <span class="chip live">JPI EDM-830</span>
           </div>
         </div>
         <div class="card">
-          <span class="status"><span class="dot" style="background:var(--yellow)"></span>Coming</span>
-          <p>Next on the list:</p>
+          <span class="status"><span class="dot" style="background:var(--yellow)"></span>In beta</span>
+          <p>Imports work; we're confirming each one with pilots' real files:</p>
           <div class="chips">
-            <span class="chip">Garmin TXi</span>
+            <span class="chip">Other JPI EDM models</span>
+            <span class="chip">Garmin G3X Touch</span>
+            <span class="chip">Garmin G3000</span>
+            <span class="chip">Garmin G500/G600 TXi</span>
             <span class="chip">Garmin GI 275</span>
-            <span class="chip">Garmin G3X</span>
-            <span class="chip">JPI EDM</span>
-            <span class="chip">EI MVP</span>
-            <span class="chip">Avidyne</span>
+            <span class="chip">EI MVP-50 / CGR-30</span>
+            <span class="chip">Dynon SkyView / HDX</span>
+            <span class="chip">Avidyne Entegra R9</span>
+            <span class="chip">GRT, AFS, MGL</span>
           </div>
         </div>
       </div>
@@ -348,11 +353,15 @@
         </details>
         <details>
           <summary>Which aircraft and avionics does it work with?</summary>
-          <div><p>Your aircraft, if its avionics record Garmin CSV data logs: Cirrus Perspective, Perspective+, G1000 and G1000 NXi. Garmin TXi, GI 275 and G3X, JPI EDM, EI MVP and Avidyne are coming.</p></div>
+          <div><p>Your aircraft, if its avionics or engine monitor records a data log. Garmin G1000 and G1000 NXi, Cirrus Perspective, Perspective+ and Perspective Touch+, and the JPI EDM-830 are tested with real logs. Other JPI EDM models, Garmin G3X Touch, G3000, TXi and GI 275, EI MVP-50 and CGR-30, Dynon SkyView, Avidyne Entegra R9, and GRT, AFS and MGL exports are in beta. On twins, the left engine is analyzed for now.</p></div>
         </details>
         <details>
           <summary>Why do you need my POH?</summary>
           <div><p>So every check uses your aircraft's real limits, not generic numbers. The app reads the Section 2 limits from your POH PDF on your device, notes the page each came from, and cross-checks them against any AFM supplement you upload. Where a supplement differs, the supplement governs.</p></div>
+        </details>
+        <details>
+          <summary>Can I add more than one aircraft?</summary>
+          <div><p>Yes. In the app, use the aircraft menu at the top of the sidebar and choose <strong>Add another aircraft</strong>: make, model, tail number and avionics. Switch between aircraft from the same menu, or from AIRCRAFT &gt; Your aircraft.</p><p>Each aircraft keeps its own flights, POH, maintenance and notes. On the <a href="upload/">upload page</a>, choose the aircraft at the top before you add files.</p></div>
         </details>
         <details>
           <summary>Why is my aircraft profile locked?</summary>
